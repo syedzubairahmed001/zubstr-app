@@ -1,0 +1,28 @@
+.loginContainer{
+    background-repeat: no-repeat;
+    background-position: left;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    background-color: #fff;
+}
+.loginBgContainer{
+    width: 50%;
+    background: url("../../assets/images/iMac\ -\ 2.svg");
+    background-repeat: no-repeat;
+}
+.loginFormContainer{
+    margin: 0;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    & form {
+        width: 70%;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+}
