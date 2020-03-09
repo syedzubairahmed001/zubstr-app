@@ -1,12 +1,8 @@
 import * as actionTypes from '../actions/action-types';
 
 const initailState = {
-    accessToken: null,
-    refreshToken: null,
     error: null,
-    isLoading: false,
-    isAuth: false,
-    user: null
+    success: null
 }
 
 const reducer = (state = initailState, action) => {
@@ -61,11 +57,6 @@ const reducer = (state = initailState, action) => {
             success: null
         }
         case actionTypes.SET_AUTH_SUCCESS: return {
-            ...state,
-            success: action.success || null,
-            error: null,
-        }
-        case actionTypes.REQUEST__EMAIL_VERIFICATION: return {
             ...state,
             success: action.success || null,
             error: null,

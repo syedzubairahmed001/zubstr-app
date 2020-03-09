@@ -5,7 +5,7 @@ import { Badge } from "@material-ui/core";
 import {useSpring as spring, animated} from 'react-spring'
 
 import classes from "./navigation.module.scss";
-import Logo from "../../components/Logo/Logo";
+import Logo from "../Logo/Logo";
 
 const navigation = () => {
 
@@ -23,7 +23,7 @@ const navigation = () => {
   return (
     <animated.div className={classes.navContainer} style={slide}>
       <div className={classes.logoContainer}>
-        <Logo />
+        <Logo variant="lightShadow" />
       </div>
       <nav>
         <div>
