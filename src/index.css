@@ -7,11 +7,43 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-html {
+.dark-bg{
+  background-color: #303030 !important;
+}
+html{
   /* font-size: 62.5%; */
+  transition: all .2s;
+}
+.w-100{
+  width: 100%;
+}
+.text-decoration-none{
+  text-decoration: none;
+}
+.p-relative{
+  position: relative;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/* over rides */
+.MuiFilledInput-underline:before{
+  border-color: rgba(0, 0, 0, 0);
+}
+
+
+
+
+
+@keyframes input-helperText-animate {
+  from{
+    opacity: 0;
+    min-height: 0em;
+    line-height: 0em;
+    transform: translateY(-2px);
+  }
+  to{
+    opacity: 1; 
+    min-height: 1em;
+    line-height: 1em;
+    transform: translateY(0);
+  }
 }

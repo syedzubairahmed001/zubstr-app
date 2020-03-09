@@ -40,15 +40,15 @@ export const errorSignup = error => ({
 
 export const login = data => {
   const { email, password } = data;
+  if (!email || !password) {
+    Promise.reject({ error: "data is not valid" });
+  }
+
+  const loginData = {
+    email,
+    password
+  };
   return dispatch => {
-    if (!email || !password) {
-      Promise.reject({ error: "data is not valid" });
-    }
-  
-    const loginData = {
-      email,
-      password
-    };
     return Api("/auth/login", loginData, {
       method: "post",
       dispatch,
@@ -59,10 +59,10 @@ export const login = data => {
 
 export const signup = data => {
   const { name, email, phone, password } = data;
+  if (!email || !password || !name || !phone) {
+    Promise.reject({ error: "data is not valid" });
+  }
   return dispatch => {
-    if (!email || !password || !name || !phone) {
-      Promise.reject({ error: "data is not valid" });
-    }
     const signupData = {
       name,
       email,
@@ -79,11 +79,11 @@ export const signup = data => {
 
 export const verifyEmail = (data) => {
   const {token} = data || null;
+  if(token) {
+    return Promise.reject('token is missing in parameters');
+  }
   return dispatch => {
-    if(!token) {
-      return Promise.reject('token is missing in parameters');
-    }
-    return Api(`/auth/verify-email/${token}`, null, {
+    return Api(`/auth/verify-email/${token}`,null, {
       method: 'get',
       dispatch,
       actionType: actionTypes.REQUEST__EMAIL_VERIFICATION
