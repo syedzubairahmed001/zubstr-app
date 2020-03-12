@@ -1,28 +1,14 @@
 .authContainer{
+    background-image: url('../../assets/images/image-1.svg');
     background-repeat: no-repeat;
-    background-position: left;
+    background-position: center;
     height: 100vh;
     width: 100%;
     display: flex;
     justify-content: center;
 }
-.loginBgContainer{
-    width: 50%;
-    background: url("../../assets/images/iMac\ -\ 2.svg");
-    background-repeat: no-repeat;
-}
-.loginFormContainer{
-    margin: 0;
-    width: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    & form {
-        width: 70%;
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 1rem;
-        display: flex;
-        flex-direction: column;
+@media (max-width: 700px){
+    .authContainer{
+        background-image: none;
     }
 }
