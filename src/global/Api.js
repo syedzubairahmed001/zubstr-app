@@ -31,13 +31,15 @@ dispatch({type: actionType})
       sendReq = axios.get;
   }
   return sendReq(url, data || null).then(res => {
+    console.error(res.headers);
     const data = res.data;
     console.log(res)
     if(data.error){
       dispatch({type: errorAction(actionType), data})
       return Promise.resolve(data);
     }
-    const {accessToken, refreshToken} = data;
+    const accessToken = res.headers['x-access-token'] || null;
+    const refreshToken = res.headers['x-refresh-token'] || null;
     if(accessToken && refreshToken){
       storeTokens(accessToken, refreshToken);
     }
