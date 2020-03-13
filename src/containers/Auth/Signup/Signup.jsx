@@ -51,7 +51,6 @@ const Signup = props => {
       ...prevValue,
       [name]: { value, error: false }
     }));
-    console.log(form);
   };
   const validate = () => {
     const { email, password, name, phone } = form;

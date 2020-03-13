@@ -27,7 +27,7 @@ const navigation = () => {
       </div>
       <nav>
         <div>
-            <NavLink to="/dashboard" activeClassName={classes.activeNavItem} className={classes.navItem}    >
+            <NavLink to="/i/dashboard" activeClassName={classes.activeNavItem} className={classes.navItem}    >
               <Home size={30} strokeWidth={1} />
             </NavLink>
           <NavLink to="/xyz" activeClassName={classes.activeNavItem} className={classes.navItem}>
@@ -38,7 +38,7 @@ const navigation = () => {
               <MessageSquare size={30} strokeWidth={1} />
             </Badge>
           </NavLink>
-          <NavLink to="/settings" activeClassName={classes.activeNavItem} className={classes.navItem}>
+          <NavLink to="/i/settings" activeClassName={classes.activeNavItem} className={classes.navItem}>
             <Settings size={30} strokeWidth={1} />
           </NavLink>
         </div>
