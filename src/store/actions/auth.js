@@ -98,25 +98,30 @@ export const authCheckState = () => {
     if (!accessToken && !refreshToken) {
       return dispatch(logout());
     } else {
-      axios
-        .post("/auth/validate", {
-          accessToken,
-          refreshToken
-        })
-        .then(res => {
-          const { data } = res;
-          const { accessToken, refreshToken, user } = data;
+      Api('/auth/validate', null , {
+        method: 'post',
+        dispatch,
+        actionType: actionTypes.REQUEST__LOGIN
+      })
+      // axios
+      //   .post("/auth/validate", {
+      //     accessToken,
+      //     refreshToken
+      //   })
+      //   .then(res => {
+      //     const { data } = res;
+      //     const { accessToken, refreshToken, user } = data;
 
-          if (accessToken && refreshToken && user) {
-            storeTokens(accessToken, refreshToken);
-            dispatch(succesLogin(accessToken, refreshToken, user  ));
-          } else {
-            dispatch(logout());
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      //     if (accessToken && refreshToken && user) {
+      //       storeTokens(accessToken, refreshToken);
+      //       dispatch(succesLogin(accessToken, refreshToken, user  ));
+      //     } else {
+      //       dispatch(logout());
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     }
   };
 };

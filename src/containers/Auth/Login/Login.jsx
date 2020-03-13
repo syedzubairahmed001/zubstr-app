@@ -52,7 +52,6 @@ const Login = props => {
       ...prevValue,
       [name]: { value, error: false }
     }));
-    console.log(form);
   };
   const validate = () => {
     const { email, password } = form;
@@ -146,7 +145,7 @@ const Login = props => {
               <Grid item className="w-100">
                 <Box m={1}>
                   <FormControl variant="outlined" fullWidth>
-                    <InputLabel htmlFor="password" error={!!password.error}>
+                    <InputLabel htmlFor="password" error={!!password.error} disabled={isLoading}>
                       Password
                     </InputLabel>
                     <OutlinedInput
