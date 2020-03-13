@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import Helmet from "react-helmet";
 import { useSelector, useDispatch } from "react-redux";
 import {
   TextField,
@@ -117,10 +118,9 @@ const Signup = props => {
       };
       dispatch(signup(data))
         .then(res => {
-          if(res.account){
-            return setRedirect('/auth/login')
-          }
-          else if (res && res.error){
+          if (res.account) {
+            return setRedirect("/auth/login");
+          } else if (res && res.error) {
             if (res.error.type === "validationError") {
               const data = res.error.data;
               Array.isArray(data) &&
@@ -138,17 +138,22 @@ const Signup = props => {
             }
           }
         })
-        .catch(err => {console.log(err)});
+        .catch(err => {
+          console.log(err);
+        });
     }
   };
   const { email, password, name, phone } = form;
   return (
     <>
-    {
-      redirect && (
-        <Redirect to={redirect} />
-      )
-    }
+      <Helmet>
+        <title>Zubstr Signup</title>
+        <meta
+          name="description"
+          content="create account on Zubstr. Zubstr is an institute network application for principals or who runs educational institutions"
+        />
+      </Helmet>
+      {redirect && <Redirect to={redirect} />}
       {formTransitions.map(({ item, props, key }) => (
         <animated.div key={key} style={props}>
           <form onSubmit={handleSubmit} className="w-100">

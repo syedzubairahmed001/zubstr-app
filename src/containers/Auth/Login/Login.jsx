@@ -1,4 +1,5 @@
 import React, { Component, Fragment, useContext, useState } from "react";
+import Helmet from 'react-helmet';
 import { useSelector, useDispatch } from "react-redux";
 import {
   TextField,
@@ -116,6 +117,13 @@ const Login = props => {
   const { email, password } = form;
   return (
     <>
+    <Helmet>
+        <title>Zubstr Login</title>
+        <meta
+          name="description"
+          content="Login to your Zubstr account. Zubstr is an institute network application for principals or who runs educational institutions"
+        />
+      </Helmet>
       {formTransitions.map(({ item, props, key }) => (
         <animated.div key={key} style={props}>
           <form onSubmit={handleSubmit} className="w-100">

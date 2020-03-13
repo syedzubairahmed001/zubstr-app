@@ -49,7 +49,7 @@ const App = props => {
   return (
     <ThemeProvider theme={theme}>
       <Helmet>
-        <title>Zubstr Login</title>
+        <title>Zubstr</title>
         <meta
           name="description"
           content="Login or Signup to your Zubstr account. Zubstr is an intstitute network application"
