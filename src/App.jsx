@@ -13,7 +13,9 @@ import Auth from "./containers/Auth/Auth";
 import Public from "./containers/Public/Public";
 import AppLoading from "./components/AppLoading/AppLoading";
 
+
 const Institute = lazy(() => import("./containers/Institute/Institute"));
+
 
 const lazyLoad = Component => {
   return props => (
