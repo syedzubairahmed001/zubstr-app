@@ -48,8 +48,21 @@ const Auth = props => {
       <Redirect to="/auth/login" />
     );
 
+  let title;
+  switch (p && p.split("/").reverse()[0]) {
+    case "login":
+      title = "Zubstr Login";
+      break;
+    case "signup":
+      title = "Zubstr Signup";
+      break;
+    case "verify-email":
+      title = "Verify Email";
+      break;
+    default:
+      title = "Zubstr";
+  }
   const { location } = useContext(__RouterContext);
-  let title = p.split('/').reverse()[0].replace('-', ' ');
   const transitions = useTransition(location, location => location.pathname, {
     from: {
       opacity: 0,
@@ -84,7 +97,7 @@ const Auth = props => {
           <Alert severity="success">{success}</Alert>
         </Snackbar>
       )}
-      <Grid container alignItems="center" justify="center" >
+      <Grid container alignItems="center" justify="center">
         <Grid item container md={6} sm={8} lg={4}>
           <Box px={2} className="w-100">
             <Paper elevation={0} variant="outlined">
@@ -101,9 +114,13 @@ const Auth = props => {
                       <Logo width="3rem" />
                     </Grid>
                     <Grid item>
-                      <Box px={2}>
-                        <Typography variant="h5" color="textSecondary" style={{textTransform: 'capitalize'}} >
-                        {title}
+                      <Box px={2} >
+                        <Typography
+                          variant="h1"
+                          color="textSecondary"
+                          style={{ textTransform: "capitalize", fontSize: '2rem', fontWeight: 400 }}
+                        >
+                          {title}
                         </Typography>
                       </Box>
                     </Grid>
