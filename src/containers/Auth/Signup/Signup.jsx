@@ -163,7 +163,9 @@ const Signup = props => {
               alignItems="center"
               justify="space-around"
             >
-              <Typography>Get your organisation a </Typography>
+              <Box textAlign="center" m={1}>
+              <Typography variant="h2" style={{fontSize: '1rem'}} >Zubstr is an institute network application which make you more closer to your students and teachers</Typography>
+              </Box>
               <Grid item className="w-100">
                 <Box m={1}>
                   <TextField
@@ -187,6 +189,7 @@ const Signup = props => {
                     variant="outlined"
                     label="Email"
                     id="email"
+                    type="email"
                     disabled={isLoading}
                     name="email"
                     helperText={email.error || null}
