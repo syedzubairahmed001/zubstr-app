@@ -133,7 +133,9 @@ const Login = props => {
               alignItems="center"
               justify="space-around"
             >
-              <Typography>Hey! welcome back</Typography>
+              <Box textAlign="center" m={1}>
+              <Typography variant="h2" style={{fontSize: '1rem'}} >Welcome back! Login to your existing Zubstr account</Typography>
+              </Box>
               <Grid item className="w-100">
                 <Box m={1}>
                   <TextField
@@ -143,6 +145,7 @@ const Login = props => {
                     id="email"
                     disabled={isLoading}
                     name="email"
+                    type="email"
                     helperText={email.error || null}
                     onChange={handleChange}
                     error={!!email.error}

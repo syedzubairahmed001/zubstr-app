@@ -11,6 +11,9 @@ const initailState = {
 
 const reducer = (state = initailState, action) => {
     const {data} = action || {};
+    const {error} = data || {};
+    const {msg:errorMsg} = error || {};
+    const {data: errorData} = error || {};
     switch(action.type) {
         case actionTypes.REQUEST__LOGIN: return {
             ...state,
@@ -27,10 +30,9 @@ const reducer = (state = initailState, action) => {
             user
         }
         case actionTypes.ERROR__LOGIN:
-            const {error} = data || null 
         return {
             ...state,
-            error: error.msg || null,
+            error: error && error.msg || null,
             isLoading: false,
             isAuth: false,
             user: null
@@ -52,7 +54,7 @@ const reducer = (state = initailState, action) => {
              return {
             ...state,
             isLoading: false,
-            error: data.error.msg || null,
+            error: errorMsg || null,
             success: null
         }
         case actionTypes.SET_AUTH_ERROR: return {

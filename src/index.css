@@ -24,6 +24,9 @@ html{
 .p-relative{
   position: relative;
 }
+.text-align--center{
+  text-align: center;
+}
 
 /* over rides */
 .MuiFilledInput-underline:before{

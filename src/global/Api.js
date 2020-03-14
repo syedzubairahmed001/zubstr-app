@@ -51,7 +51,7 @@ dispatch({type: actionType})
       return Promise.resolve(err.response.data);
     }
     else{
-      dispatch({type: errorAction(actionType)})
+      dispatch({type: errorAction(actionType), data: {msg: 'Check your internet connection'}})
       dispatch({type: 'ERROR__INTERNET'});
       return Promise.reject('Check your internet connection');
     }
