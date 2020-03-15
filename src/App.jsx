@@ -13,9 +13,8 @@ import Auth from "./containers/Auth/Auth";
 import Public from "./containers/Public/Public";
 import AppLoading from "./components/AppLoading/AppLoading";
 
-
 const Institute = lazy(() => import("./containers/Institute/Institute"));
-
+const Admin = lazy(() => import("./containers/Admin/Admin"))
 
 const lazyLoad = Component => {
   return props => (
@@ -27,27 +26,62 @@ const lazyLoad = Component => {
 
 const App = props => {
   const isAuth = useSelector(state => state.auth.isAuth);
+  const isGlobalLoading = useSelector(state => state.global.isLoading);
+  const user = useSelector(state => state.auth.user) || null;
+  const { isAdmin } = user || {};
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(authCheckState());
   }, [dispatch]);
 
-  let routes = !isAuth ? (
-    <>
-      <Switch>
-        <Route path="/auth" component={Auth} />
-        <Route path="/public" component={Public} />s
-        <Redirect to="/auth/login" />
-      </Switch>
-    </>
-  ) : (
-    <>
-      <Switch>
-        <Route path="/i" component={lazyLoad(Institute)} />
-        <Redirect to="/i/dashboard" />
-      </Switch>
-    </>
-  );
+  let routes;
+  if (isGlobalLoading) {
+    routes = <AppLoading />;
+  } else if (!isAuth) {
+    routes = (
+      <>
+        <Switch>
+          <Route path="/auth" component={Auth} />
+          <Route path="/public" component={Public} />
+          <Redirect to="/auth/login" />
+        </Switch>
+      </>
+    );
+  } else if (isAdmin) {
+    routes = (
+      <>
+        <Switch>
+          <Route path="/a" component={lazyLoad(Admin)} />
+          <Redirect to="/a/dashboard" />
+        </Switch>
+      </>
+    );
+  } else {
+    routes = (
+      <>
+        <Switch>
+          <Route path="/i" component={lazyLoad(Institute)} />
+          <Redirect to="/i/dashboard" />
+        </Switch>
+      </>
+    );
+  }
+  // let route = !isAuth ? (
+  //   <>
+  //     <Switch>
+  //       <Route path="/auth" component={Auth} />
+  //       <Route path="/public" component={Public} />
+  //       <Redirect to="/auth/login" />
+  //     </Switch>
+  //   </>
+  // ) : (
+  //   <>
+  //     <Switch>
+  //       <Route path="/i" component={lazyLoad(Institute)} />
+  //       <Redirect to="/i/dashboard" />
+  //     </Switch>
+  //   </>
+  // );
   return (
     <ThemeProvider theme={theme}>
       <Helmet>

@@ -14,7 +14,7 @@ export default (url, data, config) => {
       "dispatch or actiontype or method is missing in parameters"
     );
   }
-  const d = data ? data : null;
+  let d = data ? data : null;
 dispatch({type: actionType})
   let sendReq = null;
   switch (method.toLowerCase()) {
@@ -22,6 +22,7 @@ dispatch({type: actionType})
       sendReq = axios.post;
       break;
     case "get":
+      d = null;
       sendReq = axios.get;
       break;
     case "put":
@@ -30,7 +31,7 @@ dispatch({type: actionType})
     default:
       sendReq = axios.get;
   }
-  return sendReq(url, data || null).then(res => {
+  return sendReq(url, d || null).then(res => {
     console.error(res.headers);
     const data = res.data;
     console.log(res)
