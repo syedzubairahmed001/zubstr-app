@@ -1,3 +1,8 @@
+//Global
+export const SET_GLOBAL_LOADING = 'SET_GLOBAL_LOADING';
+export const RESET_GLOBAL_LOADING = 'RESET_GLOBAL_LOADING';
+
+//Auth
 export const REQUEST__LOGIN = 'REQUEST__LOGIN';
 export const SUCCESS__LOGIN = 'SUCCESS__LOGIN';
 export const ERROR__LOGIN = 'ERROR__LOGIN';

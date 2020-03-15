@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { Button, Tabs, Tab, Paper, Typography, Box } from "@material-ui/core";
-
-import Layout from "../../../hoc/Layout/Layout";
+import {
+  Tabs,
+  Tab,
+  Paper,
+  Typography,
+  Box,
+} from "@material-ui/core";
 
 const TabPanel = props => {
   const { children, value, index, ...other } = props;
@@ -26,18 +30,18 @@ const Dashboard = props => {
     setValue(newValue);
   };
   return (
-    <Layout>
-      <div>
+    <>
+      <Box>
         <Paper>
           <Tabs
             value={value}
             onChange={handleChange}
             indicatorColor="primary"
             textColor="primary"
-            centered
+            // centered
           >
-            <Tab label="Item One" />
-            <Tab label="Item Two" />
+            <Tab label="Students" />
+            <Tab label="Staff" />
             <Tab label="Item Three" />
           </Tabs>
           <TabPanel value={value} index={0}>
@@ -50,8 +54,59 @@ const Dashboard = props => {
             Item Three
           </TabPanel>
         </Paper>
-      </div>
-    </Layout>
+      </Box>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+    </>
   );
 };
 

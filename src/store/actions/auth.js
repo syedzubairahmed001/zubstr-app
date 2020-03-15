@@ -44,7 +44,7 @@ export const login = data => {
     if (!email || !password) {
       Promise.reject({ error: "data is not valid" });
     }
-  
+
     const loginData = {
       email,
       password
@@ -77,19 +77,19 @@ export const signup = data => {
   };
 };
 
-export const verifyEmail = (data) => {
-  const {token} = data || null;
+export const verifyEmail = data => {
+  const { token } = data || null;
   return dispatch => {
-    if(!token) {
-      return Promise.reject('token is missing in parameters');
+    if (!token) {
+      return Promise.reject("token is missing in parameters");
     }
     return Api(`/auth/verify-email/${token}`, null, {
-      method: 'get',
+      method: "get",
       dispatch,
       actionType: actionTypes.REQUEST__EMAIL_VERIFICATION
-    })
-  }
-}
+    });
+  };
+};
 
 export const authCheckState = () => {
   return dispatch => {
@@ -98,30 +98,18 @@ export const authCheckState = () => {
     if (!accessToken && !refreshToken) {
       return dispatch(logout());
     } else {
-      Api('/auth/validate', null , {
-        method: 'post',
-        dispatch,
-        actionType: actionTypes.REQUEST__LOGIN
-      })
-      // axios
-      //   .post("/auth/validate", {
-      //     accessToken,
-      //     refreshToken
-      //   })
-      //   .then(res => {
-      //     const { data } = res;
-      //     const { accessToken, refreshToken, user } = data;
-
-      //     if (accessToken && refreshToken && user) {
-      //       storeTokens(accessToken, refreshToken);
-      //       dispatch(succesLogin(accessToken, refreshToken, user  ));
-      //     } else {
-      //       dispatch(logout());
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
+      dispatch({ type: actionTypes.SET_GLOBAL_LOADING });
+      Api(
+        "/auth/validate",
+        { accessToken, refreshToken },
+        {
+          method: "post",
+          dispatch,
+          actionType: actionTypes.REQUEST__LOGIN
+        }
+      )
+        .then(res => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }))
+        .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
     }
   };
 };

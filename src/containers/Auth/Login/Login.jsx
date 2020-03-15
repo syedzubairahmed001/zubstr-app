@@ -22,7 +22,7 @@ import { isEmail } from "../../../helpers/validator";
 
 import Box from "@material-ui/core/Box";
 import classes from "../auth.module.scss";
-import { login, setAuthError} from "../../../store/actions/auth"; //TODO export all actions from one file
+import { login, setAuthError} from "../../../store/actions/auth"; 
 
 const Login = props => {
   const [form, setForm] = useState({
