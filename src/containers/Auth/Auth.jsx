@@ -27,7 +27,7 @@ import Login from "./Login/Login";
 import SignUp from "./Signup/Signup";
 import VerifyEmail from "./VerifyEmail/VerifyEmail";
 import classes from "./auth.module.scss";
-import { setAuthError, setAuthSuccess } from "../../store/actions/auth"; //TODO export all actions from one file
+import { setAuthError, setAuthSuccess } from "../../store/actions/auth"; 
 import Logo from "../../components/Logo/Logo";
 
 const SlideTransition = props => {

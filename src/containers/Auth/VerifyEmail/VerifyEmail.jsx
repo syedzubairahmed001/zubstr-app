@@ -5,7 +5,7 @@ import { Redirect, Link } from "react-router-dom";
 import { useTransition, animated } from "react-spring";
 
 import Box from "@material-ui/core/Box";
-import { signup } from "../../../store/actions/auth"; //TODO export all actions from one file
+import { signup } from "../../../store/actions/auth"; 
 
 const Signup = props => {
   let timeStamp;

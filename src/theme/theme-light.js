@@ -5,7 +5,11 @@ const theme = createMuiTheme({
     // htmlFontSize: '20px',
     // fontSize: 20,
   },
-
+  props: {
+    MuiButtonBase: {
+      // disableRipple: true,
+    },
+  },
   palette: {
     // type: "dark",
     // common: { black: "#000", white: "#fff" },

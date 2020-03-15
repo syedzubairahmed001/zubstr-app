@@ -19,7 +19,7 @@ import { useTransition, animated } from "react-spring";
 import { isEmail } from "../../../helpers/validator";
 
 import Box from "@material-ui/core/Box";
-import { signup } from "../../../store/actions/auth"; //TODO export all actions from one file
+import { signup } from "../../../store/actions/auth"; 
 
 const Signup = props => {
   const [form, setForm] = useState({
@@ -261,7 +261,6 @@ const Signup = props => {
                   <Typography style={{ fontSize: ".7rem" }}>
                     Forgot password?
                   </Typography>{" "}
-                  {/* TODO: forget password api logic */}
                 </Box>
               </Grid>
               <Grid item className="w-100">
