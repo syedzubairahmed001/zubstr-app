@@ -19,7 +19,7 @@ const InstituteLayout = props => {
           position="fixed"
           elevation={false}
           color="#fff"
-          style={{ left: "4rem" }}
+          style={{ left: "3rem" }}
         >
           <Toolbar>
             <Typography variant="h6">News</Typography>

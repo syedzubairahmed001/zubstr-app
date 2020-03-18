@@ -6,7 +6,8 @@ const initailState = {
   error: null,
   isLoading: false,
   isAuth: false,
-  user: null
+  user: null,
+  redirect: null
 };
 
 const reducer = (state = initailState, action) => {
@@ -83,6 +84,11 @@ const reducer = (state = initailState, action) => {
         ...state,
         success: action.success || null,
         error: null
+      };
+    case actionTypes.SET_AUTH_REDIRECT:
+      return {
+        ...state,
+        redirect: action.redirect
       };
     default:
       return state;

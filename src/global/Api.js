@@ -31,10 +31,16 @@ dispatch({type: actionType})
     default:
       sendReq = axios.get;
   }
-  return sendReq(url, d || null).then(res => {
-    console.error(res.headers);
+  const accessToken = localStorage.getItem('a-id') || null;
+  const refreshToken = localStorage.getItem('r-id') || null;
+
+  const axiosConfig = {headers: {}};
+  if(accessToken && refreshToken){
+    axiosConfig.headers['x-access-token'] = accessToken;
+    axiosConfig.headers['x-refresh-token'] = refreshToken;
+  }
+  return sendReq(url, d || null, axiosConfig).then(res => {
     const data = res.data;
-    console.log(res)
     if(data.error){
       dispatch({type: errorAction(actionType), data})
       return Promise.resolve(data);

@@ -1,23 +1,9 @@
-import axios from "../../axios";
+
 import * as actionTypes from "./action-types";
 import Api from "../../global/Api";
 
-const storeTokens = (a, r) => {
-  localStorage.setItem("a-id", a);
-  localStorage.setItem("r-id", r);
-};
-export const requestLogin = () => ({
-  type: actionTypes.REQUEST__LOGIN
-});
 
-export const succesLogin = (accessToken, refreshToken, user) => ({
-  type: actionTypes.SUCCESS__LOGIN,
-  data: { accessToken, refreshToken, user }
-});
-export const errorLogin = error => ({
-  type: actionTypes.ERROR__LOGIN,
-  error
-});
+
 export const logout = () => {
   localStorage.removeItem("a-id");
   localStorage.removeItem("r-id");
@@ -26,17 +12,6 @@ export const logout = () => {
     type: actionTypes.LOGOUT
   };
 };
-export const requestSignup = () => ({
-  type: actionTypes.REQUEST__SIGNUP
-});
-export const successSignup = success => ({
-  type: actionTypes.SUCCESS__SIGNUP,
-  success
-});
-export const errorSignup = error => ({
-  type: actionTypes.ERROR__SIGNUP,
-  error
-});
 
 export const login = data => {
   const { email, password } = data;
@@ -91,7 +66,8 @@ export const verifyEmail = data => {
   };
 };
 
-export const authCheckState = () => {
+export const authCheckState = data => {
+  const { redirect } = data || {};
   return dispatch => {
     const accessToken = localStorage.getItem("a-id");
     const refreshToken = localStorage.getItem("r-id");
@@ -108,7 +84,12 @@ export const authCheckState = () => {
           actionType: actionTypes.REQUEST__LOGIN
         }
       )
-        .then(res => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }))
+        .then(res => {
+          if (redirect) {
+            dispatch({ type: actionTypes.SET_AUTH_REDIRECT, redirect });
+          }
+          dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
+        })
         .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
     }
   };

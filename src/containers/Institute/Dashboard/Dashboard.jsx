@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Tabs,
-  Tab,
-  Paper,
-  Typography,
-  Box,
-} from "@material-ui/core";
+import { Tabs, Tab, Paper, Typography, Box } from "@material-ui/core";
 
 const TabPanel = props => {
   const { children, value, index, ...other } = props;
@@ -15,7 +9,7 @@ const TabPanel = props => {
       component="div"
       role="tabpanel"
       hidden={value !== index}
-      id={`scrollable-prevent-tabpanel-${index}`}
+      id={index}
       {...other}
     >
       {value === index && <Box p={3}>{children}</Box>}
@@ -24,7 +18,7 @@ const TabPanel = props => {
 };
 
 const Dashboard = props => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

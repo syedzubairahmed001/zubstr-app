@@ -6,18 +6,22 @@ const InstituteNav = props => {
     const nav = [
         {
             link: '/i/dashboard',
+            tooltip: 'Dashboard',
             Icon: Home
         },
         {
             link: '/i/users',
+            tooltip: 'Users',
             Icon: Users
         },
         {
             link: '/i/messages',
+            tooltip: 'Messages',
             Icon: MessageSquare
         },
         {
             link: '/i/settings',
+            tooltip: 'Settings',
             Icon: Settings
         }
     ]

@@ -3,18 +3,19 @@ import Helmet from "react-helmet";
 import { useTransition, animated } from "react-spring";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
-import { Route, Switch, Redirect, __RouterContext } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import "./App.css";
-import theme from "./theme/theme-light";
+import lightTheme from "./theme/theme-light";
+import darkTheme from "./theme/theme-dark";
 import { authCheckState } from "./store/actions/auth";
 import Auth from "./containers/Auth/Auth";
 import Public from "./containers/Public/Public";
 import AppLoading from "./components/AppLoading/AppLoading";
 
 const Institute = lazy(() => import("./containers/Institute/Institute"));
-const Admin = lazy(() => import("./containers/Admin/Admin"))
+const Admin = lazy(() => import("./containers/Admin/Admin"));
 
 const lazyLoad = Component => {
   return props => (
@@ -27,13 +28,14 @@ const lazyLoad = Component => {
 const App = props => {
   const isAuth = useSelector(state => state.auth.isAuth);
   const isGlobalLoading = useSelector(state => state.global.isLoading);
+  const currentTheme = useSelector(state => state.global.theme);
   const user = useSelector(state => state.auth.user) || null;
+  let authRedirect = localStorage.getItem("c-url");
   const { isAdmin } = user || {};
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(authCheckState());
   }, [dispatch]);
-
   let routes;
   if (isGlobalLoading) {
     routes = <AppLoading />;
@@ -52,7 +54,11 @@ const App = props => {
       <>
         <Switch>
           <Route path="/a" component={lazyLoad(Admin)} />
-          <Redirect to="/a/dashboard" />
+          {authRedirect && authRedirect.indexOf("/a/") > -1 ? (
+            <Redirect to={authRedirect} />
+          ) : (
+            <Redirect to="/a/dashboard" />
+          )}
         </Switch>
       </>
     );
@@ -61,29 +67,20 @@ const App = props => {
       <>
         <Switch>
           <Route path="/i" component={lazyLoad(Institute)} />
-          <Redirect to="/i/dashboard" />
+          {authRedirect && authRedirect.indexOf("/i/") > -1 ? (
+            <Redirect to={authRedirect} />
+          ) : (
+            <Redirect to="/i/dashboard" />
+          )}
         </Switch>
       </>
     );
   }
-  // let route = !isAuth ? (
-  //   <>
-  //     <Switch>
-  //       <Route path="/auth" component={Auth} />
-  //       <Route path="/public" component={Public} />
-  //       <Redirect to="/auth/login" />
-  //     </Switch>
-  //   </>
-  // ) : (
-  //   <>
-  //     <Switch>
-  //       <Route path="/i" component={lazyLoad(Institute)} />
-  //       <Redirect to="/i/dashboard" />
-  //     </Switch>
-  //   </>
-  // );
+  const theme = currentTheme === "dark" ? darkTheme : lightTheme;
+
   return (
     <ThemeProvider theme={theme}>
+      {currentTheme === 'dark' ? document.querySelector('body').classList.add('dark-bg') : document.querySelector('body').classList.remove('dark-bg') }
       <Helmet>
         <title>Zubstr</title>
         <meta
@@ -91,17 +88,11 @@ const App = props => {
           content="Login or Signup to your Zubstr account. Zubstr is an intstitute network application"
         />
       </Helmet>
-      <div className="App">{routes}</div>
+      <div  className={currentTheme === "dark" ? "dark-bg App" : "App"}>
+        {routes}
+      </div>
     </ThemeProvider>
   );
 };
-
-// const mapStateToProps = state => ({
-//   isAuth: state.auth.isAuth
-// });
-
-// const mapDispatchToProps = {
-//   authCheckState
-// };
 
 export default App;

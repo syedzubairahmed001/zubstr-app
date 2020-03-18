@@ -1,23 +1,27 @@
 import React from 'react';
 import Navigation from '../Navigation';
-import {Home, CreditCard, Users, Settings} from 'react-feather';
+import {Home, CreditCard, Grid, Settings} from 'react-feather';
 
 const InstituteNav = props => {
     const nav = [
         {
             link: '/a/dashboard',
+            tooltip: 'Dashboard',
             Icon: Home
         },
         {
-            link: '/a/users',
-            Icon: Users
+            link: '/a/institutes',
+            tooltip: 'Institutes',
+            Icon: Grid
         },
         {
             link: '/a/subscription',
+            tooltip: 'Subscription',
             Icon: CreditCard
         },
         {
             link: '/a/settings',
+            tooltip: 'Settings',
             Icon: Settings
         }
     ]
