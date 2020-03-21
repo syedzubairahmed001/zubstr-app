@@ -14,7 +14,6 @@ const College = props => {
   const transitions = useTransition(location, location => location.pathname, {
     from: {
       position: "absolute",
-      width: "calc(100% - 6rem)",
       opacity: 0,
       transform: "translate(100%,0)",
       padding: '1rem'
@@ -27,7 +26,7 @@ const College = props => {
     <>
       <AdminLayout>
         {transitions.map(({ item, props, key }) => (
-          <animated.div key={key} style={props}>
+          <animated.div key={key} style={props} className="AnimatedPage">
             <Switch location={item}>
               <Route path="/a/dashboard" component={Dashboard} />
               <Route path="/a/institutes" component={Institutes} />

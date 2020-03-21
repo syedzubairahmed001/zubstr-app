@@ -39,6 +39,12 @@ const theme = createMuiTheme({
     tonalOffset: 0.2
   },
   overrides: {
+    MuiAppBar:{
+      positionFixed: {
+        backdropFilter: 'saturate(180%) blur(20px)',
+        backgroundColor: 'rgba(255, 255, 255, 0)'
+      }
+    },
     MuiTooltip: {
       tooltip: {
         fontWeight: "300",
@@ -66,6 +72,9 @@ const theme = createMuiTheme({
       }
     },
     MuiPaper: {
+      elevation1: {
+        boxShadow: '0px 4px 20px rgba(0,0,0,0.05)'
+      },
       rounded: {
         borderRadius: "10px"
       }

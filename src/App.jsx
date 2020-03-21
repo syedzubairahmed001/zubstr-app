@@ -54,6 +54,7 @@ const App = props => {
       <>
         <Switch>
           <Route path="/a" component={lazyLoad(Admin)} />
+          <Route path="/public" component={Public} />
           {authRedirect && authRedirect.indexOf("/a/") > -1 ? (
             <Redirect to={authRedirect} />
           ) : (
@@ -67,6 +68,7 @@ const App = props => {
       <>
         <Switch>
           <Route path="/i" component={lazyLoad(Institute)} />
+          <Route path="/public" component={Public} />
           {authRedirect && authRedirect.indexOf("/i/") > -1 ? (
             <Redirect to={authRedirect} />
           ) : (
@@ -80,7 +82,9 @@ const App = props => {
 
   return (
     <ThemeProvider theme={theme}>
-      {currentTheme === 'dark' ? document.querySelector('body').classList.add('dark-bg') : document.querySelector('body').classList.remove('dark-bg') }
+      {currentTheme === "dark"
+        ? document.querySelector("body").classList.add("dark-bg")
+        : document.querySelector("body").classList.remove("dark-bg")}
       <Helmet>
         <title>Zubstr</title>
         <meta
@@ -88,7 +92,7 @@ const App = props => {
           content="Login or Signup to your Zubstr account. Zubstr is an intstitute network application"
         />
       </Helmet>
-      <div  className={currentTheme === "dark" ? "dark-bg App" : "App"}>
+      <div className={currentTheme === "dark" ? "dark-bg App" : "App"}>
         {routes}
       </div>
     </ThemeProvider>

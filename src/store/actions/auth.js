@@ -1,12 +1,10 @@
-
 import * as actionTypes from "./action-types";
 import Api from "../../global/Api";
-
-
 
 export const logout = () => {
   localStorage.removeItem("a-id");
   localStorage.removeItem("r-id");
+  localStorage.removeItem("c-url");
 
   return {
     type: actionTypes.LOGOUT

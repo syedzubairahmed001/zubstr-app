@@ -16,3 +16,19 @@ export const createCampus = data => {
     });
   };
 };
+
+export const createSubscription = data => {
+  return dispatch => {
+    const { subscriptionData } = data;
+    console.log(subscriptionData)
+    if (!subscriptionData) {
+      return Promise.reject("campusData not found");
+    }
+
+    return Api("/v1/subscription", subscriptionData, {
+      method: "post",
+      dispatch,
+      actionType: actionTypes.REQUEST__CREATE_SUBSCRIPTION
+    });
+  };
+};

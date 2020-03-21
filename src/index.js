@@ -9,6 +9,8 @@ import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import thunk from "redux-thunk";
 import { Provider, useDispatch } from "react-redux";
 import * as Sentry from "@sentry/browser";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 import * as actionTypes from "./store/actions/action-types";
 import "./index.css";
@@ -20,7 +22,7 @@ if (process.env.REACT_APP_GA_TRACKING_ID) {
   ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
 }
 const history = createBrowserHistory();
-
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 history.listen(location => {
   if (!location.pathname.includes("/auth/")) {
     localStorage.setItem("c-url", location.pathname);
@@ -55,13 +57,13 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk))
 );
 
-
-
 const app = (
   <Provider store={store}>
-    <Router history={history}>
-      <App />
-    </Router>
+    <Elements stripe={stripePromise}>
+      <Router history={history}>
+        <App />
+      </Router>
+    </Elements>
   </Provider>
 );
 ReactDOM.render(app, document.getElementById("root"));

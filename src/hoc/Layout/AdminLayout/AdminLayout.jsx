@@ -4,13 +4,16 @@ import {
   Typography,
   AppBar,
   Toolbar,
-  IconButton
+  IconButton,
+  makeStyles
 } from "@material-ui/core";
 import { Camera, Bell, Sun, Moon } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 
 import * as actionTypes from "../../../store/actions/action-types";
 import AdminNav from "../../../components/Navigation/AdminNav/AdminNav";
+
+
 
 const AdminLayout = props => {
   const dispatch = useDispatch();
@@ -31,7 +34,7 @@ const AdminLayout = props => {
           position="fixed"
           elevation={0}
           color="inherit"
-          style={{ left: "3rem", paddingRight: "4rem", paddingLeft: "2rem" }}
+          className="ZubstrAppBar"
         >
           <Toolbar>
             <Typography variant="h6" style={{ flexGrow: 1, fontWeight: 400 }}>

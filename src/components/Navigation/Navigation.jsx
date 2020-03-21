@@ -37,12 +37,12 @@ const navigation = props => {
   });
 
   return (
-    <animated.div className={classes.navContainer} style={slide}>
+    <div className={classes.navContainer} >
       <div className={classes.logoContainer}>
         <Logo variant="lightShadow" />
       </div>
       <nav>
-        <div>
+        <div className={classes.navLinksContainer}>
           {nav}
           {/* <NavLink
             to="/i/dashboard"
@@ -76,7 +76,7 @@ const navigation = props => {
           </NavLink> */}
         </div>
       </nav>
-    </animated.div>
+    </div>
   );
 };
 
