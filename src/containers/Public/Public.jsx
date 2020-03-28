@@ -21,7 +21,7 @@ import {
   useRouteMatch,
   __RouterContext
 } from "react-router-dom";
-import EmailVerification from './EmailVerification/EmailVerification';
+import EmailVerification from "./EmailVerification/EmailVerification";
 const Auth = props => {
   const isAuth = useSelector(state => state.auth.isAuth);
   const isLoading = useSelector(state => state.auth.isLoading);
@@ -39,12 +39,14 @@ const Auth = props => {
 
   const { location } = useContext(__RouterContext);
 
-
   return (
-    <div>
+    <div style={{ width: "100%", height: "100%" }}>
       {redirect}
       <Switch>
-          <Route path="/public/verify-email/:token" component={EmailVerification} />
+        <Route
+          path="/public/verify-email/:token"
+          component={EmailVerification}
+        />
       </Switch>
     </div>
   );

@@ -1,7 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Home, Users, Settings, MessageSquare } from "react-feather";
-import { Badge } from "@material-ui/core";
+import { Badge, Tooltip, Zoom } from "@material-ui/core";
 import { useSpring as spring, animated } from "react-spring";
 
 import classes from "./navigation.module.scss";
@@ -13,15 +12,16 @@ const navigation = props => {
   if (data && Array.isArray(data)) {
     data.forEach(e => {
       nav.push(
-        <NavLink
-          to={e.link}
-          key={e.link}
-          activeClassName={classes.activeNavItem}
-          className={classes.navItem}
-        >
-          <e.Icon size={30} strokeWidth={1} />
-          {/* <Home size={30} strokeWidth={1} /> */}
-        </NavLink>
+        <Tooltip TransitionComponent={Zoom} title={e.tooltip} placement="right" key={e.link} >
+          <NavLink
+            to={e.link}
+            
+            activeClassName={classes.activeNavItem}
+            className={classes.navItem}
+          >
+            <e.Icon size={30} strokeWidth={1} />
+          </NavLink>
+        </Tooltip>
       );
     });
   }
@@ -37,12 +37,12 @@ const navigation = props => {
   });
 
   return (
-    <animated.div className={classes.navContainer} style={slide}>
+    <div className={classes.navContainer} >
       <div className={classes.logoContainer}>
         <Logo variant="lightShadow" />
       </div>
       <nav>
-        <div>
+        <div className={classes.navLinksContainer}>
           {nav}
           {/* <NavLink
             to="/i/dashboard"
@@ -76,7 +76,7 @@ const navigation = props => {
           </NavLink> */}
         </div>
       </nav>
-    </animated.div>
+    </div>
   );
 };
 

@@ -1,14 +1,10 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
-  typography: {
-    // htmlFontSize: '20px',
-    // fontSize: 20,
-  },
   props: {
     MuiButtonBase: {
       // disableRipple: true,
-    },
+    }
   },
   palette: {
     // type: "dark",
@@ -32,14 +28,27 @@ const theme = createMuiTheme({
     success: {
       main: "#2ecc71"
     },
+    // text: {
+    //   primary: "#333"
+    // },
     contrastThreshold: 3,
     tonalOffset: 0.2
   },
   overrides: {
+    MuiAppBar:{
+      positionFixed: {
+        backdropFilter: 'saturate(180%) blur(20px)',
+        backgroundColor: 'rgba(255, 255, 255, 0)'
+      }
+    },
     MuiTooltip: {
       tooltip: {
         fontWeight: "300",
-        fontSize: ".7rem"
+        fontSize: ".7rem",
+        backgroundColor: "#333"
+      },
+      arrow: {
+        color: "#333"
       }
     },
     MuiButton: {
@@ -58,16 +67,19 @@ const theme = createMuiTheme({
         borderRadius: "10px"
       }
     },
-    MuiPaper:{
-      rounded : {
-        borderRadius: '10px'
+    MuiPaper: {
+      elevation1: {
+        boxShadow: '0px 4px 20px rgba(0,0,0,0.05)'
+      },
+      rounded: {
+        borderRadius: "10px"
       }
     },
-    MuiFormHelperText:{
+    MuiFormHelperText: {
       root: {
-        minHeight: '0em',
-        lineHeight: '0em',
-        animation: 'input-helperText-animate .1s ease-out  1 both'
+        minHeight: "0em",
+        lineHeight: "0em",
+        animation: "input-helperText-animate .1s ease-out  1 both"
       }
     }
     // MuiFilledInput: {
@@ -79,3 +91,4 @@ const theme = createMuiTheme({
 });
 
 export default theme;
+

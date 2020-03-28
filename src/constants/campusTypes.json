@@ -1,0 +1,14 @@
+[
+    {
+        "name": "School",
+        "value": "school"
+    },
+    {
+        "name": "College",
+        "value": "college"
+    },
+    {
+        "name": "Other",
+        "value": "other"
+    }
+]

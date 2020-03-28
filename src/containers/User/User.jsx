@@ -1,0 +1,17 @@
+import React from "react";
+import { Route, Switch, Redirect, Link } from "react-router-dom";
+
+import GetStarted from "./GetStarted/GetStarted";
+import CreateInstituteGroup from "./CreateInstituteGroup/CreateInstituteGroup";
+
+const User = props => {
+  return (
+    <Switch>
+      <Route path="/u/get-started" component={GetStarted} />
+      <Route path="/u/create-institute-group" component={CreateInstituteGroup} />
+      <Redirect to="/u/get-started" />
+    </Switch>
+  );
+};
+
+export default User;

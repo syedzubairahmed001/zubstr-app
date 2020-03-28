@@ -150,7 +150,7 @@ const Signup = props => {
         <title>Zubstr Signup</title>
         <meta
           name="description"
-          content="create account on Zubstr. Zubstr is an institute network application for owners or who runs educational institutions. Zubstr specifically designed for schools, colleges or universities to establish strong communication between students, teachers and management"
+          content="create account on Zubstr. Zubstr is an institute network application for owners or who runs educational institutions. Zubstr specifically designed for schools, colleges or universities to connect students, teachers and management together."
         />
       </Helmet>
       {redirect && <Redirect to={redirect} />}
@@ -165,8 +165,7 @@ const Signup = props => {
             >
               <Box textAlign="center" m={1}>
                 <Typography variant="h2" style={{ fontSize: "1rem" }}>
-                  Zubstr is an institute network application which make you more
-                  closer to your students and teachers
+                  Zubstr is an institute network application which lets you connect with students and staff together
                 </Typography>
               </Box>
               <Grid item className="w-100">
@@ -258,9 +257,7 @@ const Signup = props => {
                       </FormHelperText>
                     )}
                   </FormControl>
-                  <Typography style={{ fontSize: ".7rem" }}>
-                    Forgot password?
-                  </Typography>{" "}
+                  {/* TODO add privarcy policy and terms of services */}
                 </Box>
               </Grid>
               <Grid item className="w-100">

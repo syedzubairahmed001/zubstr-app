@@ -7,51 +7,76 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  background-color: #f5f5f5;
 }
-.dark-bg{
-  background-color: #303030 !important;
+.dark-bg {
+  background-color: #333 !important;
 }
-html{
+html {
   /* font-size: 62.5%; */
-  transition: all .2s;
+  transition: all 0.2s;
 }
-main{
+main {
   margin-top: 4rem;
   margin-left: 4rem;
+  border-radius: 2rem;
+  background-color: #ccc;
 }
 
-
-.w-100{
+.w-100 {
   width: 100%;
 }
-.text-decoration-none{
+.text-decoration-none {
   text-decoration: none;
 }
-.p-relative{
+.p-relative {
   position: relative;
 }
-.text-align--center{
+.text-align--center {
   text-align: center;
 }
 
 /* over rides */
-.MuiFilledInput-underline:before{
+.MuiFilledInput-underline:before {
   border-color: rgba(0, 0, 0, 0);
 }
 
+.AnimatedPage {
+  width: calc(100% - 6rem);
+}
+.ZubstrAppBar {
+  left: 3rem;
+  padding-left: 4rem;
+}
 
-
-
+@media only screen and (max-width: 600px) {
+  .ZubstrAppBar {
+    left: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+  main {
+    margin-top: 4rem;
+    margin-left: 0;
+    border-radius: 2rem;
+    background-color: #ccc;
+    margin-bottom: 4rem;
+  }
+  .AnimatedPage {
+    width: calc(100% - 2rem);
+    margin-bottom: 4rem;
+  }
+}
 
 @keyframes input-helperText-animate {
-  from{
+  from {
     opacity: 0;
     min-height: 0em;
     line-height: 0em;
     transform: translateY(-2px);
   }
-  to{
-    opacity: 1; 
+  to {
+    opacity: 1;
     min-height: 1em;
     line-height: 1em;
     transform: translateY(0);
