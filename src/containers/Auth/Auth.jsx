@@ -100,7 +100,7 @@ const Auth = props => {
       <Grid container alignItems="center" justify="center">
         <Grid item container md={6} sm={8} lg={4}>
           <Box px={2} className="w-100">
-            <Paper elevation={0} variant="outlined">
+            <Paper elevation={1} >
               {isLoading && <LinearProgress color="primary" />}
               <Paper elevation={0} style={{ padding: "30px" }}>
                 <Box>

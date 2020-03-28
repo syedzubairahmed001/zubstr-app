@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Tabs, Tab, Paper, Typography, Box, Grid } from "@material-ui/core";
-import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
+import { Route, Switch, useRouteMatch, useLocation, Redirect } from "react-router-dom";
 
 import Campuses from "./Campuses/Campuses";
 import CreateCampus from "./CreateCampus/CreateCampus";
@@ -59,6 +59,7 @@ const Institutes = props => {
             component={CreateCampus}
           />
           <Route path={currentPath} exact component={InstituteTabs} />
+          <Redirect to={currentPath} />
         </Switch>
       </Paper>
     </Box>

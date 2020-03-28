@@ -46,6 +46,7 @@ const Subscribe = () => {
   const elements = useElements();
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   const handleSubmit = async e => {
@@ -79,7 +80,28 @@ const Subscribe = () => {
           subscriptionData: { paymentMethod: result.paymentMethod.id }
         })
       )
-        .then(res => setLoading(false))
+        .then(res => {
+          setLoading(false);
+          const { subscription } = res || {};
+          const { latest_invoice } = subscription || {};
+          const { payment_intent } = latest_invoice || {};
+
+          if (payment_intent) {
+            const { client_secret, status } = payment_intent;
+
+            if (status === "requires_action") {
+              stripe.confirmCardPayment(client_secret).then(function(result) {
+                if (result.error) {
+                  setError(result.error.message);
+                } else {
+                  setSuccess("helloworld");
+                }
+              });
+            } else {
+              console.log("success");
+            }
+          }
+        })
         .catch(err => {
           console.log(err);
           setLoading(false);
@@ -102,7 +124,7 @@ const Subscribe = () => {
   //TODO add shield icon with label 'subscribe securely'
   return (
     <Box p={3}>
-      <form onClick={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <Grid container spacing={1} justify="center" alignItems="center">
           <Grid item md={6} xs={12} style={{ textAlign: "center" }}>
             <Box p={2}>

@@ -2,7 +2,7 @@ import * as actionTypes from "../actions/action-types";
 
 const currentTheme = localStorage.getItem("theme") || "light";
 const initailState = {
-  isLoading: false,
+  isLoading: true,
   currentUrl: null,
   theme: currentTheme,
   pageTitle: "Zubstr"

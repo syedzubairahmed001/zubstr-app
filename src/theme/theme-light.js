@@ -1,10 +1,6 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
-  typography: {
-    // htmlFontSize: '20px',
-    // fontSize: 20,
-  },
   props: {
     MuiButtonBase: {
       // disableRipple: true,

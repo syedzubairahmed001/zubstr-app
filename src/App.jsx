@@ -3,7 +3,13 @@ import Helmet from "react-helmet";
 import { useTransition, animated } from "react-spring";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
-import { Route, Switch, Redirect } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  useRouteMatch,
+  useLocation
+} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import "./App.css";
@@ -14,8 +20,11 @@ import Auth from "./containers/Auth/Auth";
 import Public from "./containers/Public/Public";
 import AppLoading from "./components/AppLoading/AppLoading";
 
-const Institute = lazy(() => import("./containers/Institute/Institute"));
-const Admin = lazy(() => import("./containers/Admin/Admin"));
+const Campus = lazy(() => import("./containers/Campus/Campus"));
+const InstituteGroup = lazy(() =>
+  import("./containers/InstituteGroup/InstituteGroup")
+);
+const User = lazy(() => import("./containers/User/User"));
 
 const lazyLoad = Component => {
   return props => (
@@ -30,53 +39,97 @@ const App = props => {
   const isGlobalLoading = useSelector(state => state.global.isLoading);
   const currentTheme = useSelector(state => state.global.theme);
   const user = useSelector(state => state.auth.user) || null;
-  let authRedirect = localStorage.getItem("c-url");
-  const { isAdmin } = user || {};
+  const account = useSelector(state => state.auth.account) || null;
+  const match = useLocation();
+  localStorage.setItem("c-url", match.pathname);
+  let pathRedirect = localStorage.getItem("c-url");
+  const { accounts } = user || {};
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(authCheckState());
   }, [dispatch]);
   let routes;
+  const commonRoutes = <Route path="/public" component={Public} />;
   if (isGlobalLoading) {
+    console.log("loading...");
     routes = <AppLoading />;
   } else if (!isAuth) {
+    console.log("iam at auth login...");
     routes = (
       <>
         <Switch>
           <Route path="/auth" component={Auth} />
-          <Route path="/public" component={Public} />
+          {commonRoutes}
           <Redirect to="/auth/login" />
         </Switch>
       </>
     );
-  } else if (isAdmin) {
+  } else if (!accounts || accounts.length === 0) {
     routes = (
       <>
         <Switch>
-          <Route path="/a" component={lazyLoad(Admin)} />
-          <Route path="/public" component={Public} />
-          {authRedirect && authRedirect.indexOf("/a/") > -1 ? (
-            <Redirect to={authRedirect} />
+          <Route path="/u" component={lazyLoad(User)} />
+          {commonRoutes}
+          {pathRedirect && pathRedirect.indexOf("/u/") > -1 ? (
+            <Redirect to={pathRedirect} />
           ) : (
-            <Redirect to="/a/dashboard" />
+            <Redirect to="/u" />
           )}
         </Switch>
       </>
     );
   } else {
-    routes = (
-      <>
-        <Switch>
+    Array.isArray(accounts) &&
+      accounts.forEach(e => {
+        const { accType } = e;
+        if (accType === "InstituteGroup") {
+          routes = (
+            <>
+              <Switch>
+                <Route path="/i" component={lazyLoad(InstituteGroup)} />
+                <Route path="/public" component={Public} />
+                {pathRedirect && pathRedirect.indexOf("/i/") > -1 ? (
+                  <Redirect to={pathRedirect} />
+                ) : (
+                  <Redirect to="/i/dashboard" />
+                )}
+              </Switch>
+            </>
+          );
+        } else if (accType === "Campus") {
+          routes = (
+            <>
+              <Switch>
+                <Route path="/c" component={lazyLoad(Campus)} />
+                <Route path="/public" component={Public} />
+                {pathRedirect && pathRedirect.indexOf("/c/") > -1 ? (
+                  <Redirect to={pathRedirect} />
+                ) : (
+                  <Redirect to="/i/dashboard" />
+                )}
+              </Switch>
+            </>
+          );
+        }
+      });
+    // routes = (
+    //   <>
+    {
+      /* <Switch>
           <Route path="/i" component={lazyLoad(Institute)} />
           <Route path="/public" component={Public} />
-          {authRedirect && authRedirect.indexOf("/i/") > -1 ? (
-            <Redirect to={authRedirect} />
+          {pathRedirect && pathRedirect.indexOf("/i/") > -1 ? (
+            <Redirect to={pathRedirect} />
           ) : (
             <Redirect to="/i/dashboard" />
           )}
-        </Switch>
+        </Switch> */
+    }
+    {
+      /* <div></div>
       </>
-    );
+    ); */
+    }
   }
   const theme = currentTheme === "dark" ? darkTheme : lightTheme;
 

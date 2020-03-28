@@ -8,14 +8,17 @@ const successAction = action => {
 };
 
 export default (url, data, config) => {
-  const { actionType, dispatch, method, passThrough } = config;
+  const { actionType, dispatch, method, passThrough, isMultipart } =
+    config || {};
   if (!config || !actionType || !dispatch || !method) {
     return Promise.reject(
       "dispatch or actiontype or method is missing in parameters"
     );
   }
+  if (isMultipart) {
+  }
   let d = data ? data : null;
-dispatch({type: actionType})
+  dispatch({ type: actionType });
   let sendReq = null;
   switch (method.toLowerCase()) {
     case "post":
@@ -31,38 +34,47 @@ dispatch({type: actionType})
     default:
       sendReq = axios.get;
   }
-  const accessToken = localStorage.getItem('a-id') || null;
-  const refreshToken = localStorage.getItem('r-id') || null;
+  const accessToken = localStorage.getItem("a-id") || null;
+  const refreshToken = localStorage.getItem("r-id") || null;
 
-  const axiosConfig = {headers: {}};
-  if(accessToken && refreshToken){
-    axiosConfig.headers['x-access-token'] = accessToken;
-    axiosConfig.headers['x-refresh-token'] = refreshToken;
+  const axiosConfig = { headers: {} };
+  if (isMultipart) {
+    axiosConfig.headers[
+      "content-type"
+    ] = `multipart/form-data; boundary=${d._boundary}`;
   }
-  return sendReq(url, d || null, axiosConfig).then(res => {
-    const data = res.data;
-    if(data.error){
-      dispatch({type: errorAction(actionType), data})
+  if (accessToken && refreshToken) {
+    axiosConfig.headers["x-access-token"] = accessToken;
+    axiosConfig.headers["x-refresh-token"] = refreshToken;
+  }
+  return sendReq(url, d || null, axiosConfig)
+    .then(res => {
+      const data = res.data;
+      if (data.error) {
+        dispatch({ type: errorAction(actionType), data });
+        return Promise.resolve(data);
+      }
+      const accessToken = res.headers["x-access-token"] || null;
+      const refreshToken = res.headers["x-refresh-token"] || null;
+      if (accessToken && refreshToken) {
+        storeTokens(accessToken, refreshToken);
+      }
+      dispatch({ type: successAction(actionType), data });
       return Promise.resolve(data);
-    }
-    const accessToken = res.headers['x-access-token'] || null;
-    const refreshToken = res.headers['x-refresh-token'] || null;
-    if(accessToken && refreshToken){
-      storeTokens(accessToken, refreshToken);
-    }
-    dispatch({type: successAction(actionType), data})
-    return Promise.resolve(data);
-  }).catch(err => {
-    if(err && err.response && err.response.data){
-      dispatch({type: errorAction(actionType), data: err.response.data})
-      return Promise.resolve(err.response.data);
-    }
-    else{
-      dispatch({type: errorAction(actionType), data: {msg: 'Check your internet connection'}})
-      dispatch({type: 'ERROR__INTERNET'});
-      return Promise.reject('Check your internet connection');
-    }
-  })
+    })
+    .catch(err => {
+      if (err && err.response && err.response.data) {
+        dispatch({ type: errorAction(actionType), data: err.response.data });
+        return Promise.resolve(err.response.data);
+      } else {
+        dispatch({
+          type: errorAction(actionType),
+          data: { msg: "Check your internet connection" }
+        });
+        dispatch({ type: "ERROR__INTERNET" });
+        return Promise.reject("Check your internet connection");
+      }
+    });
 };
 
 const storeTokens = (a, r) => {

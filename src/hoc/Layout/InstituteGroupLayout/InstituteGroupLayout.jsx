@@ -11,11 +11,11 @@ import { Camera, Bell, Sun, Moon } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 
 import * as actionTypes from "../../../store/actions/action-types";
-import AdminNav from "../../../components/Navigation/AdminNav/AdminNav";
+import InstituteGroupNav from "../../../components/Navigation/InstituteGroupNav/InstituteGroupNav";
 
 
 
-const AdminLayout = props => {
+const InstituteGroupLayout = props => {
   const dispatch = useDispatch();
   const theme = useSelector(state => state.global.theme);
   const pageTitle = useSelector(state => state.global.pageTitle)
@@ -28,7 +28,7 @@ const AdminLayout = props => {
   };
   return (
     <>
-      <AdminNav />
+      <InstituteGroupNav />
       <div>
         <AppBar
           position="fixed"
@@ -60,4 +60,4 @@ const AdminLayout = props => {
   );
 };
 
-export default AdminLayout;
+export default InstituteGroupLayout;

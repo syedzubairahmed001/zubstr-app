@@ -70,6 +70,7 @@ export const authCheckState = data => {
     const accessToken = localStorage.getItem("a-id");
     const refreshToken = localStorage.getItem("r-id");
     if (!accessToken && !refreshToken) {
+      dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
       return dispatch(logout());
     } else {
       dispatch({ type: actionTypes.SET_GLOBAL_LOADING });
@@ -83,9 +84,9 @@ export const authCheckState = data => {
         }
       )
         .then(res => {
-          if (redirect) {
-            dispatch({ type: actionTypes.SET_AUTH_REDIRECT, redirect });
-          }
+          // if (redirect) {
+          //   dispatch({ type: actionTypes.SET_AUTH_REDIRECT, redirect });
+          // }
           dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
         })
         .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
@@ -103,3 +104,10 @@ export const setAuthSuccess = error => {
     dispatch({ type: actionTypes.SET_AUTH_SUCCESS, error });
   };
 };
+
+
+export const setAccount = account => {
+  return dispatch => {
+    dispatch({ type: actionTypes.SET_ACCOUNT, account });
+  };
+}

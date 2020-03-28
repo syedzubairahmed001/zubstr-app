@@ -7,7 +7,9 @@ const initailState = {
   isLoading: false,
   isAuth: false,
   user: null,
-  redirect: null
+  redirect: null,
+  isTrial: false,
+  account: null
 };
 
 const reducer = (state = initailState, action) => {
@@ -23,13 +25,15 @@ const reducer = (state = initailState, action) => {
       };
     case actionTypes.SUCCESS__LOGIN:
       const { accessToken, refreshToken, user } = data || null;
+      const isTrial = user.subscription && user.subscription.isTrial;
       return {
         ...state,
         accessToken,
         refreshToken,
         isAuth: true,
         isLoading: false,
-        user
+        user,
+        isTrial
       };
     case actionTypes.ERROR__LOGIN:
       localStorage.removeItem("a-id");
@@ -89,6 +93,11 @@ const reducer = (state = initailState, action) => {
       return {
         ...state,
         redirect: action.redirect
+      };
+    case actionTypes.SET_ACCOUNT:
+      return {
+        ...state,
+        account: action.account
       };
     default:
       return state;

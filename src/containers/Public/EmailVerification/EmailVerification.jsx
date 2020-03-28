@@ -59,8 +59,8 @@ const EmailVerification = () => {
         )}
         {!success && isLoading && (
           <>
-            <Skeleton variant="rect" width={100} height={30} />
-            <Skeleton variant="rect" width={100} height={30} />
+            <Skeleton variant="rect" animation="wave" width={100} height={30} />
+            <Skeleton variant="rect" animation="wave" width={100} height={30} />
           </>
         )}
       </Grid>

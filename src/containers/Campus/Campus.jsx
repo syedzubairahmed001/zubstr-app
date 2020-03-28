@@ -25,9 +25,9 @@ const College = props => {
         {transitions.map(({ item, props, key }) => (
           <animated.div key={key} style={props}>
             <Switch location={item}>
-              <Route path="/i/dashboard" component={Dashboard} />
-              <Route path="/i/settings" component={Settings} />
-              <Redirect to="/i/dashboard" />
+              <Route path="/c/dashboard" component={Dashboard} />
+              <Route path="/c/settings" component={Settings} />
+              <Redirect to="/c/dashboard" />
             </Switch>
           </animated.div>
         ))}
