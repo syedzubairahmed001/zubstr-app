@@ -1,6 +1,8 @@
 import * as actionTypes from "../actions/action-types";
 
-const currentTheme = localStorage.getItem("theme") || "light";
+const currentTheme =
+  localStorage.getItem("theme") ||
+  (localStorage.setItem("theme", "light") && "light");
 const initailState = {
   isLoading: true,
   currentUrl: null,

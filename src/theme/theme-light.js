@@ -1,13 +1,20 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
+  typography: {
+    // htmlFontSize: '20px',
+    // fontSize: 20,
+  },
   props: {
     MuiButtonBase: {
-      // disableRipple: true,
+      disableRipple: true
     }
   },
+  shape: {
+    borderRadius: "10px"
+  },
   palette: {
-    // type: "dark",
+    type: "light",
     // common: { black: "#000", white: "#fff" },
     // background: {
     //   paper: "#424242",
@@ -32,47 +39,55 @@ const theme = createMuiTheme({
     //   primary: "#333"
     // },
     contrastThreshold: 3,
-    tonalOffset: 0.2
+    tonalOffset: 0.2,
+    background: {
+      paper: "#fff"
+    },
+    common: {
+      black: "#333",
+      white: "#fff"
+    },
+    text: {
+      primary: '#333',
+    }
   },
   overrides: {
-    MuiAppBar:{
+    MuiAppBar: {
       positionFixed: {
-        backdropFilter: 'saturate(180%) blur(20px)',
-        backgroundColor: 'rgba(255, 255, 255, 0)'
+        backdropFilter: "saturate(180%) blur(20px)",
+        backgroundColor: "rgba(255, 255, 255, 0)"
       }
     },
     MuiTooltip: {
       tooltip: {
         fontWeight: "300",
         fontSize: ".7rem",
-        backgroundColor: "#333"
+        backgroundColor: "#333",
+        borderRadius: "5px",
+        boxShadow: '0px 0px 10px rgba(0,0,0, 0.1)'
       },
       arrow: {
         color: "#333"
       }
     },
-    MuiButton: {
+    MuiButtonBase: {
       root: {
-        padding: "8px 32px",
-        borderRadius: "10px"
-      },
+        transition: "all 0.2s !important",
+        "&:active": {
+          transform: "scale(0.9)"
+        }
+      }
+    },
+    MuiButton: {
       label: {
         textTransform: "capitalize",
         fontSize: ".9rem",
         fontWeight: 400
       }
     },
-    MuiOutlinedInput: {
-      root: {
-        borderRadius: "10px"
-      }
-    },
     MuiPaper: {
       elevation1: {
-        boxShadow: '0px 4px 20px rgba(0,0,0,0.05)'
-      },
-      rounded: {
-        borderRadius: "10px"
+        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)"
       }
     },
     MuiFormHelperText: {
@@ -82,13 +97,7 @@ const theme = createMuiTheme({
         animation: "input-helperText-animate .1s ease-out  1 both"
       }
     }
-    // MuiFilledInput: {
-    //   underline: {
-    //     borderRadius: "10px"
-    //   }
-    // }
   }
 });
 
 export default theme;
-

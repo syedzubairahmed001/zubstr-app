@@ -19,7 +19,10 @@ const College = props => {
       padding: "1rem"
     },
     enter: { opacity: 1, transform: "translate(0%,0)" },
-    leave: { opacity: 0, transform: "translate(-50%,0)" }
+    leave: { opacity: 0, transform: "translate(-50%,0)" },
+    config: {
+      friction: 20
+    }
   });
 
   return (

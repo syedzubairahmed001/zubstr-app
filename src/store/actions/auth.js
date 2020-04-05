@@ -64,6 +64,31 @@ export const verifyEmail = data => {
   };
 };
 
+export const getAccount = data => {
+  const { account } = data || null;
+  return dispatch => {
+    if (!account) {
+      dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
+      return Promise.reject("account is missing in parameters");
+    }
+    dispatch({ type: actionTypes.SET_GLOBAL_LOADING });
+    return Api(`/user/account/`, account, {
+      method: "post",
+      dispatch,
+      actionType: actionTypes.REQUEST__ACCOUNT
+    })
+      .then(res => {
+        const { account } = res || {};
+        const { _id, accType } = account || {};
+
+        _id && localStorage.setItem("current-acc-id", _id);
+        accType && localStorage.setItem("current-acc-type", accType);
+        dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
+      })
+      .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
+  };
+};
+
 export const authCheckState = data => {
   const { redirect } = data || {};
   return dispatch => {
@@ -84,9 +109,9 @@ export const authCheckState = data => {
         }
       )
         .then(res => {
-          // if (redirect) {
-          //   dispatch({ type: actionTypes.SET_AUTH_REDIRECT, redirect });
-          // }
+          if (redirect) {
+            dispatch({ type: actionTypes.SET_AUTH_REDIRECT, redirect });
+          }
           dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
         })
         .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
@@ -105,9 +130,8 @@ export const setAuthSuccess = error => {
   };
 };
 
-
 export const setAccount = account => {
   return dispatch => {
     dispatch({ type: actionTypes.SET_ACCOUNT, account });
   };
-}
+};

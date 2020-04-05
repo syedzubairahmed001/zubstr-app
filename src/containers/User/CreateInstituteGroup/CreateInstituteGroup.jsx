@@ -19,6 +19,7 @@ import Dropzone from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 
 import { createInstituteGroup } from "../../../store/actions/user";
+import { setAccount } from "../../../store/actions/auth";
 import Logo from "../../../components/Logo/Logo";
 import CharCounter from "../../../components/CharCounter/CharCounter";
 
@@ -31,8 +32,10 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center"
   },
   uploadControls: {
-    display: "flex",
-    "@media (max-width: 600px)": {
+    display: "flex"
+  },
+  "@media (max-width: 600px)": {
+    uploadControls: {
       flexDirection: "column"
     }
   },
@@ -78,6 +81,7 @@ const CreateAdminAccount = props => {
   const [scale, setScale] = useState(1.4);
   const [image, setImage] = useState(null);
   const [rotate, setRotate] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: {
       value: "",
@@ -197,10 +201,7 @@ const CreateAdminAccount = props => {
                           width={200}
                           height={200}
                           ref={setEditorRef}
-                          border={100}
                           borderRadius={100}
-                          // borderRadius={10}
-                          // onPositionChange
                           style={{ borderRadius: "10px" }}
                           scale={scale}
                           image={upload}
@@ -283,34 +284,57 @@ const CreateAdminAccount = props => {
       }
     }
     if (activeStep === 2) {
+      setLoading(true);
       const { name, description } = form;
-      const canvas = reactAvatarRef.getImageScaledToCanvas().toDataURL();
-      let imageURL;
-      fetch(canvas)
-        .then(res => res.blob())
-        .then(blob => {
-          console.log(blob);
-          imageURL = window.URL.createObjectURL(blob);
-          setImage(imageURL);
+      let canvas =
+        (reactAvatarRef &&
+          reactAvatarRef.getImageScaledToCanvas().toDataURL()) ||
+        null;
+      if (canvas) {
+        fetch(canvas)
+          .then(res => res.blob())
+          .then(blob => {
+            console.log(blob);
 
-          const formdata = new FormData();
+            const formdata = new FormData();
 
-          formdata.append("logo", blob);
-          formdata.append("name", name.value);
-          formdata.append("description", description.value);
+            formdata.append("logo", blob);
+            formdata.append("name", name.value);
+            formdata.append("description", description.value);
 
-          dispatch(
-            createInstituteGroup({
-              body: formdata
-            })
-          )
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
-        });
+            dispatch(
+              createInstituteGroup({
+                body: formdata
+              })
+            )
+              .then(res => {
+                const { account } = res || {};
 
-      // if (!upload === "") {
-      //   setUploadError("Please upload a logo");
-      // }
+                dispatch(setAccount(account));
+              })
+              .catch(err => console.log(err));
+          });
+
+        // if (!upload === "") {
+        //   setUploadError("Please upload a logo");
+        // }
+      } else {
+        const formdata = new FormData();
+
+        formdata.append("name", name.value);
+        formdata.append("description", description.value);
+        dispatch(
+          createInstituteGroup({
+            body: formdata
+          })
+        )
+          .then(res => {
+            const { account } = res || {};
+
+            dispatch(setAccount(account));
+          })
+          .catch(err => console.log(err));
+      }
     }
   };
 
@@ -341,7 +365,7 @@ const CreateAdminAccount = props => {
             </Typography>
           </Box>
         </Grid>
-        <Grid item md={8} xs={11} className={classes.grid}>
+        <Grid item md={8} xs={12} className={classes.grid}>
           <Box className={classes.box}>
             <Stepper
               activeStep={activeStep}
