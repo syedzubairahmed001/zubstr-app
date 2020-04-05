@@ -13,25 +13,8 @@ import {
 } from "@material-ui/core";
 import { Lock } from "react-feather";
 
-import { createSubscription } from "../../../../store/actions/admin";
+import { createSubscription } from "../../../../store/actions/instituteGroup";
 
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      color: "#333",
-      fontFamily: '"Roboto", sans-serif',
-      fontSmoothing: "antialiased",
-      fontSize: "16px",
-      "::placeholder": {
-        color: "#ccc"
-      }
-    },
-    invalid: {
-      color: "#e74c3c",
-      iconColor: "#e74c3c"
-    }
-  }
-};
 const useStyles = makeStyles(theme => ({
   margin: {
     margin: theme.spacing(1)
@@ -48,6 +31,25 @@ const Subscribe = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const theme = useSelector(state => state.global.theme);
+
+  const CARD_ELEMENT_OPTIONS = {
+    style: {
+      base: {
+        color: theme === "dark" ? "#ddd" : "#333",
+        fontFamily: '"Roboto", sans-serif',
+        fontSmoothing: "antialiased",
+        fontSize: "16px",
+        "::placeholder": {
+          color: theme === "dark" ? "#aaa" : "#ccc"
+        }
+      },
+      invalid: {
+        color: "#e74c3c",
+        iconColor: "#e74c3c"
+      }
+    }
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -129,10 +131,10 @@ const Subscribe = () => {
           <Grid item md={6} xs={12} style={{ textAlign: "center" }}>
             <Box p={2}>
               <Typography variant="h5">Subscribe</Typography>
-              <Typography variant="subtitle1" color="textSecondary">
+              <Typography variant="body2" color="textSecondary">
                 Enter your credit or debit card details to subscribe
               </Typography>
-              <Typography color="textSecondary">
+              <Typography variant="body2" color="textSecondary">
                 You can cancel your Subscription any time you want
               </Typography>
             </Box>

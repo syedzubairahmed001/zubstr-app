@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Tabs, Tab, Paper, Typography, Box, Grid } from "@material-ui/core";
-import { Route, Switch, useRouteMatch, useLocation, Redirect } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  useRouteMatch,
+  useLocation,
+  Redirect
+} from "react-router-dom";
 
 import Campuses from "./Campuses/Campuses";
 import CreateCampus from "./CreateCampus/CreateCampus";
@@ -49,7 +55,6 @@ const InstituteTabs = props => {
 
 const Institutes = props => {
   const currentPath = useRouteMatch().path;
-  console.log(useRouteMatch());
   return (
     <Box>
       <Paper elevation={0}>

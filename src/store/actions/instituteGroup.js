@@ -4,7 +4,7 @@ import Api from "../../global/Api";
 export const createCampus = data => {
   return dispatch => {
     const { campusData } = data;
-    console.log(campusData)
+    console.log(campusData);
     if (!campusData) {
       return Promise.reject("campusData not found");
     }
@@ -20,7 +20,7 @@ export const createCampus = data => {
 export const createSubscription = data => {
   return dispatch => {
     const { subscriptionData } = data;
-    console.log(subscriptionData)
+    console.log(subscriptionData);
     if (!subscriptionData) {
       return Promise.reject("campusData not found");
     }
@@ -29,6 +29,16 @@ export const createSubscription = data => {
       method: "post",
       dispatch,
       actionType: actionTypes.REQUEST__CREATE_SUBSCRIPTION
+    });
+  };
+};
+
+export const subscriptionFail = data => {
+  return dispatch => {
+    return Api("/v1/subscription/fail", null, {
+      method: "get",
+      dispatch,
+      actionType: actionTypes.REQUEST__SUBSCRIPTION_FAIL
     });
   };
 };

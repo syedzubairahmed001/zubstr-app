@@ -10,10 +10,10 @@ const Campuses = props => {
   return (
     <Grid container spacing={2}>
       <Grid item md={3} sm={12} xs={12}>
-        <CampusCard isAdd link="/a/institutes/create-campus" />
+        <CampusCard isAdd link="/i/institutes/create-campus" />
       </Grid>
       <Grid item md={3} sm={12} xs={12}>
-        <CampusCard link="/a/dashboard" />
+        <CampusCard link="/i/dashboard" />
       </Grid>
       <Grid item md={3} sm={12} xs={12}>
         <CampusCard skeleton />

@@ -11,18 +11,21 @@ import {
   FormControl,
   MenuItem,
   Select,
-  FormHelperText
+  FormHelperText,
+  Slider
 } from "@material-ui/core";
-import { ArrowLeft } from "react-feather";
+import { ArrowLeft, MapPin, Upload, AlignLeft } from "react-feather";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import ReactAvatarEditor from "react-avatar-editor";
+import Dropzone from "react-dropzone";
 import _ from "lodash";
 
 import campusTypes from "../../../../constants/campusTypes.json";
 import countries from "../../../../constants/countries.json";
 import collegeCategories from "../../../../constants/collegeCategories.json";
 import image from "../../../../assets/images/undraw/coming_home.svg";
-import { createCampus } from "../../../../store/actions/admin";
+import { createCampus } from "../../../../store/actions/instituteGroup";
 import { setPageTitle } from "../../../../store/actions/global";
 
 const useStyles = makeStyles(theme => ({
@@ -34,6 +37,35 @@ const useStyles = makeStyles(theme => ({
   },
   selectEmpty: {
     marginTop: theme.spacing(2)
+  },
+  subHeading: {
+    display: "flex",
+    alignItems: "center"
+  },
+  uploadControls: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  "@media (max-width: 600px)": {
+    drag: {
+      height: "100px"
+    }
+  },
+  icon: {
+    color: theme.palette.text.secondary,
+    width: "1.2rem",
+    marginRight: "10px"
+  },
+  drag: {
+    // width: "90%",
+    height: "200px",
+    borderRadius: "20px",
+    backgroundImage: ` url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='20' ry='20' stroke='%23CACACAFF' stroke-width='2' stroke-dasharray='12' stroke-dashoffset='2' stroke-linecap='round'/%3e%3c/svg%3e")`,
+    padding: "1rem",
+    "&:hover": {
+      backgroundColor: "rgba(255,255,255, 0.1)"
+    },
+    cursor: "pointer"
   }
 }));
 
@@ -41,7 +73,13 @@ const CreateCampus = props => {
   const styles = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  let reactAvatarRef;
+  const setEditorRef = editor => (reactAvatarRef = editor);
   dispatch(setPageTitle("Create Campus"));
+  const [scale, setScale] = useState(1.4);
+  const [image, setImage] = useState(null);
+  const [upload, setUpload] = useState(null);
+  const [rotate, setRotate] = useState(0);
   const [form, setForm] = useState({
     name: { value: "", error: null },
     type: { value: "", error: null },
@@ -57,6 +95,16 @@ const CreateCampus = props => {
   });
   // document.title = "Create Campus";
   const inputLabel = React.useRef(null);
+  const handleDrop = acceptedFiles => {
+    setUpload(acceptedFiles[0]);
+    console.log(acceptedFiles);
+  };
+  const handleScaleChange = (event, newValue) => {
+    setScale(newValue);
+  };
+  const handleRotateChange = (event, newValue) => {
+    setRotate(newValue);
+  };
   const handleChange = event => {
     const name = event.target.name;
     const value = event.target.value;
@@ -87,27 +135,36 @@ const CreateCampus = props => {
   } = form;
   const handleSubmit = e => {
     e.preventDefault();
-    if (validate()) {
-      dispatch(
-        createCampus({
-          campusData: {
-            name: name.value,
-            email: email.value,
-            phone: phone.value,
-            description: description.value,
-            type: type.value,
-            city: city.value,
-            state: state.value,
-            zipCode: zipCode.value,
-            country: country.value,
-            category: category.value,
-            landmark: landmark.value
-          }
-        })
-      )
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
-    }
+    const canvas = reactAvatarRef.getImageScaledToCanvas().toDataURL();
+    fetch(canvas)
+      .then(res => res.blob())
+      .then(blob => {
+        console.log(blob);
+
+        const formdata = new FormData();
+
+        formdata.append("logo", blob);
+        formdata.append("name", name.value);
+        formdata.append("email", email.value);
+        formdata.append("phone", phone.value);
+        formdata.append("description", description.value);
+        formdata.append("type", type.value);
+        formdata.append("city", city.value);
+        formdata.append("state", state.value);
+        formdata.append("zipCode", zipCode.value);
+        formdata.append("country", country.value);
+        formdata.append("category", category.value);
+        formdata.append("landmark", landmark.value);
+        if (validate()) {
+          dispatch(
+            createCampus({
+              body: formdata
+            })
+          )
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        }
+      });
   };
   const validate = () => {
     let valid = true;
@@ -148,15 +205,7 @@ const CreateCampus = props => {
     <Box p={2}>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={4}>
-          <Grid
-            item
-            container
-            sm={12}
-            md={4}
-            xs={12}
-            justify="space-between"
-            direction="column"
-          >
+          <Grid item container sm={12} md={4} xs={12} direction="column">
             <Grid item>
               <IconButton color="inherit" onClick={handleBack}>
                 <ArrowLeft />
@@ -166,7 +215,75 @@ const CreateCampus = props => {
               </Typography>
             </Grid>
             <Grid item>
-              <img src={image} alt="quite_town" style={{ width: "100%" }} />
+              <Box style={{ width: "100%" }} mt={4}>
+                <Box mb={2}>
+                  <Box className={styles.subHeading}>
+                    <Upload className={styles.icon} />
+                    <div>
+                      <Typography variant="subtitle1">Upload Logo</Typography>
+                      <Typography color="textSecondary" variant="caption">
+                        Please upload a .jpeg or .png file
+                      </Typography>
+                    </div>
+                  </Box>
+                </Box>
+                <Dropzone
+                  onDrop={handleDrop}
+                  disableClick
+                  accept={["image/png", "image/jpeg"]}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <section>
+                      <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        <Typography
+                          color="textSecondary"
+                          className={styles.drag}
+                        >
+                          Drag 'n' drop the logo here, or click to select
+                        </Typography>
+                      </div>
+                      {upload && (
+                        <Box mt={2} className={styles.uploadControls}>
+                          <Box>
+                            <ReactAvatarEditor
+                              width={200}
+                              height={200}
+                              ref={setEditorRef}
+                              borderRadius={100}
+                              style={{ borderRadius: "10px" }}
+                              scale={scale}
+                              image={upload}
+                              rotate={rotate}
+                            />
+                          </Box>
+                          <Box ml={2} width={150}>
+                            <Typography>Zoom</Typography>
+                            <Slider
+                              value={scale}
+                              min={1}
+                              step={0.1}
+                              max={10}
+                              onChange={handleScaleChange}
+                              aria-labelledby="continuous-slider"
+                            />
+                            <Typography>Rotate</Typography>
+                            <Slider
+                              value={rotate}
+                              min={0}
+                              step={1}
+                              max={360}
+                              onChange={handleRotateChange}
+                              aria-labelledby="continuous-slider"
+                            />
+                            {image && <img src={image} alt="hello" />}
+                          </Box>
+                        </Box>
+                      )}
+                    </section>
+                  )}
+                </Dropzone>
+              </Box>
             </Grid>
           </Grid>
           <Grid
@@ -180,7 +297,9 @@ const CreateCampus = props => {
           >
             <Grid item container direction="column" spacing={2}>
               <Grid item container>
-                <Typography variant="subtitle1">General</Typography>
+                <Typography variant="subtitle1" className={styles.subHeading}>
+                  <AlignLeft className={styles.icon} /> General
+                </Typography>
               </Grid>
               <Grid item container direction="row" spacing={1}>
                 <Grid item className={styles.gridItem}>
@@ -307,7 +426,9 @@ const CreateCampus = props => {
             </Grid>
             <Grid item container direction="column" spacing={2}>
               <Grid item>
-                <Typography variant="subtitle1">Location</Typography>
+                <Typography variant="subtitle1" className={styles.subHeading}>
+                  <MapPin className={styles.icon} /> Location
+                </Typography>
               </Grid>
               <Grid item container direction="row" spacing={1}>
                 <Grid item className={styles.gridItem}>

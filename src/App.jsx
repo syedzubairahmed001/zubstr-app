@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "./App.css";
 import lightTheme from "./theme/theme-light";
 import darkTheme from "./theme/theme-dark";
-import { authCheckState } from "./store/actions/auth";
+import { authCheckState, getAccount } from "./store/actions/auth";
 import Auth from "./containers/Auth/Auth";
 import Public from "./containers/Public/Public";
 import AppLoading from "./components/AppLoading/AppLoading";
@@ -41,13 +41,13 @@ const App = props => {
   const user = useSelector(state => state.auth.user) || null;
   const account = useSelector(state => state.auth.account) || null;
   const match = useLocation();
-  localStorage.setItem("c-url", match.pathname);
-  let pathRedirect = localStorage.getItem("c-url");
+  let pathRedirect = match.pathname || null;
+  const authRedirect = useSelector(state => state.auth.redirect);
   const { accounts } = user || {};
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(authCheckState());
-  }, [dispatch]);
+    dispatch(authCheckState({ redirect: pathRedirect }));
+  }, []);
   let routes;
   const commonRoutes = <Route path="/public" component={Public} />;
   if (isGlobalLoading) {
@@ -70,8 +70,8 @@ const App = props => {
         <Switch>
           <Route path="/u" component={lazyLoad(User)} />
           {commonRoutes}
-          {pathRedirect && pathRedirect.indexOf("/u/") > -1 ? (
-            <Redirect to={pathRedirect} />
+          {authRedirect && authRedirect.indexOf("/u/") > -1 ? (
+            <Redirect to={authRedirect} />
           ) : (
             <Redirect to="/u" />
           )}
@@ -79,56 +79,61 @@ const App = props => {
       </>
     );
   } else {
-    Array.isArray(accounts) &&
-      accounts.forEach(e => {
-        const { accType } = e;
-        if (accType === "InstituteGroup") {
+    if (account) {
+      switch (account.accType) {
+        case "institutegroup":
           routes = (
             <>
               <Switch>
                 <Route path="/i" component={lazyLoad(InstituteGroup)} />
                 <Route path="/public" component={Public} />
-                {pathRedirect && pathRedirect.indexOf("/i/") > -1 ? (
-                  <Redirect to={pathRedirect} />
+                {authRedirect && authRedirect.indexOf("/i/") > -1 ? (
+                  <Redirect to={authRedirect} />
                 ) : (
                   <Redirect to="/i/dashboard" />
                 )}
               </Switch>
             </>
           );
-        } else if (accType === "Campus") {
+          break;
+        case "campus":
           routes = (
             <>
               <Switch>
                 <Route path="/c" component={lazyLoad(Campus)} />
                 <Route path="/public" component={Public} />
-                {pathRedirect && pathRedirect.indexOf("/c/") > -1 ? (
-                  <Redirect to={pathRedirect} />
+                {authRedirect && authRedirect.indexOf("/c/") > -1 ? (
+                  <Redirect to={authRedirect} />
                 ) : (
                   <Redirect to="/i/dashboard" />
                 )}
               </Switch>
             </>
           );
-        }
-      });
-    // routes = (
-    //   <>
-    {
-      /* <Switch>
-          <Route path="/i" component={lazyLoad(Institute)} />
-          <Route path="/public" component={Public} />
-          {pathRedirect && pathRedirect.indexOf("/i/") > -1 ? (
-            <Redirect to={pathRedirect} />
-          ) : (
-            <Redirect to="/i/dashboard" />
-          )}
-        </Switch> */
-    }
-    {
-      /* <div></div>
-      </>
-    ); */
+          break;
+        default:
+          routes = <div></div>;
+      }
+    } else {
+      let a;
+      a =
+        Array.isArray(accounts) &&
+        accounts.find(
+          e =>
+            e.accType.toLowerCase() === "institutegroup" ||
+            e.accType.toLowerCase() === "campus"
+        );
+
+      if (a) {
+        const { accType, id } = a;
+        dispatch(getAccount({ account: { accType, id } }))
+          .then(res => {})
+          .catch(err => {
+            routes = <div></div>;
+          });
+      } else {
+        routes = <div></div>;
+      }
     }
   }
   const theme = currentTheme === "dark" ? darkTheme : lightTheme;

@@ -8,9 +8,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   background-color: #f5f5f5;
+  min-width: 300px;
 }
 .dark-bg {
-  background-color: #333 !important;
+  background-color: #3d3d3d !important;
 }
 html {
   /* font-size: 62.5%; */
@@ -49,6 +50,11 @@ main {
   padding-left: 4rem;
 }
 
+@media only screen and (max-width: 300px) {
+  body {
+    overflow-x: auto;
+  }
+}
 @media only screen and (max-width: 600px) {
   .ZubstrAppBar {
     left: 0;

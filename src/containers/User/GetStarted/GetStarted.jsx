@@ -28,6 +28,11 @@ const useStyles = makeStyles(theme => ({
   heading: {
     textTransform: "capitalize",
     color: theme.palette.text.primary
+  },
+  "@media (max-width: 600px)": {
+    heading: {
+      fontSize: "3rem"
+    }
   }
 }));
 
@@ -90,13 +95,13 @@ const GetStarted = props => {
             <Lottie options={defaultOptions} height={100} width={100} />
           </Grid>
           <Grid item>
-            <Typography variant="h2" className={classes.heading}>
+            <Typography variant="h2" className={classes.heading} align="center">
               Welcome {name}!
             </Typography>
           </Grid>
         </Grid>
       </animated.div>
-      <Grid item md={5} xs={12}>
+      <Grid item md={5} xs={11}>
         <animated.div style={containerAnimation}>
           <Typography align="center" variant="subtitle1" color="textSecondary">
             Glad to see you here at Zubstr, We are working hard to connect

@@ -36,6 +36,8 @@ export default (url, data, config) => {
   }
   const accessToken = localStorage.getItem("a-id") || null;
   const refreshToken = localStorage.getItem("r-id") || null;
+  const currentAccountId = localStorage.getItem("current-acc-id") || null;
+  const currentAccountType = localStorage.getItem("current-acc-type") || null;
 
   const axiosConfig = { headers: {} };
   if (isMultipart) {
@@ -46,6 +48,10 @@ export default (url, data, config) => {
   if (accessToken && refreshToken) {
     axiosConfig.headers["x-access-token"] = accessToken;
     axiosConfig.headers["x-refresh-token"] = refreshToken;
+  }
+  if (currentAccountId && currentAccountType) {
+    axiosConfig.headers["acc-id"] = currentAccountId;
+    axiosConfig.headers["acc-type"] = currentAccountType;
   }
   return sendReq(url, d || null, axiosConfig)
     .then(res => {
@@ -59,12 +65,16 @@ export default (url, data, config) => {
       if (accessToken && refreshToken) {
         storeTokens(accessToken, refreshToken);
       }
-      dispatch({ type: successAction(actionType), data });
+      dispatch({ type: successAction(actionType), data, passThrough });
       return Promise.resolve(data);
     })
     .catch(err => {
       if (err && err.response && err.response.data) {
-        dispatch({ type: errorAction(actionType), data: err.response.data });
+        dispatch({
+          type: errorAction(actionType),
+          data: err.response.data,
+          passThrough
+        });
         return Promise.resolve(err.response.data);
       } else {
         dispatch({

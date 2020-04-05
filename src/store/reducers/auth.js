@@ -99,6 +99,24 @@ const reducer = (state = initailState, action) => {
         ...state,
         account: action.account
       };
+    case actionTypes.REQUEST__ACCOUNT:
+      return {
+        ...state,
+        isLoading: true
+      };
+    case actionTypes.SUCCESS__ACCOUNT:
+      return {
+        ...state,
+        account: data.account,
+        isLoading: false
+      };
+    case actionTypes.ERROR__ACCOUNT:
+      return {
+        ...state,
+        account: null,
+        user: { ...state.user, accounts: [] },
+        isLoading: false
+      };
     default:
       return state;
   }

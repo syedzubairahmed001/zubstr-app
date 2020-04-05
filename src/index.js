@@ -17,6 +17,7 @@ import "./index.css";
 import App from "./App";
 import authReducer from "./store/reducers/auth";
 import globalReducer from "./store/reducers/global";
+import instituteGroupReducer from "./store/reducers/instituteGroup";
 
 if (process.env.REACT_APP_GA_TRACKING_ID) {
   ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
@@ -50,7 +51,8 @@ const composeEnhancers =
     : null) || compose;
 const rootReducer = combineReducers({
   auth: authReducer,
-  global: globalReducer
+  global: globalReducer,
+  instituteGroup: instituteGroupReducer
 });
 const store = createStore(
   rootReducer,
