@@ -5,22 +5,22 @@ import {Home, Users, MessageSquare, Settings} from 'react-feather';
 const InstituteNav = props => {
     const nav = [
         {
-            link: '/i/dashboard',
+            link: '/c/dashboard',
             tooltip: 'Dashboard',
             Icon: Home
         },
         {
-            link: '/i/users',
-            tooltip: 'Users',
+            link: '/c/people',
+            tooltip: 'People',
             Icon: Users
         },
         {
-            link: '/i/messages',
-            tooltip: 'Messages',
+            link: '/c/communicate',
+            tooltip: 'Communicate',
             Icon: MessageSquare
         },
         {
-            link: '/i/settings',
+            link: '/c/settings',
             tooltip: 'Settings',
             Icon: Settings
         }
