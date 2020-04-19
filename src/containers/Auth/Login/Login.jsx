@@ -33,7 +33,6 @@ const Login = props => {
   const [isShowPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword(prev => !prev);
   const [toggle, set] = useState(false);
-  const { location } = useContext(__RouterContext);
   const dispatch = useDispatch();
   const isLoading = useSelector(state => state.auth.isLoading);
 

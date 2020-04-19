@@ -23,17 +23,20 @@ const theme = createMuiTheme({
     //   level1: "#212121"
     // },
     primary: {
-      main: "#0083FF"
+      main: "#0083FF",
+      light: "#E9F4FF",
+      dark: "#0076ED"
     },
     secondary: {
-      light: "#fff",
-      main: "#55efc4"
+      light: "rgba(0, 231, 162, 0.1)",
+      main: "#00E7A2",
+      contrastText: "#fff",
     },
     error: {
-      main: "#e74c3c"
+      main: "#e74c3c",
     },
     success: {
-      main: "#2ecc71"
+      main: "#2ecc71",
     },
     // text: {
     //   primary: "#333"

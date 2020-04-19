@@ -19,11 +19,13 @@ import authReducer from "./store/reducers/auth";
 import globalReducer from "./store/reducers/global";
 import instituteGroupReducer from "./store/reducers/instituteGroup";
 
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
+
+
 if (process.env.REACT_APP_GA_TRACKING_ID) {
   ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
 }
 const history = createBrowserHistory();
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 history.listen(location => {
   if (!location.pathname.includes("/auth/")) {
     localStorage.setItem("c-url", location.pathname);
@@ -40,6 +42,8 @@ if (process.env.REACT_APP_GMT_ID) {
 
   TagManager.initialize(tagManagerArgs);
 }
+
+
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({ dsn: process.env.REACT_APP_SENTRY_DSN });

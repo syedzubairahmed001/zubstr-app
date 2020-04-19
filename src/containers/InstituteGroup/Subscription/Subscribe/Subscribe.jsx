@@ -167,7 +167,7 @@ const Subscribe = () => {
                   )
                 }
               >
-                Proceed Securely
+                Pay Securely
               </Button>
             </Box>
           </Grid>

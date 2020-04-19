@@ -7,11 +7,11 @@ const theme = createMuiTheme({
   },
   props: {
     MuiButtonBase: {
-      disableRipple: true
-    }
+      disableRipple: true,
+    },
   },
   shape: {
-    borderRadius: "10px"
+    borderRadius: "10px",
   },
   palette: {
     type: "light",
@@ -23,17 +23,22 @@ const theme = createMuiTheme({
     //   level1: "#212121"
     // },
     primary: {
-      main: "#0083FF"
+      main: "#0083FF",
+      light: "#E9F4FF",
+      dark: "#0076ED",
     },
     secondary: {
-      light: "#fff",
-      main: "#55efc4"
+      light: "rgba(0, 231, 162, 0.1)",
+      main: "#00E7A2",
+      contrastText: "#fff",
     },
     error: {
-      main: "#e74c3c"
+      main: "#e74c3c",
+      
+
     },
     success: {
-      main: "#2ecc71"
+      main: "#2ecc71",
     },
     // text: {
     //   primary: "#333"
@@ -41,22 +46,22 @@ const theme = createMuiTheme({
     contrastThreshold: 3,
     tonalOffset: 0.2,
     background: {
-      paper: "#fff"
+      paper: "#fff",
     },
     common: {
       black: "#333",
-      white: "#fff"
+      white: "#fff",
     },
     text: {
-      primary: '#333',
-    }
+      primary: "#333",
+    },
   },
   overrides: {
     MuiAppBar: {
       positionFixed: {
         backdropFilter: "saturate(180%) blur(20px)",
-        backgroundColor: "rgba(255, 255, 255, 0)"
-      }
+        backgroundColor: "rgba(255, 255, 255, 0)",
+      },
     },
     MuiTooltip: {
       tooltip: {
@@ -64,40 +69,40 @@ const theme = createMuiTheme({
         fontSize: ".7rem",
         backgroundColor: "#333",
         borderRadius: "5px",
-        boxShadow: '0px 0px 10px rgba(0,0,0, 0.1)'
+        boxShadow: "0px 0px 10px rgba(0,0,0, 0.1)",
       },
       arrow: {
-        color: "#333"
-      }
+        color: "#333",
+      },
     },
     MuiButtonBase: {
       root: {
         transition: "all 0.2s !important",
         "&:active": {
-          transform: "scale(0.9)"
-        }
-      }
+          transform: "scale(0.95)",
+        },
+      },
     },
     MuiButton: {
       label: {
         textTransform: "capitalize",
         fontSize: ".9rem",
-        fontWeight: 400
-      }
+        fontWeight: 400,
+      },
     },
     MuiPaper: {
       elevation1: {
-        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)"
-      }
+        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+      },
     },
     MuiFormHelperText: {
       root: {
         minHeight: "0em",
         lineHeight: "0em",
-        animation: "input-helperText-animate .1s ease-out  1 both"
-      }
-    }
-  }
+        animation: "input-helperText-animate .1s ease-out  1 both",
+      },
+    },
+  },
 });
 
 export default theme;

@@ -12,7 +12,7 @@ import {
   MenuItem,
   Select,
   FormHelperText,
-  Slider
+  Slider,
 } from "@material-ui/core";
 import { ArrowLeft, MapPin, Upload, AlignLeft } from "react-feather";
 import { useHistory } from "react-router-dom";
@@ -20,41 +20,45 @@ import { useDispatch } from "react-redux";
 import ReactAvatarEditor from "react-avatar-editor";
 import Dropzone from "react-dropzone";
 import _ from "lodash";
+import { useSnackbar } from "notistack";
 
 import campusTypes from "../../../../constants/campusTypes.json";
 import countries from "../../../../constants/countries.json";
 import collegeCategories from "../../../../constants/collegeCategories.json";
 import image from "../../../../assets/images/undraw/coming_home.svg";
-import { createCampus } from "../../../../store/actions/instituteGroup";
+import {
+  createCampus,
+  uploadCampusProfileImage,
+} from "../../../../store/actions/instituteGroup";
 import { setPageTitle } from "../../../../store/actions/global";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   gridItem: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   formControl: {
-    minWidth: "100%"
+    minWidth: "100%",
   },
   selectEmpty: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   subHeading: {
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
   uploadControls: {
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   "@media (max-width: 600px)": {
     drag: {
-      height: "100px"
-    }
+      height: "100px",
+    },
   },
   icon: {
     color: theme.palette.text.secondary,
     width: "1.2rem",
-    marginRight: "10px"
+    marginRight: "10px",
   },
   drag: {
     // width: "90%",
@@ -63,23 +67,26 @@ const useStyles = makeStyles(theme => ({
     backgroundImage: ` url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='20' ry='20' stroke='%23CACACAFF' stroke-width='2' stroke-dasharray='12' stroke-dashoffset='2' stroke-linecap='round'/%3e%3c/svg%3e")`,
     padding: "1rem",
     "&:hover": {
-      backgroundColor: "rgba(255,255,255, 0.1)"
+      backgroundColor: "rgba(255,255,255, 0.1)",
     },
-    cursor: "pointer"
-  }
+    cursor: "pointer",
+  },
 }));
 
-const CreateCampus = props => {
+const CreateCampus = (props) => {
   const styles = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   let reactAvatarRef;
-  const setEditorRef = editor => (reactAvatarRef = editor);
+  const setEditorRef = (editor) => {
+    reactAvatarRef = editor;
+  };
   dispatch(setPageTitle("Create Campus"));
   const [scale, setScale] = useState(1.4);
-  const [image, setImage] = useState(null);
   const [upload, setUpload] = useState(null);
   const [rotate, setRotate] = useState(0);
+  const { enqueueSnackbar } = useSnackbar();
+
   const [form, setForm] = useState({
     name: { value: "", error: null },
     type: { value: "", error: null },
@@ -91,11 +98,11 @@ const CreateCampus = props => {
     city: { value: "", error: null },
     zipCode: { value: "", error: null },
     category: { value: "", error: null },
-    landmark: { value: "", error: null }
+    landmark: { value: "", error: null },
   });
   // document.title = "Create Campus";
   const inputLabel = React.useRef(null);
-  const handleDrop = acceptedFiles => {
+  const handleDrop = (acceptedFiles) => {
     setUpload(acceptedFiles[0]);
     console.log(acceptedFiles);
   };
@@ -105,19 +112,19 @@ const CreateCampus = props => {
   const handleRotateChange = (event, newValue) => {
     setRotate(newValue);
   };
-  const handleChange = event => {
+  const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setForm(prevForm => ({
+    setForm((prevForm) => ({
       ...prevForm,
       [name]: {
         value,
-        error: null
-      }
+        error: null,
+      },
     }));
   };
 
-  const handleBack = e => {
+  const handleBack = (e) => {
     history.goBack();
   };
   const {
@@ -131,59 +138,135 @@ const CreateCampus = props => {
     zipCode,
     country,
     category,
-    landmark
+    landmark,
   } = form;
-  const handleSubmit = e => {
+
+  const resetData = () => {
+    setForm({
+      name: { value: "", error: null },
+      type: { value: "", error: null },
+      email: { value: "", error: null },
+      phone: { value: "", error: null },
+      description: { value: "", error: null },
+      country: { value: "", error: null },
+      state: { value: "", error: null },
+      city: { value: "", error: null },
+      zipCode: { value: "", error: null },
+      category: { value: "", error: null },
+      landmark: { value: "", error: null },
+    });
+    setScale(1.4);
+    setRotate(0);
+    setUpload(null);
+  };
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const canvas = reactAvatarRef.getImageScaledToCanvas().toDataURL();
-    fetch(canvas)
-      .then(res => res.blob())
-      .then(blob => {
-        console.log(blob);
 
-        const formdata = new FormData();
-
-        formdata.append("logo", blob);
-        formdata.append("name", name.value);
-        formdata.append("email", email.value);
-        formdata.append("phone", phone.value);
-        formdata.append("description", description.value);
-        formdata.append("type", type.value);
-        formdata.append("city", city.value);
-        formdata.append("state", state.value);
-        formdata.append("zipCode", zipCode.value);
-        formdata.append("country", country.value);
-        formdata.append("category", category.value);
-        formdata.append("landmark", landmark.value);
-        if (validate()) {
-          dispatch(
-            createCampus({
-              body: formdata
-            })
-          )
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
-        }
-      });
+    const body = {
+      name: name.value,
+      email: email.value,
+      phone: phone.value,
+      description: description.value,
+      type: type.value,
+      city: city.value,
+      state: state.value,
+      zipCode: zipCode.value,
+      country: country.value,
+      category: category.value,
+      landmark: landmark.value,
+    };
+    if (validate()) {
+      dispatch(
+        createCampus({
+          body,
+        })
+      )
+        .then((res) => {
+          const { account, error } = res || {};
+          console.log(account, error, reactAvatarRef, form, upload);
+          if (account) {
+            if (reactAvatarRef) {
+              const canvas = reactAvatarRef
+                .getImageScaledToCanvas()
+                .toDataURL();
+              fetch(canvas)
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const formdata = new FormData();
+                  formdata.append("image", blob);
+                  dispatch(
+                    uploadCampusProfileImage({
+                      body: formdata,
+                      campusId: account._id,
+                    })
+                  )
+                    .then((res) => {
+                      enqueueSnackbar("Campus created successfully!", {
+                        variant: "success",
+                      });
+                      resetData();
+                    })
+                    .catch((err) => {
+                      //change the below path to upload a logo
+                      enqueueSnackbar(
+                        "We could'nt upload logo, please upload it campus > edit > upload logo",
+                        { variant: "success" }
+                      );
+                      resetData();
+                    });
+                });
+            } else {
+              enqueueSnackbar("Campus created successfully!", {
+                variant: "success",
+              });
+              resetData();
+            }
+          } else if (error && error.type === "validationError") {
+            enqueueSnackbar("There are some errors, please recheck", {
+              variant: "error",
+              color: '#fff'
+            });
+            error.data &&
+              Array.isArray(error.data) &&
+              error.data.forEach((e) => {
+                setForm((prev) => ({
+                  ...prev,
+                  [e.param]: {
+                    ...prev[e.param],
+                    error: e.msg,
+                  },
+                }));
+              });
+          } else {
+            resetData();
+          }
+        })
+        .catch((err) => {
+          enqueueSnackbar(
+            "Opps something went wrong. Please wait for some time and try again",
+            { variant: "error" }
+          );
+        });
+    }
   };
   const validate = () => {
     let valid = true;
     const keys = Object.keys(form);
     console.log(form, keys);
     const invalidForm = { ...form };
-    keys.forEach(i => {
+    keys.forEach((i) => {
       if (
         invalidForm[i] &&
         (!invalidForm[i].value || invalidForm[i].value === "")
       ) {
-        setForm(prevForm => {
+        setForm((prevForm) => {
           if (i.toString() === "category" && prevForm.type !== "college") {
             return {
               ...prevForm,
               [i]: {
                 value: "",
-                error: null
-              }
+                error: null,
+              },
             };
           } else {
             valid = false;
@@ -191,8 +274,8 @@ const CreateCampus = props => {
               ...prevForm,
               [i]: {
                 ...prevForm[i],
-                error: "Please enter a valid " + i
-              }
+                error: "Please enter a valid " + i,
+              },
             };
           }
         });
@@ -276,7 +359,6 @@ const CreateCampus = props => {
                               onChange={handleRotateChange}
                               aria-labelledby="continuous-slider"
                             />
-                            {image && <img src={image} alt="hello" />}
                           </Box>
                         </Box>
                       )}
@@ -333,7 +415,7 @@ const CreateCampus = props => {
                       name="type"
                       labelWidth={100}
                     >
-                      {campusTypes.map(c => (
+                      {campusTypes.map((c) => (
                         <MenuItem value={c.value.toLowerCase()} key={c.value}>
                           {c.name.replace(/\w+/g, _.capitalize)}
                         </MenuItem>
@@ -366,7 +448,7 @@ const CreateCampus = props => {
                         name="category"
                         labelWidth={120}
                       >
-                        {collegeCategories.map(c => (
+                        {collegeCategories.map((c) => (
                           <MenuItem value={c.toLowerCase()} key={c}>
                             {c.toLowerCase().replace(/\w+/g, _.capitalize)}
                           </MenuItem>
@@ -453,7 +535,7 @@ const CreateCampus = props => {
                       name="country"
                       labelWidth={60}
                     >
-                      {countries.map(c => (
+                      {countries.map((c) => (
                         <MenuItem
                           value={c.abbreviation.toLowerCase()}
                           key={c.country}
@@ -528,6 +610,26 @@ const CreateCampus = props => {
               </Grid>
             </Grid>
             <Grid item>
+            {/* <Button
+                variant="contained"
+                color="primary"
+                disableElevation
+                className={classes.button}
+                type="submit"
+                disabled={isLoading}
+                startIcon={
+                  isLoading ? (
+                    <CircularProgress
+                      color="primary"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  ) : (
+                    <Lock size={15} />
+                  )
+                }
+              >
+                Proceed Securely
+              </Button> */}
               <Button
                 variant="contained"
                 color="primary"

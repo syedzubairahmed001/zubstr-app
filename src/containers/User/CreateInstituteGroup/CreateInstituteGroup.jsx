@@ -12,48 +12,57 @@ import {
   Grid,
   TextField,
   Slider,
-  CircularProgress
+  CircularProgress,
 } from "@material-ui/core";
 import ReactAvatarEditor from "react-avatar-editor";
 import Dropzone from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 
-import { createInstituteGroup } from "../../../store/actions/user";
+import {
+  createInstituteGroup,
+  uploadInstituteGroupProfileImage,
+} from "../../../store/actions/user";
 import { setAccount } from "../../../store/actions/auth";
 import Logo from "../../../components/Logo/Logo";
 import CharCounter from "../../../components/CharCounter/CharCounter";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   uploadControls: {
-    display: "flex"
+    display: "flex",
   },
   "@media (max-width: 600px)": {
     uploadControls: {
-      flexDirection: "column"
-    }
+      flexDirection: "column",
+    },
   },
   grid: {
-    width: "100%"
+    width: "100%",
   },
   box: {
-    width: "100%"
+    width: "100%",
   },
   button: {
     marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   actionsContainer: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   resetContainer: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+  },
+  formError: {
+    padding: "1rem",
+    fontSize: "1rem",
+    textAlign: "center",
+    display: "block",
   },
   drag: {
     // width: "90%",
@@ -62,40 +71,40 @@ const useStyles = makeStyles(theme => ({
     backgroundImage: ` url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='20' ry='20' stroke='%23CACACAFF' stroke-width='2' stroke-dasharray='12' stroke-dashoffset='2' stroke-linecap='round'/%3e%3c/svg%3e")`,
     padding: "1rem",
     "&:hover": {
-      backgroundColor: "rgba(255,255,255, 0.1)"
+      backgroundColor: "rgba(255,255,255, 0.1)",
     },
-    cursor: "pointer"
-  }
+    cursor: "pointer",
+  },
 }));
 
 function getSteps() {
   return ["Enter Name", "Enter Description", "Upload Logo"];
 }
 
-const CreateAdminAccount = props => {
+const CreateAdminAccount = (props) => {
   const dispatch = useDispatch();
   const [upload, setUpload] = useState(null);
   let reactAvatarRef;
-  const setEditorRef = editor => (reactAvatarRef = editor);
-  const [uploadError, setUploadError] = useState(null);
+  const setEditorRef = (editor) => (reactAvatarRef = editor);
+  const [formError, setFormError] = useState(null);
   const [scale, setScale] = useState(1.4);
-  const [image, setImage] = useState(null);
   const [rotate, setRotate] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [resAccount, setResAccount] = useState(false);
   const [form, setForm] = useState({
     name: {
       value: "",
-      error: null
+      error: null,
     },
     description: {
       value: "",
       error: null,
       count: 0,
-      max: 200
-    }
+      max: 200,
+    },
   });
   const classes = useStyles();
-  const handleDrop = acceptedFiles => {
+  const handleDrop = (acceptedFiles) => {
     setUpload(acceptedFiles[0]);
     console.log(acceptedFiles);
   };
@@ -105,33 +114,33 @@ const CreateAdminAccount = props => {
   const handleRotateChange = (event, newValue) => {
     setRotate(newValue);
   };
-  const handleInputChange = e => {
+  const handleInputChange = (e) => {
     const value = e.target.value;
     const name = e.target.name;
 
     if (name === "description") {
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         [name]: {
           value,
           error: null,
           count: value.length,
-          max: 200
-        }
+          max: 200,
+        },
       }));
     } else {
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         [name]: {
           value,
-          error: null
-        }
+          error: null,
+        },
       }));
     }
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
-  const getStepContent = step => {
+  const getStepContent = (step) => {
     const { name, description } = form;
     switch (step) {
       case 0:
@@ -143,6 +152,7 @@ const CreateAdminAccount = props => {
               value={name.value}
               error={!!name.error}
               name="name"
+              disabled={loading}
               onChange={handleInputChange}
               label="Name"
               helperText={
@@ -163,6 +173,7 @@ const CreateAdminAccount = props => {
               value={description.value}
               error={!!description.error}
               name="description"
+              disabled={loading}
               onChange={handleInputChange}
               color="primary"
               label="Description"
@@ -184,6 +195,7 @@ const CreateAdminAccount = props => {
             <Dropzone
               onDrop={handleDrop}
               disableClick
+              disabled={loading}
               accept={["image/png", "image/jpeg"]}
             >
               {({ getRootProps, getInputProps }) => (
@@ -227,7 +239,6 @@ const CreateAdminAccount = props => {
                           onChange={handleRotateChange}
                           aria-labelledby="continuous-slider"
                         />
-                        {image && <img src={image} alt="hello" />}
                       </Box>
                     </Box>
                   )}
@@ -240,7 +251,7 @@ const CreateAdminAccount = props => {
         return "Unknown step";
     }
   };
-  const validate = name => {
+  const validate = (name) => {
     let isValid = true;
     if (
       !form[name].value ||
@@ -248,12 +259,12 @@ const CreateAdminAccount = props => {
       form[name].value === " "
     ) {
       isValid = false;
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         [name]: {
           ...prev[name],
-          error: "Please enter Something"
-        }
+          error: "Please enter Something",
+        },
       }));
     }
     if (
@@ -262,12 +273,12 @@ const CreateAdminAccount = props => {
       form[name].count > form[name].max
     ) {
       isValid = false;
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         [name]: {
           ...prev[name],
-          error: "Only 200 characters are allowed"
-        }
+          error: "Only 200 characters are allowed",
+        },
       }));
     }
     return isValid;
@@ -275,77 +286,75 @@ const CreateAdminAccount = props => {
   const handleNext = () => {
     if (activeStep === 0) {
       if (validate("name")) {
-        setActiveStep(prevActiveStep => prevActiveStep + 1);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     }
     if (activeStep === 1) {
       if (validate("description")) {
-        setActiveStep(prevActiveStep => prevActiveStep + 1);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     }
     if (activeStep === 2) {
-      setLoading(true);
       const { name, description } = form;
+      setLoading(true);
       let canvas =
         (reactAvatarRef &&
           reactAvatarRef.getImageScaledToCanvas().toDataURL()) ||
         null;
-      if (canvas) {
-        fetch(canvas)
-          .then(res => res.blob())
-          .then(blob => {
-            console.log(blob);
+      dispatch(
+        createInstituteGroup({
+          body: {
+            name: name.value,
+            description: description.value,
+          },
+        })
+      )
+        .then((response) => {
+          const { account, error } = response || {};
+          setResAccount(account);
+          console.log("canvas", canvas);
+          if (canvas) {
+            fetch(canvas)
+              .then((res) => res.blob())
+              .then((blob) => {
+                console.log(blob);
 
-            const formdata = new FormData();
+                const formdata = new FormData();
+                formdata.append("image", blob);
 
-            formdata.append("logo", blob);
-            formdata.append("name", name.value);
-            formdata.append("description", description.value);
-
-            dispatch(
-              createInstituteGroup({
-                body: formdata
-              })
-            )
-              .then(res => {
-                const { account } = res || {};
-
-                dispatch(setAccount(account));
-              })
-              .catch(err => console.log(err));
-          });
-
-        // if (!upload === "") {
-        //   setUploadError("Please upload a logo");
-        // }
-      } else {
-        const formdata = new FormData();
-
-        formdata.append("name", name.value);
-        formdata.append("description", description.value);
-        dispatch(
-          createInstituteGroup({
-            body: formdata
-          })
-        )
-          .then(res => {
-            const { account } = res || {};
-
+                dispatch(
+                  uploadInstituteGroupProfileImage({
+                    body: formdata,
+                    instituteGroupId: account._id,
+                  })
+                )
+                  .then((res) => {
+                    const { account: acc, error } = res || {};
+                    //export all errors from one file
+                    if (error) {
+                      if (error.type === "validationError") {
+                        setFormError(error.data[0].msg);
+                      } else {
+                        setFormError("cannot upload image please try again");
+                      }
+                    }
+                    setLoading(false);
+                    dispatch(setAccount(acc));
+                  })
+                  .catch((err) => console.log(err));
+              });
+          } else {
+            setLoading(false);
             dispatch(setAccount(account));
-          })
-          .catch(err => console.log(err));
-      }
+          }
+        })
+        .catch((err) => console.log(err));
     }
   };
 
   const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   return (
     <Box className={classes.root}>
       <Grid container direction="column" justify="center" alignItems="center">
@@ -367,47 +376,57 @@ const CreateAdminAccount = props => {
         </Grid>
         <Grid item md={8} xs={12} className={classes.grid}>
           <Box className={classes.box}>
-            <Stepper
-              activeStep={activeStep}
-              orientation="vertical"
-              style={{ borderRadius: "10px" }}
-            >
-              {steps.map((label, index) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                  <StepContent>
-                    <Box>{getStepContent(index)}</Box>
-                    <div className={classes.actionsContainer}>
-                      <div>
-                        <Button
-                          disabled={activeStep === 0}
-                          size="medium"
-                          onClick={handleBack}
-                          className={classes.button}
-                        >
-                          Back
-                        </Button>
-                        <Button
-                          variant="contained"
-                          size="medium"
-                          color="primary"
-                          disableElevation
-                          onClick={handleNext}
-                          className={classes.button}
-                        >
-                          {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                        </Button>
+            <Paper elevation={0}>
+              {formError && (
+                <Typography
+                  color="error"
+                  variant="caption"
+                  align="center"
+                  className={classes.formError}
+                >
+                  {formError}
+                </Typography>
+              )}
+              <Stepper
+                activeStep={activeStep}
+                orientation="vertical"
+                style={{ borderRadius: "10px" }}
+              >
+                {steps.map((label, index) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                    <StepContent>
+                      <Box>{getStepContent(index)}</Box>
+                      <div className={classes.actionsContainer}>
+                        <div>
+                          <Button
+                            disabled={activeStep === 0 || loading}
+                            size="medium"
+                            onClick={handleBack}
+                            className={classes.button}
+                          >
+                            Back
+                          </Button>
+                          <Button
+                            variant="contained"
+                            size="medium"
+                            color="primary"
+                            disableElevation
+                            onClick={handleNext}
+                            disabled={loading}
+                            className={classes.button}
+                          >
+                            {activeStep === steps.length - 1
+                              ? "Finish"
+                              : "Next"}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </StepContent>
-                </Step>
-              ))}
-            </Stepper>
-            {activeStep === steps.length && (
-              <Button onClick={handleReset} className={classes.button}>
-                Reset
-              </Button>
-            )}
+                    </StepContent>
+                  </Step>
+                ))}
+              </Stepper>
+            </Paper>
           </Box>
         </Grid>
       </Grid>

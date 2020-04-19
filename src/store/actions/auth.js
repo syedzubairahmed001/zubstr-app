@@ -7,32 +7,32 @@ export const logout = () => {
   localStorage.removeItem("c-url");
 
   return {
-    type: actionTypes.LOGOUT
+    type: actionTypes.LOGOUT,
   };
 };
 
-export const login = data => {
+export const login = (data) => {
   const { email, password } = data;
-  return dispatch => {
+  return (dispatch) => {
     if (!email || !password) {
       Promise.reject({ error: "data is not valid" });
     }
 
     const loginData = {
       email,
-      password
+      password,
     };
     return Api("/auth/login", loginData, {
       method: "post",
       dispatch,
-      actionType: actionTypes.REQUEST__LOGIN
+      actionType: actionTypes.REQUEST__LOGIN,
     });
   };
 };
 
-export const signup = data => {
+export const signup = (data) => {
   const { name, email, phone, password } = data;
-  return dispatch => {
+  return (dispatch) => {
     if (!email || !password || !name || !phone) {
       Promise.reject({ error: "data is not valid" });
     }
@@ -40,33 +40,33 @@ export const signup = data => {
       name,
       email,
       phone,
-      password
+      password,
     };
     return Api("/auth/signup", signupData, {
       method: "post",
       dispatch,
-      actionType: actionTypes.REQUEST__SIGNUP
+      actionType: actionTypes.REQUEST__SIGNUP,
     });
   };
 };
 
-export const verifyEmail = data => {
+export const verifyEmail = (data) => {
   const { token } = data || null;
-  return dispatch => {
+  return (dispatch) => {
     if (!token) {
       return Promise.reject("token is missing in parameters");
     }
     return Api(`/auth/verify-email/${token}`, null, {
       method: "get",
       dispatch,
-      actionType: actionTypes.REQUEST__EMAIL_VERIFICATION
+      actionType: actionTypes.REQUEST__EMAIL_VERIFICATION,
     });
   };
 };
 
-export const getAccount = data => {
+export const getAccount = (data) => {
   const { account } = data || null;
-  return dispatch => {
+  return (dispatch) => {
     if (!account) {
       dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
       return Promise.reject("account is missing in parameters");
@@ -75,9 +75,9 @@ export const getAccount = data => {
     return Api(`/user/account/`, account, {
       method: "post",
       dispatch,
-      actionType: actionTypes.REQUEST__ACCOUNT
+      actionType: actionTypes.REQUEST__ACCOUNT,
     })
-      .then(res => {
+      .then((res) => {
         const { account } = res || {};
         const { _id, accType } = account || {};
 
@@ -85,13 +85,22 @@ export const getAccount = data => {
         accType && localStorage.setItem("current-acc-type", accType);
         dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
       })
-      .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
+      .catch((err) => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
+  };
+};
+export const getAllAccounts = () => {
+  return (dispatch) => {
+    return Api(`/user/accounts/`, null, {
+      method: "get",
+      dispatch,
+      actionType: actionTypes.REQUEST__ACCOUNTS,
+    });
   };
 };
 
-export const authCheckState = data => {
+export const authCheckState = (data) => {
   const { redirect } = data || {};
-  return dispatch => {
+  return (dispatch) => {
     const accessToken = localStorage.getItem("a-id");
     const refreshToken = localStorage.getItem("r-id");
     if (!accessToken && !refreshToken) {
@@ -105,33 +114,33 @@ export const authCheckState = data => {
         {
           method: "post",
           dispatch,
-          actionType: actionTypes.REQUEST__LOGIN
+          actionType: actionTypes.REQUEST__LOGIN,
         }
       )
-        .then(res => {
+        .then((res) => {
           if (redirect) {
             dispatch({ type: actionTypes.SET_AUTH_REDIRECT, redirect });
           }
           dispatch({ type: actionTypes.RESET_GLOBAL_LOADING });
         })
-        .catch(err => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
+        .catch((err) => dispatch({ type: actionTypes.RESET_GLOBAL_LOADING }));
     }
   };
 };
 
-export const setAuthError = error => {
-  return dispatch => {
+export const setAuthError = (error) => {
+  return (dispatch) => {
     dispatch({ type: actionTypes.SET_AUTH_ERROR, error });
   };
 };
-export const setAuthSuccess = error => {
-  return dispatch => {
+export const setAuthSuccess = (error) => {
+  return (dispatch) => {
     dispatch({ type: actionTypes.SET_AUTH_SUCCESS, error });
   };
 };
 
-export const setAccount = account => {
-  return dispatch => {
+export const setAccount = (account) => {
+  return (dispatch) => {
     dispatch({ type: actionTypes.SET_ACCOUNT, account });
   };
 };

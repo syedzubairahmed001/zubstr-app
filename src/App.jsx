@@ -8,9 +8,10 @@ import {
   Switch,
   Redirect,
   useRouteMatch,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { SnackbarProvider } from "notistack";
 
 import "./App.css";
 import lightTheme from "./theme/theme-light";
@@ -26,23 +27,23 @@ const InstituteGroup = lazy(() =>
 );
 const User = lazy(() => import("./containers/User/User"));
 
-const lazyLoad = Component => {
-  return props => (
+const lazyLoad = (Component) => {
+  return (props) => (
     <Suspense fallback={<AppLoading />}>
       <Component {...props} />
     </Suspense>
   );
 };
 
-const App = props => {
-  const isAuth = useSelector(state => state.auth.isAuth);
-  const isGlobalLoading = useSelector(state => state.global.isLoading);
-  const currentTheme = useSelector(state => state.global.theme);
-  const user = useSelector(state => state.auth.user) || null;
-  const account = useSelector(state => state.auth.account) || null;
+const App = (props) => {
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const isGlobalLoading = useSelector((state) => state.global.isLoading);
+  const currentTheme = useSelector((state) => state.global.theme);
+  const user = useSelector((state) => state.auth.user) || null;
+  const account = useSelector((state) => state.auth.account) || null;
   const match = useLocation();
   let pathRedirect = match.pathname || null;
-  const authRedirect = useSelector(state => state.auth.redirect);
+  const authRedirect = useSelector((state) => state.auth.redirect);
   const { accounts } = user || {};
   const dispatch = useDispatch();
   useEffect(() => {
@@ -50,11 +51,10 @@ const App = props => {
   }, []);
   let routes;
   const commonRoutes = <Route path="/public" component={Public} />;
+
   if (isGlobalLoading) {
-    console.log("loading...");
     routes = <AppLoading />;
   } else if (!isAuth) {
-    console.log("iam at auth login...");
     routes = (
       <>
         <Switch>
@@ -105,7 +105,7 @@ const App = props => {
                 {authRedirect && authRedirect.indexOf("/c/") > -1 ? (
                   <Redirect to={authRedirect} />
                 ) : (
-                  <Redirect to="/i/dashboard" />
+                  <Redirect to="/c/dashboard" />
                 )}
               </Switch>
             </>
@@ -116,23 +116,38 @@ const App = props => {
       }
     } else {
       let a;
-      a =
-        Array.isArray(accounts) &&
-        accounts.find(
-          e =>
-            e.accType.toLowerCase() === "institutegroup" ||
-            e.accType.toLowerCase() === "campus"
-        );
-
-      if (a) {
-        const { accType, id } = a;
-        dispatch(getAccount({ account: { accType, id } }))
-          .then(res => {})
-          .catch(err => {
-            routes = <div></div>;
+      const lastUsedAccountId = localStorage.getItem("current-acc-id") || null;
+      const lastUsedAccountType =
+        localStorage.getItem("current-acc-type") || null;
+      if (lastUsedAccountId && lastUsedAccountType) {
+        dispatch(
+          getAccount({
+            account: { accType: lastUsedAccountType, id: lastUsedAccountId },
+          })
+        )
+          .then((res) => {})
+          .catch((err) => {
+           routes = <div></div>
           });
       } else {
-        routes = <div></div>;
+        a =
+          Array.isArray(accounts) &&
+          accounts.find(
+            (e) =>
+              e.accType.toLowerCase() === "institutegroup" ||
+              e.accType.toLowerCase() === "campus"
+          );
+
+        if (a) {
+          const { accType, id } = a;
+          dispatch(getAccount({ account: { accType, id } }))
+            .then((res) => {})
+            .catch((err) => {
+              routes = <div></div>;
+            });
+        } else {
+          routes = <div></div>;
+        }
       }
     }
   }
@@ -150,9 +165,18 @@ const App = props => {
           content="Login or Signup to your Zubstr account. Zubstr is an intstitute network application"
         />
       </Helmet>
-      <div className={currentTheme === "dark" ? "dark-bg App" : "App"}>
-        {routes}
-      </div>
+      <SnackbarProvider
+        maxSnack={2}
+        preventDuplicate
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <div className={currentTheme === "dark" ? "dark-bg App" : "App"}>
+          {routes}
+        </div>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 };

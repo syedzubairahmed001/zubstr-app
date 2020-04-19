@@ -1,9 +1,9 @@
 import axios from "../axios";
 
-const errorAction = action => {
+const errorAction = (action) => {
   return "ERROR__" + action.split("__")[1];
 };
-const successAction = action => {
+const successAction = (action) => {
   return "SUCCESS__" + action.split("__")[1];
 };
 
@@ -53,8 +53,8 @@ export default (url, data, config) => {
     axiosConfig.headers["acc-id"] = currentAccountId;
     axiosConfig.headers["acc-type"] = currentAccountType;
   }
-  return sendReq(url, d || null, axiosConfig)
-    .then(res => {
+  return sendReq(url, d || axiosConfig, d ? axiosConfig : null)
+    .then((res) => {
       const data = res.data;
       if (data.error) {
         dispatch({ type: errorAction(actionType), data });
@@ -68,18 +68,18 @@ export default (url, data, config) => {
       dispatch({ type: successAction(actionType), data, passThrough });
       return Promise.resolve(data);
     })
-    .catch(err => {
+    .catch((err) => {
       if (err && err.response && err.response.data) {
         dispatch({
           type: errorAction(actionType),
           data: err.response.data,
-          passThrough
+          passThrough,
         });
         return Promise.resolve(err.response.data);
       } else {
         dispatch({
           type: errorAction(actionType),
-          data: { msg: "Check your internet connection" }
+          data: { msg: "Check your internet connection" },
         });
         dispatch({ type: "ERROR__INTERNET" });
         return Promise.reject("Check your internet connection");

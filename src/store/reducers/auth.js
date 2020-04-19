@@ -9,7 +9,8 @@ const initailState = {
   user: null,
   redirect: null,
   isTrial: false,
-  account: null
+  account: null,
+  accounts: null
 };
 
 const reducer = (state = initailState, action) => {
@@ -18,10 +19,23 @@ const reducer = (state = initailState, action) => {
   const { msg: errorMsg } = error || {};
   const { data: errorData } = error || {};
   switch (action.type) {
+    case actionTypes.LOGOUT:
+      return {
+        accessToken: null,
+        refreshToken: null,
+        error: null,
+        isLoading: false,
+        isAuth: false,
+        user: null,
+        redirect: null,
+        isTrial: false,
+        account: null,
+      };
+
     case actionTypes.REQUEST__LOGIN:
       return {
         ...state,
-        isLoading: true
+        isLoading: true,
       };
     case actionTypes.SUCCESS__LOGIN:
       const { accessToken, refreshToken, user } = data || null;
@@ -33,7 +47,7 @@ const reducer = (state = initailState, action) => {
         isAuth: true,
         isLoading: false,
         user,
-        isTrial
+        isTrial,
       };
     case actionTypes.ERROR__LOGIN:
       localStorage.removeItem("a-id");
@@ -43,14 +57,14 @@ const reducer = (state = initailState, action) => {
         error: (error && error.msg) || null,
         isLoading: false,
         isAuth: false,
-        user: null
+        user: null,
       };
     case actionTypes.REQUEST__SIGNUP:
       return {
         ...state,
         isLoading: true,
         error: null,
-        success: null
+        success: null,
       };
     case actionTypes.SUCCESS__SIGNUP:
       return {
@@ -62,60 +76,66 @@ const reducer = (state = initailState, action) => {
           (data.account &&
             "A verification email has sent to " +
               data.account.email +
-              ", please check your inbox")
+              ", please check your inbox"),
       };
     case actionTypes.ERROR__SIGNUP:
       return {
         ...state,
         isLoading: false,
         error: errorMsg || null,
-        success: null
+        success: null,
       };
     case actionTypes.SET_AUTH_ERROR:
       return {
         ...state,
         error: action.error || null,
-        success: null
+        success: null,
       };
     case actionTypes.SET_AUTH_SUCCESS:
       return {
         ...state,
         success: action.success || null,
-        error: null
+        error: null,
       };
     case actionTypes.REQUEST__EMAIL_VERIFICATION:
       return {
         ...state,
         success: action.success || null,
-        error: null
+        error: null,
       };
     case actionTypes.SET_AUTH_REDIRECT:
       return {
         ...state,
-        redirect: action.redirect
+        redirect: action.redirect,
       };
     case actionTypes.SET_ACCOUNT:
       return {
         ...state,
-        account: action.account
+        account: action.account,
       };
     case actionTypes.REQUEST__ACCOUNT:
       return {
         ...state,
-        isLoading: true
+        isLoading: true,
       };
     case actionTypes.SUCCESS__ACCOUNT:
       return {
         ...state,
         account: data.account,
-        isLoading: false
+        isLoading: false,
       };
     case actionTypes.ERROR__ACCOUNT:
+      localStorage.removeItem("current-acc-type");
+      localStorage.removeItem("current-acc-id");
       return {
         ...state,
         account: null,
-        user: { ...state.user, accounts: [] },
-        isLoading: false
+        isLoading: false,
+      };
+    case actionTypes.SUCCESS__ACCOUNTS:
+      return {
+        ...state,
+        accounts: data.data
       };
     default:
       return state;
