@@ -22,7 +22,7 @@ import {
   createInstituteGroup,
   uploadInstituteGroupProfileImage,
 } from "../../../store/actions/user";
-import { setAccount } from "../../../store/actions/auth";
+import { setAccount, setUser } from "../../../store/actions/auth";
 import Logo from "../../../components/Logo/Logo";
 import CharCounter from "../../../components/CharCounter/CharCounter";
 
@@ -310,7 +310,7 @@ const CreateAdminAccount = (props) => {
         })
       )
         .then((response) => {
-          const { account, error } = response || {};
+          const { account, user, error } = response || {};
           setResAccount(account);
           console.log("canvas", canvas);
           if (canvas) {
@@ -329,7 +329,7 @@ const CreateAdminAccount = (props) => {
                   })
                 )
                   .then((res) => {
-                    const { account: acc, error } = res || {};
+                    const { error } = res || {};
                     //export all errors from one file
                     if (error) {
                       if (error.type === "validationError") {
@@ -339,13 +339,13 @@ const CreateAdminAccount = (props) => {
                       }
                     }
                     setLoading(false);
-                    dispatch(setAccount(acc));
+                    dispatch(setUser(user));
                   })
                   .catch((err) => console.log(err));
               });
           } else {
             setLoading(false);
-            dispatch(setAccount(account));
+            dispatch(setUser(user));
           }
         })
         .catch((err) => console.log(err));

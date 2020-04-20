@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
   Typography,
@@ -13,6 +13,7 @@ import {
   Select,
   FormHelperText,
   Slider,
+  CircularProgress,
 } from "@material-ui/core";
 import { ArrowLeft, MapPin, Upload, AlignLeft } from "react-feather";
 import { useHistory } from "react-router-dom";
@@ -81,10 +82,13 @@ const CreateCampus = (props) => {
   const setEditorRef = (editor) => {
     reactAvatarRef = editor;
   };
-  dispatch(setPageTitle("Create Campus"));
+  useEffect(() => {
+    dispatch(setPageTitle("Create Campus"));
+  }, []);
   const [scale, setScale] = useState(1.4);
   const [upload, setUpload] = useState(null);
   const [rotate, setRotate] = useState(0);
+  const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const [form, setForm] = useState({
@@ -100,7 +104,6 @@ const CreateCampus = (props) => {
     category: { value: "", error: null },
     landmark: { value: "", error: null },
   });
-  // document.title = "Create Campus";
   const inputLabel = React.useRef(null);
   const handleDrop = (acceptedFiles) => {
     setUpload(acceptedFiles[0]);
@@ -175,7 +178,10 @@ const CreateCampus = (props) => {
       category: category.value,
       landmark: landmark.value,
     };
+    let canvas =
+      reactAvatarRef && reactAvatarRef.getImageScaledToCanvas().toDataURL();
     if (validate()) {
+      setLoading(true);
       dispatch(
         createCampus({
           body,
@@ -185,13 +191,11 @@ const CreateCampus = (props) => {
           const { account, error } = res || {};
           console.log(account, error, reactAvatarRef, form, upload);
           if (account) {
-            if (reactAvatarRef) {
-              const canvas = reactAvatarRef
-                .getImageScaledToCanvas()
-                .toDataURL();
+            if (canvas) {
               fetch(canvas)
                 .then((res) => res.blob())
                 .then((blob) => {
+                  setLoading(false);
                   const formdata = new FormData();
                   formdata.append("image", blob);
                   dispatch(
@@ -201,30 +205,34 @@ const CreateCampus = (props) => {
                     })
                   )
                     .then((res) => {
+                      setLoading(false);
                       enqueueSnackbar("Campus created successfully!", {
                         variant: "success",
                       });
                       resetData();
                     })
                     .catch((err) => {
+                      setLoading(false);
                       //change the below path to upload a logo
                       enqueueSnackbar(
-                        "We could'nt upload logo, please upload it campus > edit > upload logo",
+                        "We could'nt upload logo, please re upload it campus > edit > upload logo",
                         { variant: "success" }
                       );
                       resetData();
                     });
                 });
             } else {
+              setLoading(false);
               enqueueSnackbar("Campus created successfully!", {
                 variant: "success",
               });
               resetData();
             }
           } else if (error && error.type === "validationError") {
+            setLoading(false);
             enqueueSnackbar("There are some errors, please recheck", {
               variant: "error",
-              color: '#fff'
+              color: "#fff",
             });
             error.data &&
               Array.isArray(error.data) &&
@@ -238,6 +246,7 @@ const CreateCampus = (props) => {
                 }));
               });
           } else {
+            setLoading(false);
             resetData();
           }
         })
@@ -259,8 +268,10 @@ const CreateCampus = (props) => {
         invalidForm[i] &&
         (!invalidForm[i].value || invalidForm[i].value === "")
       ) {
+        valid = false;
         setForm((prevForm) => {
           if (i.toString() === "category" && prevForm.type !== "college") {
+            valid = true;
             return {
               ...prevForm,
               [i]: {
@@ -269,7 +280,6 @@ const CreateCampus = (props) => {
               },
             };
           } else {
-            valid = false;
             return {
               ...prevForm,
               [i]: {
@@ -610,7 +620,7 @@ const CreateCampus = (props) => {
               </Grid>
             </Grid>
             <Grid item>
-            {/* <Button
+              {/* <Button
                 variant="contained"
                 color="primary"
                 disableElevation
@@ -635,6 +645,15 @@ const CreateCampus = (props) => {
                 color="primary"
                 disableElevation
                 type="submit"
+                disabled={loading}
+                startIcon={
+                  loading ? (
+                    <CircularProgress
+                      color="primary"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  ) : null
+                }
               >
                 Create Campus
               </Button>

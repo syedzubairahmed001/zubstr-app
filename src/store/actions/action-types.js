@@ -41,6 +41,9 @@ export const RESET_AUTH_REDIRECT = 'RESET_AUTH_REDIRECT';
 export const SET_ACCOUNT = 'SET_ACCOUNT';
 export const RESET_ACCOUNT = 'RESET_ACCOUNT';
 
+export const SET_USER = 'SET_USER';
+export const RESET_USER = 'RESET_USER';
+
 export const LOGOUT = 'LOGOUT';
 
 

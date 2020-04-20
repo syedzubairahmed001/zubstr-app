@@ -108,11 +108,20 @@ const reducer = (state = initailState, action) => {
         ...state,
         redirect: action.redirect,
       };
-    case actionTypes.SET_ACCOUNT:
-      return {
-        ...state,
-        account: action.account,
-      };
+    case actionTypes.SET_USER: 
+    return {
+      ...state,
+      user: action.data
+    }
+    // case actionTypes.SET_ACCOUNT:
+    //   return {
+    //     ...state,
+    //     account: action.account,
+    //     user: {
+    //       ...state.user,
+    //       accounts: [...state.user.accounts, {accType: action.account.}],
+    //     }
+    //   };
     case actionTypes.REQUEST__ACCOUNT:
       return {
         ...state,
