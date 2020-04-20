@@ -9,19 +9,21 @@ import {
   Grid,
   Fab,
   makeStyles,
-  CircularProgress
+  CircularProgress,
 } from "@material-ui/core";
 import { Lock } from "react-feather";
+import { useSnackbar } from "notistack";
 
-import { createSubscription } from "../../../../store/actions/instituteGroup";
+import { createSubscription } from "../../../../../store/actions/instituteGroup";
+import { setIsTrial } from "../../../../../store/actions/auth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   margin: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   extendedIcon: {
-    marginRight: theme.spacing(1)
-  }
+    marginRight: theme.spacing(1),
+  },
 }));
 const Subscribe = () => {
   const classes = useStyles();
@@ -31,7 +33,8 @@ const Subscribe = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setLoading] = useState(false);
-  const theme = useSelector(state => state.global.theme);
+  const theme = useSelector((state) => state.global.theme);
+  const { enqueueSnackbar } = useSnackbar();
 
   const CARD_ELEMENT_OPTIONS = {
     style: {
@@ -41,17 +44,17 @@ const Subscribe = () => {
         fontSmoothing: "antialiased",
         fontSize: "16px",
         "::placeholder": {
-          color: theme === "dark" ? "#aaa" : "#ccc"
-        }
+          color: theme === "dark" ? "#aaa" : "#ccc",
+        },
       },
       invalid: {
         color: "#e74c3c",
-        iconColor: "#e74c3c"
-      }
-    }
+        iconColor: "#e74c3c",
+      },
+    },
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -65,8 +68,8 @@ const Subscribe = () => {
       type: "card",
       card: elements.getElement(CardElement),
       billing_details: {
-        email: "jenny.rosen@example.com"
-      }
+        email: "jenny.rosen@example.com",
+      },
     });
 
     stripePaymentMethodHandler(result);
@@ -79,10 +82,10 @@ const Subscribe = () => {
     } else {
       dispatch(
         createSubscription({
-          subscriptionData: { paymentMethod: result.paymentMethod.id }
+          subscriptionData: { paymentMethod: result.paymentMethod.id },
         })
       )
-        .then(res => {
+        .then((res) => {
           setLoading(false);
           const { subscription } = res || {};
           const { latest_invoice } = subscription || {};
@@ -92,20 +95,33 @@ const Subscribe = () => {
             const { client_secret, status } = payment_intent;
 
             if (status === "requires_action") {
-              stripe.confirmCardPayment(client_secret).then(function(result) {
+              stripe.confirmCardPayment(client_secret).then(function (result) {
                 if (result.error) {
                   setError(result.error.message);
                 } else {
-                  setSuccess("helloworld");
+                  enqueueSnackbar("Subscribed successfully!", {
+                    variant: "success",
+                  });
+                  dispatch(setIsTrial(false));
                 }
               });
             } else {
-              console.log("success");
+              enqueueSnackbar("Subscribed successfully!", {
+                variant: "success",
+              });
+              dispatch(setIsTrial(false));
             }
           }
+          enqueueSnackbar("Subscribed successfully!", {
+            variant: "success",
+          });
+          dispatch(setIsTrial(false));
         })
-        .catch(err => {
-          console.log(err);
+        .catch((err) => {
+          enqueueSnackbar(
+            "Something went wrong, if you are seeing this issue frequently please contact us hello@zubstr.com",
+            { variant: "error" }
+          );
           setLoading(false);
         });
       // Otherwise send paymentMethod.id to your server

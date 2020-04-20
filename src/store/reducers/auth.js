@@ -10,7 +10,7 @@ const initailState = {
   redirect: null,
   isTrial: false,
   account: null,
-  accounts: null
+  accounts: null,
 };
 
 const reducer = (state = initailState, action) => {
@@ -108,20 +108,22 @@ const reducer = (state = initailState, action) => {
         ...state,
         redirect: action.redirect,
       };
-    case actionTypes.SET_USER: 
-    return {
-      ...state,
-      user: action.data
-    }
-    // case actionTypes.SET_ACCOUNT:
-    //   return {
-    //     ...state,
-    //     account: action.account,
-    //     user: {
-    //       ...state.user,
-    //       accounts: [...state.user.accounts, {accType: action.account.}],
-    //     }
-    //   };
+    case actionTypes.SET_USER:
+      return {
+        ...state,
+        user: action.data,
+      };
+    case actionTypes.SET_SUBSCRIPTION:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          subscription: {
+            ...state.user.subscription,
+            isTrial: action.data,
+          },
+        },
+      };
     case actionTypes.REQUEST__ACCOUNT:
       return {
         ...state,
@@ -144,7 +146,7 @@ const reducer = (state = initailState, action) => {
     case actionTypes.SUCCESS__ACCOUNTS:
       return {
         ...state,
-        accounts: data.data
+        accounts: data.data,
       };
     default:
       return state;

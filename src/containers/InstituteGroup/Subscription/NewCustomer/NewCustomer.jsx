@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 
-import Subscribe from "../Subscribe/Subscribe";
+import Subscribe from "./Subscribe/Subscribe";
 const useStyles = makeStyles(theme => ({
   subHeading: {}
 }));

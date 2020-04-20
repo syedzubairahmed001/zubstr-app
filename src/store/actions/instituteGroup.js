@@ -66,6 +66,6 @@ export const getCampuses = () => {
 
 export const setCampusShouldLoad = (shouldLoad) => {
   return (dispatch) => {
-    dispatch({ type: actionTypes.SET_CAMPUS_SHOULD_LOAD, shouldLoad})
+    dispatch({ type: actionTypes.SET_CAMPUS_SHOULD_LOAD, data: shouldLoad})
   };
 }

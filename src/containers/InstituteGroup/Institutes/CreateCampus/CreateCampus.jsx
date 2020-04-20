@@ -26,10 +26,12 @@ import { useSnackbar } from "notistack";
 import campusTypes from "../../../../constants/campusTypes.json";
 import countries from "../../../../constants/countries.json";
 import collegeCategories from "../../../../constants/collegeCategories.json";
+import Illustration from "../../../../components/Illustration/Illustration";
 import image from "../../../../assets/images/undraw/coming_home.svg";
 import {
   createCampus,
   uploadCampusProfileImage,
+  setCampusShouldLoad,
 } from "../../../../store/actions/instituteGroup";
 import { setPageTitle } from "../../../../store/actions/global";
 
@@ -72,10 +74,15 @@ const useStyles = makeStyles((theme) => ({
     },
     cursor: "pointer",
   },
+  illustration: {
+    display: "inline-block",
+    width: "10rem",
+    height: "10rem",
+  },
 }));
 
 const CreateCampus = (props) => {
-  const styles = useStyles();
+  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   let reactAvatarRef;
@@ -107,7 +114,6 @@ const CreateCampus = (props) => {
   const inputLabel = React.useRef(null);
   const handleDrop = (acceptedFiles) => {
     setUpload(acceptedFiles[0]);
-    console.log(acceptedFiles);
   };
   const handleScaleChange = (event, newValue) => {
     setScale(newValue);
@@ -189,13 +195,12 @@ const CreateCampus = (props) => {
       )
         .then((res) => {
           const { account, error } = res || {};
-          console.log(account, error, reactAvatarRef, form, upload);
           if (account) {
+            dispatch(setCampusShouldLoad(true));
             if (canvas) {
               fetch(canvas)
                 .then((res) => res.blob())
                 .then((blob) => {
-                  setLoading(false);
                   const formdata = new FormData();
                   formdata.append("image", blob);
                   dispatch(
@@ -261,7 +266,6 @@ const CreateCampus = (props) => {
   const validate = () => {
     let valid = true;
     const keys = Object.keys(form);
-    console.log(form, keys);
     const invalidForm = { ...form };
     keys.forEach((i) => {
       if (
@@ -291,7 +295,6 @@ const CreateCampus = (props) => {
         });
       }
     });
-    console.log(valid);
     return valid;
   };
   return (
@@ -307,11 +310,16 @@ const CreateCampus = (props) => {
                 Create Campus
               </Typography>
             </Grid>
+            <Grid item style={{textAlign: "center"}}>
+              <Box className={classes.illustration} mb={2}>
+                <Illustration type="campus" withBg />
+              </Box>
+            </Grid>
             <Grid item>
               <Box style={{ width: "100%" }} mt={4}>
                 <Box mb={2}>
-                  <Box className={styles.subHeading}>
-                    <Upload className={styles.icon} />
+                  <Box className={classes.subHeading}>
+                    <Upload className={classes.icon} />
                     <div>
                       <Typography variant="subtitle1">Upload Logo</Typography>
                       <Typography color="textSecondary" variant="caption">
@@ -323,6 +331,7 @@ const CreateCampus = (props) => {
                 <Dropzone
                   onDrop={handleDrop}
                   disableClick
+                  disable={loading}
                   accept={["image/png", "image/jpeg"]}
                 >
                   {({ getRootProps, getInputProps }) => (
@@ -331,13 +340,13 @@ const CreateCampus = (props) => {
                         <input {...getInputProps()} />
                         <Typography
                           color="textSecondary"
-                          className={styles.drag}
+                          className={classes.drag}
                         >
                           Drag 'n' drop the logo here, or click to select
                         </Typography>
                       </div>
                       {upload && (
-                        <Box mt={2} className={styles.uploadControls}>
+                        <Box mt={2} className={classes.uploadControls}>
                           <Box>
                             <ReactAvatarEditor
                               width={200}
@@ -389,12 +398,12 @@ const CreateCampus = (props) => {
           >
             <Grid item container direction="column" spacing={2}>
               <Grid item container>
-                <Typography variant="subtitle1" className={styles.subHeading}>
-                  <AlignLeft className={styles.icon} /> General
+                <Typography variant="subtitle1" className={classes.subHeading}>
+                  <AlignLeft className={classes.icon} /> General
                 </Typography>
               </Grid>
               <Grid item container direction="row" spacing={1}>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="Name"
                     error={!!name.error}
@@ -402,16 +411,18 @@ const CreateCampus = (props) => {
                     name="name"
                     value={name.value}
                     onChange={handleChange}
+                    disabled={loading}
                     placeholder="Campus Name"
                     variant="outlined"
                     fullWidth
                   />
                 </Grid>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <FormControl
                     variant="outlined"
-                    className={styles.formControl}
+                    className={classes.formControl}
                     error={!!type.error}
+                    disabled={loading}
                   >
                     <InputLabel id="type" ref={inputLabel} error={!!type.error}>
                       Campus Type
@@ -439,11 +450,12 @@ const CreateCampus = (props) => {
               </Grid>
               {type.value && type.value.toLowerCase() === "college" && (
                 <Grid item container direction="row" spacing={1}>
-                  <Grid item className={styles.gridItem} md={6} xs={12}>
+                  <Grid item className={classes.gridItem} md={6} xs={12}>
                     <FormControl
                       variant="outlined"
-                      // className={styles.formControl}
+                      // className={classes.formControl}
                       fullWidth
+                      disabled={loading}
                       error={!!category.error}
                       // style={{ width: "50%" }}
                     >
@@ -472,7 +484,7 @@ const CreateCampus = (props) => {
                 </Grid>
               )}
               <Grid item container direction="row" spacing={1}>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="Email"
                     name="email"
@@ -480,18 +492,20 @@ const CreateCampus = (props) => {
                     error={!!email.error}
                     helperText={email.error}
                     onChange={handleChange}
+                    disabled={loading}
                     placeholder="Campus Email"
                     variant="outlined"
                     fullWidth
                   />
                 </Grid>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="Phone"
                     name="phone"
                     value={phone.value}
                     error={!!phone.error}
                     helperText={phone.error}
+                    disabled={loading}
                     type="number"
                     onChange={handleChange}
                     placeholder="Campus Phone"
@@ -511,6 +525,7 @@ const CreateCampus = (props) => {
                   placeholder="Some description about the campus"
                   variant="outlined"
                   fullWidth
+                  disabled={loading}
                   multiline
                   rows="4"
                 />
@@ -518,16 +533,17 @@ const CreateCampus = (props) => {
             </Grid>
             <Grid item container direction="column" spacing={2}>
               <Grid item>
-                <Typography variant="subtitle1" className={styles.subHeading}>
-                  <MapPin className={styles.icon} /> Location
+                <Typography variant="subtitle1" className={classes.subHeading}>
+                  <MapPin className={classes.icon} /> Location
                 </Typography>
               </Grid>
               <Grid item container direction="row" spacing={1}>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <FormControl
                     variant="outlined"
-                    className={styles.formControl}
+                    className={classes.formControl}
                     error={!!country.error}
+                    disabled={loading}
                   >
                     <InputLabel
                       id="country"
@@ -561,13 +577,14 @@ const CreateCampus = (props) => {
                     )}
                   </FormControl>
                 </Grid>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="State"
                     name="state"
                     value={state.value}
                     error={!!state.error}
                     helperText={state.error}
+                    disabled={loading}
                     onChange={handleChange}
                     placeholder="eg: Telangana"
                     variant="outlined"
@@ -576,26 +593,28 @@ const CreateCampus = (props) => {
                 </Grid>
               </Grid>
               <Grid item container direction="row" spacing={1}>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="City"
                     name="city"
                     value={city.value}
                     error={!!city.error}
                     helperText={city.error}
+                    disabled={loading}
                     onChange={handleChange}
                     placeholder="eg: Hyderabad"
                     variant="outlined"
                     fullWidth
                   />
                 </Grid>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="Zip Code"
                     name="zipCode"
                     value={zipCode.value}
                     error={!!zipCode.error}
                     helperText={zipCode.error}
+                    disabled={loading}
                     onChange={handleChange}
                     placeholder="eg: 12345"
                     variant="outlined"
@@ -604,12 +623,13 @@ const CreateCampus = (props) => {
                 </Grid>
               </Grid>
               <Grid item container direction="row" spacing={1}>
-                <Grid item className={styles.gridItem}>
+                <Grid item className={classes.gridItem}>
                   <TextField
                     label="Landmark"
                     name="landmark"
                     value={landmark.value}
                     error={!!landmark.error}
+                    disabled={loading}
                     helperText={landmark.error}
                     onChange={handleChange}
                     placeholder="eg: Street number 1, opposite xyz"
@@ -619,27 +639,7 @@ const CreateCampus = (props) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item>
-              {/* <Button
-                variant="contained"
-                color="primary"
-                disableElevation
-                className={classes.button}
-                type="submit"
-                disabled={isLoading}
-                startIcon={
-                  isLoading ? (
-                    <CircularProgress
-                      color="primary"
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  ) : (
-                    <Lock size={15} />
-                  )
-                }
-              >
-                Proceed Securely
-              </Button> */}
+            <Grid item style={{ textAlign: "right" }}>
               <Button
                 variant="contained"
                 color="primary"

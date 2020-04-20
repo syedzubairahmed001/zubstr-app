@@ -5,6 +5,7 @@ const initailState = {
     count: null,
     data: null,
     isLoading: false,
+    shouldLoad: false,
   },
 };
 
@@ -23,7 +24,7 @@ const reducer = (state = initailState, action) => {
         ...state,
         campuses: {
           ...state.campuses,
-          shouldLoad: action.shouldLoad,
+          shouldLoad: action.data,
         },
       };
     case actionTypes.REQUEST__GET_CAMPUSES:

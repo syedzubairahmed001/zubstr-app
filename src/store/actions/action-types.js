@@ -44,6 +44,9 @@ export const RESET_ACCOUNT = 'RESET_ACCOUNT';
 export const SET_USER = 'SET_USER';
 export const RESET_USER = 'RESET_USER';
 
+export const SET_SUBSCRIPTION = 'SET_SUBSCRIPTION';
+export const RESET_SUBSCRIPTION = 'RESET_SUBSCRIPTION';
+
 export const LOGOUT = 'LOGOUT';
 
 
