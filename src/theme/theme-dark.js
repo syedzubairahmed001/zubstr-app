@@ -79,8 +79,8 @@ const theme = createMuiTheme({
       root: {
         transition: "all 0.2s !important",
         "&:active": {
-          transform: "scale(0.9)"
-        }
+          transform: "scale(0.95)",
+        },
       }
     },
     MuiButton: {
