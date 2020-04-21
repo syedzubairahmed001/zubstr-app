@@ -20,6 +20,7 @@ import { useSpring, animated, useTransition } from "react-spring";
 import tickAnimation from "../../../../assets/lottiefiles/tick.json";
 import Subscribe from "./Subscribe/Subscribe";
 import { setIsTrial } from "../../../../store/actions/auth";
+import { setIsSubNow } from "../../../../store/actions/instituteGroup";
 
 const useStyles = makeStyles((theme) => ({
   subHeading: {},
@@ -179,7 +180,7 @@ const NewCustomer = (props) => {
         </Box>
       )}
       {isSubscribe && !isSubscribedNow && <Subscribe />}
-      {!isSubscribe && isSubscribedNow && <IsSubNow />}
+      {isSubscribedNow && <IsSubNow />}
     </>
   );
 };
@@ -203,6 +204,7 @@ const IsSubNow = (props) => {
 
   const handleContinue = () => {
     dispatch(setIsTrial(false));
+    dispatch(setIsSubNow(false));
   };
 
   return (

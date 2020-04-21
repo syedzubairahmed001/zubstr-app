@@ -116,10 +116,10 @@ const reducer = (state = initailState, action) => {
     case actionTypes.SET_SUBSCRIPTION:
       return {
         ...state,
-        user: {
-          ...state.user,
+        account: {
+          ...state.account,
           subscription: {
-            ...state.user.subscription,
+            ...state.account.subscription,
             isTrial: action.data,
           },
         },
