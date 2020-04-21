@@ -5,7 +5,11 @@ const initailState = {
     count: null,
     data: null,
     isLoading: false,
+    shouldLoad: false,
   },
+  subscription: {
+    isSubscribedNow: false
+  }
 };
 
 const reducer = (state = initailState, action) => {
@@ -23,7 +27,7 @@ const reducer = (state = initailState, action) => {
         ...state,
         campuses: {
           ...state.campuses,
-          shouldLoad: action.shouldLoad,
+          shouldLoad: action.data,
         },
       };
     case actionTypes.REQUEST__GET_CAMPUSES:
@@ -52,6 +56,14 @@ const reducer = (state = initailState, action) => {
           isLoading: false,
           // data: action.data
         },
+      };
+    case actionTypes.SET_IS_SUB_NOW:
+      return {
+        ...state,
+        subscription: {
+          ...state.subscription,
+          isSubscribedNow: action.data
+        }
       };
     default:
       return state;

@@ -10,24 +10,34 @@ import {
   makeStyles,
   ExpansionPanel,
   ExpansionPanelDetails,
-  ExpansionPanelSummary
+  ExpansionPanelSummary,
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
+import { useSelector, useDispatch } from "react-redux";
+import Lottie from "react-lottie";
+import { useSpring, animated, useTransition } from "react-spring";
 
-import Subscribe from "../Subscribe/Subscribe";
-const useStyles = makeStyles(theme => ({
-  subHeading: {}
+import tickAnimation from "../../../../assets/lottiefiles/tick.json";
+import Subscribe from "./Subscribe/Subscribe";
+import { setIsTrial } from "../../../../store/actions/auth";
+
+const useStyles = makeStyles((theme) => ({
+  subHeading: {},
 }));
 
-const NewCustomer = props => {
+const NewCustomer = (props) => {
   const [expanded, setExpanded] = useState("panel1");
   const [isSubscribe, setSubscribe] = useState(false);
-  const handleChange = panel => (event, isExpanded) => {
+  const isSubscribedNow = useSelector(
+    (state) => state.instituteGroup.subscription.isSubscribedNow
+  );
+  const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
+
   return (
     <>
-      {!isSubscribe && (
+      {!isSubscribe && !isSubscribedNow && (
         <Box p={3}>
           <Box>
             <Grid
@@ -51,22 +61,14 @@ const NewCustomer = props => {
                 </Typography>
               </Grid>
               <Grid item>
-                {/* <Box mx={1}> */}
                 <Button
                   variant="contained"
                   color="primary"
                   disableElevation
                   onClick={() => setSubscribe(true)}
-                  // style={{ marginRight: "1rem" }}
                 >
                   Subscribe Now!
                 </Button>
-                {/* </Box>
-          <Box mx={1}> */}
-                {/* <Button variant="text" color="primary">
-              Learn More
-            </Button> */}
-                {/* </Box> */}
               </Grid>
             </Grid>
           </Box>
@@ -176,8 +178,62 @@ const NewCustomer = props => {
           </Box>
         </Box>
       )}
-      {isSubscribe && <Subscribe />}
+      {isSubscribe && !isSubscribedNow && <Subscribe />}
+      {!isSubscribe && isSubscribedNow && <IsSubNow />}
     </>
+  );
+};
+
+const IsSubNow = (props) => {
+  const dispatch = useDispatch();
+
+  const defaultOptions = {
+    loop: false,
+    autoplay: true,
+    animationData: tickAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+  const containerAnimation = useSpring({
+    from: { opacity: 0, transform: "translateY(50px) scale(0.8)" },
+    to: { opacity: 1, transform: "translateY(0px) scale(1)" },
+    config: { delay: 600, mass: 2, tension: 200, velocity: 1 },
+  });
+
+  const handleContinue = () => {
+    dispatch(setIsTrial(false));
+  };
+
+  return (
+    <Box p={3} style={{ textAlign: "center" }}>
+      <Box>
+        <Lottie options={defaultOptions} height={100} width={100} />
+      </Box>
+      <animated.div style={containerAnimation}>
+        <Box mt={2}>
+          <Typography variant="h4" color="textPrimary">
+            You Successfully Subscribed!
+          </Typography>
+        </Box>
+        <Box mt={1}>
+          <Typography variant="body1" color="textSecondary">
+            Now, you can create unlimited campuses and add as many students and
+            teachers as you want
+          </Typography>
+        </Box>
+        <Box mt={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            onClick={handleContinue}
+          >
+            Continue
+          </Button>
+        </Box>
+      </animated.div>
+    </Box>
   );
 };
 

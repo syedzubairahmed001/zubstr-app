@@ -1,4 +1,10 @@
 import axios from 'axios';
+import { setupCache } from 'axios-cache-adapter'
+ 
+// Create `axios-cache-adapter` instance
+const cache = setupCache({
+  maxAge: 30 * 1000
+})
 
 const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
@@ -6,9 +12,10 @@ const instance = axios.create({
         common: {        // can be common or any other method
           // 'x-access-token': localStorage.getItem('a-id') || '',
           // 'x-refresh-token': localStorage.getItem('r-id') || '',
-          'zubstr-refrence': 'web'
+          'zubstr-ref': 'web'
         }
-      }
+      },
+      adapter: cache.adapter
 });
 console.log('api-url', process.env.REACT_APP_API_URL);
 

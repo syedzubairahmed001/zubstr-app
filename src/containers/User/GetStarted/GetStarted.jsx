@@ -48,7 +48,7 @@ const GetStarted = props => {
   });
 
   const defaultOptions = {
-    loop: true,
+    loop: false,
     autoplay: true,
     animationData: smileyAnimation,
     rendererSettings: {

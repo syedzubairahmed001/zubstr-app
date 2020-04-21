@@ -144,3 +144,14 @@ export const setAccount = (account) => {
     dispatch({ type: actionTypes.SET_ACCOUNT, account });
   };
 };
+
+export const setIsTrial = (data) => ({
+  type: actionTypes.SET_SUBSCRIPTION,
+  data,
+});
+
+export const setUser = (user) => {
+  return (dispatch) => {
+    dispatch({ type: actionTypes.SET_USER, data: user });
+  };
+};

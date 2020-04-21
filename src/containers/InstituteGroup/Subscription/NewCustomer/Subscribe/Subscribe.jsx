@@ -9,19 +9,22 @@ import {
   Grid,
   Fab,
   makeStyles,
-  CircularProgress
+  CircularProgress,
 } from "@material-ui/core";
 import { Lock } from "react-feather";
+import { useSnackbar } from "notistack";
 
-import { createSubscription } from "../../../../store/actions/instituteGroup";
+import { createSubscription } from "../../../../../store/actions/instituteGroup";
+import { setIsTrial } from "../../../../../store/actions/auth";
+import { setIsSubNow } from "../../../../../store/actions/instituteGroup";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   margin: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   extendedIcon: {
-    marginRight: theme.spacing(1)
-  }
+    marginRight: theme.spacing(1),
+  },
 }));
 const Subscribe = () => {
   const classes = useStyles();
@@ -31,7 +34,9 @@ const Subscribe = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setLoading] = useState(false);
-  const theme = useSelector(state => state.global.theme);
+  const theme = useSelector((state) => state.global.theme);
+  const user = useSelector((state) => state.auth.user);
+  const { enqueueSnackbar } = useSnackbar();
 
   const CARD_ELEMENT_OPTIONS = {
     style: {
@@ -41,32 +46,35 @@ const Subscribe = () => {
         fontSmoothing: "antialiased",
         fontSize: "16px",
         "::placeholder": {
-          color: theme === "dark" ? "#aaa" : "#ccc"
-        }
+          color: theme === "dark" ? "#aaa" : "#ccc",
+        },
       },
       invalid: {
         color: "#e74c3c",
-        iconColor: "#e74c3c"
-      }
-    }
+        iconColor: "#e74c3c",
+      },
+    },
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
+      enqueueSnackbar("Secure payment is loading, Please wait...", {
+        variant: "info",
+      });
       return;
     }
+    setError(null);
+    setLoading(true);
 
     const result = await stripe.createPaymentMethod({
       type: "card",
       card: elements.getElement(CardElement),
       billing_details: {
-        email: "jenny.rosen@example.com"
-      }
+        email: user.email,
+      },
     });
 
     stripePaymentMethodHandler(result);
@@ -79,10 +87,10 @@ const Subscribe = () => {
     } else {
       dispatch(
         createSubscription({
-          subscriptionData: { paymentMethod: result.paymentMethod.id }
+          subscriptionData: { paymentMethod: result.paymentMethod.id },
         })
       )
-        .then(res => {
+        .then((res) => {
           setLoading(false);
           const { subscription } = res || {};
           const { latest_invoice } = subscription || {};
@@ -92,38 +100,28 @@ const Subscribe = () => {
             const { client_secret, status } = payment_intent;
 
             if (status === "requires_action") {
-              stripe.confirmCardPayment(client_secret).then(function(result) {
+              stripe.confirmCardPayment(client_secret).then(function (result) {
                 if (result.error) {
                   setError(result.error.message);
                 } else {
-                  setSuccess("helloworld");
+                  dispatch(setIsSubNow(true));
                 }
               });
             } else {
-              console.log("success");
+              dispatch(setIsSubNow(true));
             }
           }
+          dispatch(setIsSubNow(true));
         })
-        .catch(err => {
-          console.log(err);
+        .catch((err) => {
+          enqueueSnackbar(
+            "Something went wrong, if you are seeing this issue frequently please contact us hello@zubstr.com",
+            { variant: "error" }
+          );
           setLoading(false);
         });
-      // Otherwise send paymentMethod.id to your server
-      // fetch('/create-customer', {
-      //   method: 'post',
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: JSON.stringify({
-      //     email: 'jenny.rosen@example.com',
-      //     payment_method: result.paymentMethod.id
-      //   }),
-      // }).then(function(result) {
-      //  return result.json();
-      // }).then(function(customer) {
-      //   // The customer has been created
-      // });
     }
   };
-  //TODO add shield icon with label 'subscribe securely'
   return (
     <Box p={3}>
       <form onSubmit={handleSubmit}>

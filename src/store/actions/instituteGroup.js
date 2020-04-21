@@ -64,8 +64,12 @@ export const getCampuses = () => {
   };
 };
 
-export const setCampusShouldLoad = (shouldLoad) => {
-  return (dispatch) => {
-    dispatch({ type: actionTypes.SET_CAMPUS_SHOULD_LOAD, shouldLoad})
-  };
-}
+export const setCampusShouldLoad = (shouldLoad) => ({
+  type: actionTypes.SET_CAMPUS_SHOULD_LOAD,
+  data: shouldLoad,
+});
+
+export const setIsSubNow = (data) => ({
+  type: actionTypes.SET_IS_SUB_NOW,
+  data,
+});
