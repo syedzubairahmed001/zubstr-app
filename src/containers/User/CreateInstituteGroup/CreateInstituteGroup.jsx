@@ -407,6 +407,7 @@ const CreateAdminAccount = (props) => {
                           >
                             Back
                           </Button>
+
                           <Button
                             variant="contained"
                             size="medium"
@@ -414,6 +415,14 @@ const CreateAdminAccount = (props) => {
                             disableElevation
                             onClick={handleNext}
                             disabled={loading}
+                            startIcon={
+                              loading ? (
+                                <CircularProgress
+                                  color="primary"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                              ) : null
+                            }
                             className={classes.button}
                           >
                             {activeStep === steps.length - 1

@@ -16,6 +16,7 @@ import { useSnackbar } from "notistack";
 
 import { createSubscription } from "../../../../../store/actions/instituteGroup";
 import { setIsTrial } from "../../../../../store/actions/auth";
+import { setIsSubNow } from "../../../../../store/actions/instituteGroup";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -34,6 +35,7 @@ const Subscribe = () => {
   const [success, setSuccess] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const theme = useSelector((state) => state.global.theme);
+  const user = useSelector((state) => state.auth.user);
   const { enqueueSnackbar } = useSnackbar();
 
   const CARD_ELEMENT_OPTIONS = {
@@ -56,19 +58,22 @@ const Subscribe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
+      enqueueSnackbar("Secure payment is loading, Please wait...", {
+        variant: "info",
+      });
       return;
     }
+    setError(null);
+    setLoading(true);
 
     const result = await stripe.createPaymentMethod({
       type: "card",
       card: elements.getElement(CardElement),
       billing_details: {
-        email: "jenny.rosen@example.com",
+        email: user.email,
       },
     });
 
@@ -99,23 +104,14 @@ const Subscribe = () => {
                 if (result.error) {
                   setError(result.error.message);
                 } else {
-                  enqueueSnackbar("Subscribed successfully!", {
-                    variant: "success",
-                  });
-                  dispatch(setIsTrial(false));
+                  dispatch(setIsSubNow(true));
                 }
               });
             } else {
-              enqueueSnackbar("Subscribed successfully!", {
-                variant: "success",
-              });
-              dispatch(setIsTrial(false));
+              dispatch(setIsSubNow(true));
             }
           }
-          enqueueSnackbar("Subscribed successfully!", {
-            variant: "success",
-          });
-          dispatch(setIsTrial(false));
+          dispatch(setIsSubNow(true));
         })
         .catch((err) => {
           enqueueSnackbar(
@@ -124,22 +120,8 @@ const Subscribe = () => {
           );
           setLoading(false);
         });
-      // Otherwise send paymentMethod.id to your server
-      // fetch('/create-customer', {
-      //   method: 'post',
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: JSON.stringify({
-      //     email: 'jenny.rosen@example.com',
-      //     payment_method: result.paymentMethod.id
-      //   }),
-      // }).then(function(result) {
-      //  return result.json();
-      // }).then(function(customer) {
-      //   // The customer has been created
-      // });
     }
   };
-  //TODO add shield icon with label 'subscribe securely'
   return (
     <Box p={3}>
       <form onSubmit={handleSubmit}>
