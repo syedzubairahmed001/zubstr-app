@@ -38,7 +38,7 @@ const theme = createMuiTheme({
 
     },
     success: {
-      main: "#2ecc71",
+      main: "#17bf63",
     },
     // text: {
     //   primary: "#333"

@@ -5,11 +5,13 @@ import { Switch, Redirect, Route, __RouterContext } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
 import Settings from "./Settings/Settings";
 import People from "./People/People";
+import Create from "./Create/Create";
+
 import CampusLayout from "../../hoc/Layout/CampusLayout/CampusLayout";
 
-const College = props => {
+const College = (props) => {
   const { location } = useContext(__RouterContext);
-  const transitions = useTransition(location, location => location.pathname, {
+  const transitions = useTransition(location, (location) => location.pathname, {
     from: {
       position: "absolute",
       opacity: 0,
@@ -19,8 +21,8 @@ const College = props => {
     enter: { opacity: 1, transform: "translate(0%,0)" },
     leave: { opacity: 0, transform: "translate(-50%,0)" },
     config: {
-      friction: 20
-    }
+      friction: 20,
+    },
   });
 
   return (
@@ -32,6 +34,7 @@ const College = props => {
               <Route path="/c/dashboard" component={Dashboard} />
               <Route path="/c/people" component={People} />
               <Route path="/c/settings" component={Settings} />
+              <Route path="/c/create" component={Create} />
               <Redirect to="/c/dashboard" />
             </Switch>
           </animated.div>

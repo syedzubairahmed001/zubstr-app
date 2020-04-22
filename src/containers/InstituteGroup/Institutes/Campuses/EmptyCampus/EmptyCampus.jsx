@@ -14,12 +14,15 @@ const useStyles = makeStyles((theme) => ({
     height: "10rem",
   },
   para: {
-    width: "60%",
+    maxWidth: "60%",
     display: "inline-block",
   },
-  "@media only sreen and (max-width: 600px)": {
+  "@media only screen and (max-width: 600px)": {
     container: {
-      width: "90%",
+      width: "95%",
+    },
+    para: {
+      maxWidth: "100%",
     },
   },
 }));
@@ -46,7 +49,10 @@ const EmptyCampus = (props) => {
         {/* <Button variant="text" color="primary" disableElevation>
           Watch the tutorial
         </Button> */}
-        <Link to="/i/institutes/create-campus" style={{textDecoration: "none" }}>
+        <Link
+          to="/i/institutes/create-campus"
+          style={{ textDecoration: "none" }}
+        >
           <Button variant="contained" color="primary" disableElevation>
             Create Campus
           </Button>

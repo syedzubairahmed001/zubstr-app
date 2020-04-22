@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useState, useEffect, useContext } from "react";
 import Helmet from "react-helmet";
 import { useTransition, animated } from "react-spring";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { LinearProgress } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import {
   Route,
   Switch,
@@ -11,7 +11,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { SnackbarProvider } from "notistack";
+import { SnackbarProvider, useSnackbar } from "notistack";
 
 import "./App.css";
 import lightTheme from "./theme/theme-light";
@@ -35,6 +35,14 @@ const lazyLoad = (Component) => {
   );
 };
 
+const useStyles = makeStyles((theme) => ({
+  successSnackbar: {
+    backgroundColor: theme.palette.success.main,
+  },
+  errorSnackbar: {
+    backgroundColor: theme.palette.success.main,
+  },
+}));
 const App = (props) => {
   const isAuth = useSelector((state) => state.auth.isAuth);
   const isGlobalLoading = useSelector((state) => state.global.isLoading);
@@ -127,7 +135,7 @@ const App = (props) => {
         )
           .then((res) => {})
           .catch((err) => {
-           routes = <div></div>
+            routes = <div></div>;
           });
       } else {
         a =
@@ -152,7 +160,7 @@ const App = (props) => {
     }
   }
   const theme = currentTheme === "dark" ? darkTheme : lightTheme;
-
+  const classes = useStyles();
   return (
     <ThemeProvider theme={theme}>
       {currentTheme === "dark"
@@ -166,8 +174,15 @@ const App = (props) => {
         />
       </Helmet>
       <SnackbarProvider
-        maxSnack={2}
+        maxSnack={1}
         preventDuplicate
+        classes={{
+          variantSuccess: classes.successSnackbar,
+          variantError: classes.errorSnackbar,
+
+          // variantWarning: classes.warning,
+          // variantInfo: classes.info,
+        }}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -175,10 +190,35 @@ const App = (props) => {
       >
         <div className={currentTheme === "dark" ? "dark-bg App" : "App"}>
           {routes}
+          <InternetConnectionAlerter />
         </div>
       </SnackbarProvider>
     </ThemeProvider>
   );
+};
+
+const InternetConnectionAlerter = (props) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const handleConnectionChange = (event) => {
+    if (event.type === "offline") {
+      enqueueSnackbar(
+        "Oops!, you are offline, please check your internet connection",
+        {
+          variant: "error",
+        }
+      );
+    }
+    if (event.type === "online") {
+      enqueueSnackbar("Yay! you are back online.", {
+        variant: "success",
+      });
+    }
+
+    console.log(new Date(event.timeStamp));
+  };
+  window.addEventListener("online", handleConnectionChange);
+  window.addEventListener("offline", handleConnectionChange);
+  return <></>;
 };
 
 export default App;

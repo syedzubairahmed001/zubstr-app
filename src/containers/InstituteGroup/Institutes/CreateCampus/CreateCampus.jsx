@@ -250,9 +250,12 @@ const CreateCampus = (props) => {
                   },
                 }));
               });
-          } else {
+          } else if(error){
             setLoading(false);
-            resetData();
+            enqueueSnackbar(
+              "Opps something went wrong. Please wait for some time and try again",
+              { variant: "error" }
+            );
           }
         })
         .catch((err) => {

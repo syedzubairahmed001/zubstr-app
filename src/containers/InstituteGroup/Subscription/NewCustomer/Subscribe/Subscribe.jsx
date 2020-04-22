@@ -142,7 +142,13 @@ const Subscribe = () => {
               </Box>
             </Paper>
             {error && (
-              <Typography color="error" align="left">
+              <Typography
+                color="error"
+                align="left"
+                style={{
+                  animation: "input-helperText-animate .1s ease-out  1 both",
+                }}
+              >
                 {error}
               </Typography>
             )}
