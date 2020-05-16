@@ -7,11 +7,12 @@ const theme = createMuiTheme({
   },
   props: {
     MuiButtonBase: {
-      disableRipple: true
-    }
+      disableTouchRipple: true,
+      focusRipple: true,
+    },
   },
   shape: {
-    borderRadius: "10px"
+    borderRadius: "10px",
   },
   palette: {
     type: "dark",
@@ -25,11 +26,11 @@ const theme = createMuiTheme({
     primary: {
       main: "#0083FF",
       light: "#E9F4FF",
-      dark: "#0076ED"
+      dark: "#0076ED",
     },
     secondary: {
       light: "rgba(0, 231, 162, 0.1)",
-      main: "#00E7A2",
+      main: "#01D696",
       contrastText: "#fff",
     },
     error: {
@@ -44,23 +45,23 @@ const theme = createMuiTheme({
     contrastThreshold: 3,
     tonalOffset: 0.2,
     background: {
-      paper: "#333"
+      paper: "#333",
     },
     common: {
       black: "#333",
-      white: "#fff"
+      white: "#fff",
     },
     text: {
       primary: "#ddd",
-      secondary: "#ccc"
-    }
+      secondary: "#ccc",
+    },
   },
   overrides: {
     MuiAppBar: {
       positionFixed: {
         backdropFilter: "saturate(180%) blur(20px)",
-        backgroundColor: "rgba(255, 255, 255, 0)"
-      }
+        backgroundColor: "rgba(255, 255, 255, 0)",
+      },
     },
     MuiTooltip: {
       tooltip: {
@@ -69,11 +70,11 @@ const theme = createMuiTheme({
         backgroundColor: "#fff",
         color: "#333",
         borderRadius: "5px",
-        boxShadow: "0px 0px 10px rgba(255,255,255, 0.1)"
+        boxShadow: "0px 0px 10px rgba(255,255,255, 0.1)",
       },
       arrow: {
-        color: "#fff"
-      }
+        color: "#fff",
+      },
     },
     MuiButtonBase: {
       root: {
@@ -81,28 +82,28 @@ const theme = createMuiTheme({
         "&:active": {
           transform: "scale(0.95)",
         },
-      }
+      },
     },
     MuiButton: {
       label: {
         textTransform: "capitalize",
         fontSize: ".9rem",
-        fontWeight: 400
-      }
+        fontWeight: 400,
+      },
     },
     MuiPaper: {
       elevation1: {
-        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)"
-      }
+        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+      },
     },
     MuiFormHelperText: {
       root: {
         minHeight: "0em",
         lineHeight: "0em",
-        animation: "input-helperText-animate .1s ease-out  1 both"
-      }
-    }
-  }
+        animation: "input-helperText-animate .1s ease-out  1 both",
+      },
+    },
+  },
 });
 
 export default theme;

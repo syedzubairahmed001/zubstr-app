@@ -7,7 +7,8 @@ const theme = createMuiTheme({
   },
   props: {
     MuiButtonBase: {
-      disableRipple: true,
+      disableTouchRipple: true,
+      focusRipple: true,
     },
   },
   shape: {
@@ -29,13 +30,11 @@ const theme = createMuiTheme({
     },
     secondary: {
       light: "rgba(0, 231, 162, 0.1)",
-      main: "#00E7A2",
+      main: "#01D696",
       contrastText: "#fff",
     },
     error: {
       main: "#e74c3c",
-      
-
     },
     success: {
       main: "#17bf63",

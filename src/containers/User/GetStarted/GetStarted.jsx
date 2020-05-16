@@ -5,7 +5,7 @@ import {
   Paper,
   makeStyles,
   Typography,
-  Button
+  Button,
 } from "@material-ui/core";
 import Lottie from "react-lottie";
 import { useSpring, animated, useTransition } from "react-spring";
@@ -18,33 +18,33 @@ import { useSelector } from "react-redux";
 import bgImage1 from "../../../assets/images/bg-image-1.svg";
 import { Link } from "react-router-dom";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     height: "100vh",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   heading: {
     textTransform: "capitalize",
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   "@media (max-width: 600px)": {
     heading: {
-      fontSize: "3rem"
-    }
-  }
+      fontSize: "3rem",
+    },
+  },
 }));
 
-const GetStarted = props => {
+const GetStarted = (props) => {
   const classes = useStyles();
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   let { name } = user;
   name = name.split(" ")[0];
   const transitions = useTransition(false, null, {
     from: { transform: "translate3d(0,-40px,0)" },
     enter: { transform: "translate3d(0,0px,0)" },
-    leave: { transform: "translate3d(0,-40px,0)" }
+    leave: { transform: "translate3d(0,-40px,0)" },
   });
 
   const defaultOptions = {
@@ -52,18 +52,18 @@ const GetStarted = props => {
     autoplay: true,
     animationData: smileyAnimation,
     rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice"
-    }
+      preserveAspectRatio: "xMidYMid slice",
+    },
   };
   const containerAnimation = useSpring({
     from: { opacity: 0, transform: "translateY(100px) scale(0.8)" },
     to: { opacity: 1, transform: "translateY(0px) scale(1)" },
-    config: { delay: 600, mass: 2, tension: 200, velocity: 1 }
+    config: { delay: 600, mass: 2, tension: 200, velocity: 1 },
   });
   const logoAnimation = useSpring({
     from: { opacity: 0, transform: "translateY(-100px) scale(1.4)" },
     to: { opacity: 1, transform: "translateY(0px) scale(1)" },
-    config: { friction: 15 }
+    config: { friction: 15 },
   });
 
   const [isSelection, setSelection] = useState(false);
@@ -150,15 +150,29 @@ const GetStarted = props => {
                 to="/u/create-institute-group"
                 style={{ textDecoration: "none" }}
               >
-                <Button variant="contained" color="primary" disableElevation>
-                  I own an educational institute
+                <Button variant="outlined" color="primary" disableElevation>
+                  Continue as Institute Owner
                 </Button>
               </Link>
             </Box>
             <Box p={1} style={{ textAlign: "center" }}>
               <Link to="/" style={{ textDecoration: "none" }}>
-                <Button variant="contained" color="secondary" disableElevation>
-                  I am an employer at an institute
+                <Button variant="outlined" color="primary" disableElevation>
+                  Continue as Principal
+                </Button>
+              </Link>
+            </Box>
+            <Box p={1} style={{ textAlign: "center" }}>
+              <Link to="/" style={{ textDecoration: "none" }}>
+                <Button variant="outlined" color="primary" disableElevation>
+                  Continue as Student
+                </Button>
+              </Link>
+            </Box>
+            <Box p={1} style={{ textAlign: "center" }}>
+              <Link to="/" style={{ textDecoration: "none" }}>
+                <Button variant="outlined" color="primary" disableElevation>
+                  Continue as Teacher
                 </Button>
               </Link>
             </Box>

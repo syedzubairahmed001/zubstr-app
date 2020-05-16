@@ -1,7 +1,6 @@
 import React from "react";
 import { Grid, Box, makeStyles } from "@material-ui/core";
 
-import ToolBox from "./ToolBox/ToolBox";
 import Requests from "../Requests/Requests";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +19,6 @@ const Students = (props) => {
   const classes = useStyles();
   return (
     <>
-      <ToolBox />
       <Box className={classes.container}>
         <Box className={classes.usersContainer}>
           <Grid container>

@@ -2,14 +2,17 @@ import React, { useState, useEffect, useContext } from "react";
 import { useTransition, animated } from "react-spring";
 import { Switch, Redirect, Route, __RouterContext } from "react-router-dom";
 
+import { askForPermissioToReceiveNotifications } from "../../helpers/firebase";
 import Dashboard from "./Dashboard/Dashboard";
 import Settings from "./Settings/Settings";
 import People from "./People/People";
-import Create from "./Create/Create";
 
 import CampusLayout from "../../hoc/Layout/CampusLayout/CampusLayout";
 
 const College = (props) => {
+  useEffect(() => {
+    askForPermissioToReceiveNotifications();
+  }, []);
   const { location } = useContext(__RouterContext);
   const transitions = useTransition(location, (location) => location.pathname, {
     from: {
@@ -34,7 +37,6 @@ const College = (props) => {
               <Route path="/c/dashboard" component={Dashboard} />
               <Route path="/c/people" component={People} />
               <Route path="/c/settings" component={Settings} />
-              <Route path="/c/create" component={Create} />
               <Redirect to="/c/dashboard" />
             </Switch>
           </animated.div>

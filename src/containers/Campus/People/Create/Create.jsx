@@ -17,8 +17,13 @@ import {
   Redirect,
   useRouteMatch,
   useLocation,
+  Link,
 } from "react-router-dom";
 import { ArrowLeft, ChevronDown } from "react-feather";
+
+import Section from "./Section/Section";
+import ClassComp from "./Class/Class";
+import ClassGroup from "./ClassGroup/ClassGroup";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -77,17 +82,41 @@ const Create = (props) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Class Group</MenuItem>
-                <MenuItem onClick={handleClose}>Class</MenuItem>
-                <MenuItem onClick={handleClose}>Section</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    history.push(currentPath + "/section");
+                    handleClose();
+                  }}
+                >
+                  Section
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    history.push(currentPath + "/class");
+                    handleClose();
+                  }}
+                >
+                  Class
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    history.push(currentPath + "/class-group");
+                    handleClose();
+                  }}
+                >
+                  Class Group
+                </MenuItem>
               </Menu>
             </Box>
           </Box>
-          <Box>
+          <Box mt={2}>
             <Switch>
-              <Route path={currentPath + "/class"} component={H} />
-              <Route path={currentPath + "/class-group"} component={H} />
-              {/* <Route path={currentPath} exact component={InstituteTabs} /> */}
+              <Route path={currentPath + "/class"} component={ClassComp} />
+              <Route
+                path={currentPath + "/class-group"}
+                component={ClassGroup}
+              />
+              <Route path={currentPath + "/section"} component={Section} />
               <Redirect to={currentPath + "/class"} />
             </Switch>
           </Box>
