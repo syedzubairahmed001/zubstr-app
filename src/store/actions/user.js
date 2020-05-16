@@ -30,3 +30,17 @@ export const uploadInstituteGroupProfileImage = (data) => {
     });
   };
 };
+
+export const notifToken = (data) => {
+  return (dispatch) => {
+    if (!data) {
+      Promise.reject({ error: "data is not valid" });
+    }
+
+    return Api(`/v1/notification`, data, {
+      method: "PUT",
+      dispatch,
+      actionType: actionTypes.REQUEST__NOTIF_TOKEN,
+    });
+  };
+};

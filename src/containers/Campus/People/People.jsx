@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Tabs, Tab, Paper, Typography, Box, Grid } from "@material-ui/core";
+import {
+  Tabs,
+  Tab,
+  Paper,
+  Typography,
+  Box,
+  Grid,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@material-ui/core";
 import {
   Route,
   Switch,
@@ -8,8 +18,11 @@ import {
   Redirect,
 } from "react-router-dom";
 
+import Requests from "./Requests/Requests";
+import ToolBar from "./ToolBar/Toolbar";
 import Students from "./Students/Students";
 import Teachers from "./Teachers/Teachers";
+import Create from "./Create/Create";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -28,11 +41,24 @@ const TabPanel = (props) => {
 
 const InstituteTabs = (props) => {
   const [value, setValue] = useState(0);
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const handleRequestsClose = () => {
+    setRequestModalOpen(false);
+  };
+  const handleRequestsOpen = () => {
+    setRequestModalOpen(true);
+  };
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   return (
     <>
+      <Requests
+        open={requestModalOpen}
+        onClose={handleRequestsClose}
+        onCloseBtnClick={handleRequestsClose}
+      />
+      <ToolBar onRequestsBtnClick={handleRequestsOpen} />
       <Tabs
         value={value}
         onChange={handleChange}
@@ -53,18 +79,13 @@ const InstituteTabs = (props) => {
   );
 };
 
-const H = (props) => {
-  return <div></div>;
-};
-
 const People = (props) => {
   const currentPath = useRouteMatch().path;
   return (
     <Box>
       <Paper elevation={0}>
         <Switch>
-          <Route path={currentPath + "/create-class"} component={H} />
-          <Route path={currentPath + "/create-course"} component={H} />
+          <Route path={currentPath + "/create"} component={Create} />
           <Route path={currentPath} exact component={InstituteTabs} />
           <Redirect to={currentPath} />
         </Switch>

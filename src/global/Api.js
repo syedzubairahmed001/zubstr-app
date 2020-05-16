@@ -69,6 +69,7 @@ export default (url, data, config) => {
       return Promise.resolve(data);
     })
     .catch((err) => {
+      console.log(err);
       if (err && err.response && err.response.data) {
         dispatch({
           type: errorAction(actionType),

@@ -2,14 +2,19 @@ import React, { useState, useEffect, useContext } from "react";
 import { useTransition, animated } from "react-spring";
 import { Switch, Redirect, Route, __RouterContext } from "react-router-dom";
 
+import { askForPermissioToReceiveNotifications } from "../../helpers/firebase";
 import Dashboard from "./Dashboard/Dashboard";
 import Settings from "./Settings/Settings";
 import People from "./People/People";
+
 import CampusLayout from "../../hoc/Layout/CampusLayout/CampusLayout";
 
-const College = props => {
+const College = (props) => {
+  useEffect(() => {
+    askForPermissioToReceiveNotifications();
+  }, []);
   const { location } = useContext(__RouterContext);
-  const transitions = useTransition(location, location => location.pathname, {
+  const transitions = useTransition(location, (location) => location.pathname, {
     from: {
       position: "absolute",
       opacity: 0,
@@ -19,8 +24,8 @@ const College = props => {
     enter: { opacity: 1, transform: "translate(0%,0)" },
     leave: { opacity: 0, transform: "translate(-50%,0)" },
     config: {
-      friction: 20
-    }
+      friction: 20,
+    },
   });
 
   return (
