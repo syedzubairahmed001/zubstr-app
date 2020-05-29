@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.success.main,
   },
   errorSnackbar: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: "blue",
   },
 }));
 const App = (props) => {
@@ -159,6 +159,7 @@ const App = (props) => {
       }
     }
   }
+
   const theme = currentTheme === "dark" ? darkTheme : lightTheme;
   const classes = useStyles();
   return (

@@ -49,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
     width: "100px",
     height: "1rem",
   },
+  messageToggleBtn: {
+    padding: ".8rem",
+  },
 
   skeletonAvatar: {
     width: "3rem",
@@ -61,10 +64,10 @@ const useStyles = makeStyles((theme) => ({
     width: "15rem",
   },
   skeletonMessage: {
-    height: "2.5rem",
+    height: "2rem",
     fontWeight: 400,
     width: "100%",
-    borderRadius: "1.5rem",
+    borderRadius: "1rem",
   },
   skeletonBtn: {
     width: "5rem",
@@ -78,7 +81,19 @@ const useStyles = makeStyles((theme) => ({
 const RequestCard = (props) => {
   const styles = useStyles();
   const [expanded, setExpanded] = useState(false);
-  const { name, profileImageUrl, msg, location, _id, loading, onAcceptClick, requestId, studentId } = props;
+  const {
+    name,
+    profileImageUrl,
+    msg,
+    location,
+    _id,
+    loading,
+    onAcceptClick,
+    onRejectClick,
+    requestId,
+    studentId,
+    accType,
+  } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -171,7 +186,9 @@ const RequestCard = (props) => {
                 <MapPin size={16} />
               </Box>
               <Box ml={1}>
-                <Typography>{`${location.landmark}, ${location.city}, ${
+                <Typography variant="caption">{`${location.landmark}, ${
+                  location.city
+                }, ${
                   location.state
                 }, ${location.country.toUpperCase()}`}</Typography>
               </Box>
@@ -181,14 +198,16 @@ const RequestCard = (props) => {
               <Box className={styles.messageToggle} onClick={handleExpandClick}>
                 <Box>
                   {/* <Mail /> */}
-                  <Typography color="textSecondary">Message</Typography>
+                  <Typography color="textSecondary" variant="subtitle1">
+                    Message
+                  </Typography>
                 </Box>
-                <IconButton>
-                  <ChevronDown />
+                <IconButton className={styles.messageToggleBtn}>
+                  <ChevronDown size={15} />
                 </IconButton>
               </Box>
               <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <Box pb={2} px={2}>
+                <Box pb={1} px={2}>
                   <Typography color="textSecondary">{msg || "N/A"}</Typography>
                 </Box>
               </Collapse>
@@ -198,7 +217,12 @@ const RequestCard = (props) => {
         <Box className={styles.cardActions} mt={2}>
           <Box>hello world</Box>
           <Box>
-            <Button color="primary" variant="text" disableElevation>
+            <Button
+              color="primary"
+              variant="text"
+              disableElevation
+              onClick={() => onRejectClick(name, requestId, accType)}
+            >
               Reject
             </Button>
             <Button
@@ -208,6 +232,7 @@ const RequestCard = (props) => {
               onClick={() => onAcceptClick(name, requestId, studentId)}
               type="button"
               aria-describedby={id}
+              style={{ marginLeft: ".5rem" }}
             >
               Accept
             </Button>

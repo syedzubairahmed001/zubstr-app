@@ -16,10 +16,10 @@ const Subscription = (props) => {
   }, []);
   return (
     <Box>
-      <Paper elevation={0}>
+      <Box>
         {isTrial && <NewCustomer />}
         {!isTrial && <Subscribed />}
-      </Paper>
+      </Box>
     </Box>
   );
 };

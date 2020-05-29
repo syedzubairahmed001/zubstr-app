@@ -7,7 +7,7 @@ import {
   Button,
   Tooltip,
 } from "@material-ui/core";
-import { Plus, Users } from "react-feather";
+import { Plus, Users, UserPlus } from "react-feather";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
   },
   container: {
-    padding: "1rem",
+    // padding: "1rem",
+    marginBottom: "1rem"
   },
 }));
 
@@ -54,8 +55,8 @@ const ToolBar = (props) => {
             className={classes.icon}
             onClick={onRequestsBtnClick}
           >
-            <Badge badgeContent={4} color="primary">
-              <Users />
+            <Badge badgeContent={0} color="primary">
+              <UserPlus />
             </Badge>
           </IconButton>
         </Tooltip>

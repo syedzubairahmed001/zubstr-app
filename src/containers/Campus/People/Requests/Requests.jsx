@@ -22,6 +22,9 @@ import SearchInput from "../../../../components/SearchInput/SearchInput";
 import {
   getStudentRequests,
   acceptStudentRequest,
+  acceptTeacherRequest,
+  rejectStudentRequest,
+  rejectTeacherRequest,
 } from "../../../../store/actions/campus";
 
 import EmptyRequest from "./EmptyRequest/EmptyRequest";
@@ -72,47 +75,160 @@ const Requests = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const { open, onClose, onCloseBtnClick } = props;
   const [value, setValue] = useState(0);
-  const [acceptReqOpen, setAcceptReqOpen] = useState(false);
+  const [studentAcceptOpen, setStudentAcceptReqOpen] = useState(false);
+  const [teachertAcceptOpen, setTeacherAcceptReqOpen] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
-  const [reqData, setReqData] = useState({
+  const [studentReqData, setStudentReqData] = useState({
+    name: "",
+    requestId: "",
+    classId: {
+      value: "",
+      error: null,
+    },
+  });
+  const [teacherReqData, setTeacherReqData] = useState({
     name: "",
     requestId: "",
     classId: "",
   });
-  const handleAcceptClick = (name, requestId, studentId) => {
-    console.log(name, requestId, studentId);
-    setReqData({ name, requestId });
-    setAcceptReqOpen(true);
+  const [rejectReqData, setRejectReqData] = useState({
+    requestId: { value: "" },
+    personType: { value: "" },
+    name: { value: "" },
+  });
+  const handleStudentAcceptOpen = (name, requestId) => {
+    setStudentReqData((prev) => ({ ...prev, name, requestId }));
+    setStudentAcceptReqOpen(true);
+  };
+  const handleTeacherAcceptOpen = (name, requestId) => {
+    setTeacherReqData({ name, requestId });
+    setTeacherAcceptReqOpen(true);
+  };
+  const handleRejectClick = (name, requestId, personType) => {
+    setRejectReqData((prev) => ({
+      name: { value: name },
+      personType: { value: personType },
+      requestId: { value: requestId },
+    }));
+    setRejectOpen(true);
   };
   const handleClassSelect = (event, newVal) => {
-    setReqData((prev) => ({
+    if (newVal.value) {
+      setStudentReqData((prev) => ({
+        ...prev,
+        classId: { value: newVal.value, error: null },
+      }));
+    }
+  };
+  const handleClassesSelect = (event, newVal) => {
+    const newArr = newVal.map((e) => e.value);
+    setTeacherReqData((prev) => ({
       ...prev,
-      classId: newVal.value,
+      classId: newArr,
     }));
   };
-  const handleAddClick = () => {
-    const { requestId, classId } = reqData || {};
-    if (requestId && classId) {
+  const handleStudentAddClick = () => {
+    const { requestId, classId } = studentReqData || {};
+    if (requestId && classId && classId.value) {
       setAddLoading(true);
-      const data = { requestId, classId };
+      const data = { requestId, classId: classId.value };
       dispatch(acceptStudentRequest(data))
         .then(() => {
           setAddLoading(false);
-          setAcceptReqOpen(false);
+          setStudentAcceptReqOpen(false);
           enqueueSnackbar("Student added", { variant: "success" });
         })
         .catch(() => setAddLoading(false));
+    } else if (!classId || !classId.value) {
+      setStudentReqData((prev) => ({
+        ...prev,
+        classId: { ...prev.classId, error: "Please select a class" },
+      }));
     }
   };
-  const handleAcceptClose = () => {
-    setReqData({ name: "", requestId: "", studentId: "" });
-    setAcceptReqOpen(false);
+  const handleRejectConfirm = () => {
+    const { requestId, name, personType } = rejectReqData || {};
+    if (requestId.value && personType.value) {
+      const data = { requestId: requestId.value };
+      if (personType.value === "student") {
+        setAddLoading(true);
+        dispatch(rejectStudentRequest(data))
+        .then(() => {
+          setAddLoading(false);
+          setRejectOpen(false);
+        })
+          .catch(() => setAddLoading(false));
+      } else if (personType.value === "teacher") {
+        setAddLoading(true);
+        dispatch(rejectTeacherRequest(data))
+          .then(() => {
+            setAddLoading(false);
+            setRejectOpen(false);
+          })
+          .catch(() => setAddLoading(false));
+      }
+    }
+  };
+  const handleTeacherAddClick = () => {
+    const { requestId, classId } = teacherReqData || {};
+    if (requestId && classId) {
+      setAddLoading(true);
+      const data = { requestId, classId };
+      dispatch(acceptTeacherRequest(data))
+        .then((res) => {
+          setAddLoading(false);
+          if (res.data && res.data.requestId) {
+            setTeacherAcceptReqOpen(false);
+            enqueueSnackbar("Teacher added", { variant: "success" });
+          } else {
+            enqueueSnackbar("Something went wrong, please try again", {
+              variant: "error",
+            });
+          }
+        })
+        .catch(() => {
+          setAddLoading(false);
+          enqueueSnackbar("Something went wrong, please try again", {
+            variant: "error",
+          });
+        });
+    }
+  };
+  const handleStudentAcceptClose = () => {
+    setStudentReqData({
+      name: "",
+      requestId: "",
+      classId: {
+        value: "",
+        error: null,
+      },
+    });
+    setStudentAcceptReqOpen(false);
+  };
+  const handleRejectClose = () => {
+    setRejectReqData({
+      name: { value: "" },
+      requestId: { value: "" },
+      personType: { value: "" },
+    });
+    setRejectOpen(false);
+  };
+  const handleTeacherAcceptClose = () => {
+    setTeacherReqData({ name: "", requestId: "", studentId: "" });
+    setTeacherAcceptReqOpen(false);
   };
   const studentRequests = useSelector(
     (state) => state.campus.requests.student.data
   );
   const isStudentLoadedOnce = useSelector(
     (state) => state.campus.requests.student.isLoadedOnce
+  );
+  const teacherRequests = useSelector(
+    (state) => state.campus.requests.teacher.data
+  );
+  const isTeacherLoadedOnce = useSelector(
+    (state) => state.campus.requests.teacher.isLoadedOnce
   );
 
   const styles = useStyles();
@@ -146,51 +262,163 @@ const Requests = (props) => {
         </Tabs>
         <TabPanel value={value} index={0}>
           {(!isStudentLoadedOnce || studentRequests.length > 0) && (
-            <DisplayRequests type="student" onAcceptClick={handleAcceptClick} />
+            <DisplayRequests
+              type="student"
+              onAcceptClick={handleStudentAcceptOpen}
+              onRejectClick={handleRejectClick}
+            />
           )}
           {studentRequests &&
             studentRequests.length === 0 &&
             isStudentLoadedOnce && <EmptyRequest type="student" />}
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <EmptyRequest type="teacher" />
+          {(!isTeacherLoadedOnce || teacherRequests.length > 0) && (
+            <DisplayRequests
+              type="teacher"
+              onAcceptClick={handleTeacherAcceptOpen}
+              onRejectClick={handleRejectClick}
+            />
+          )}
+          {teacherRequests &&
+            teacherRequests.length === 0 &&
+            isTeacherLoadedOnce && <EmptyRequest type="teacher" />}
         </TabPanel>
       </Box>
       <Dialog
         fullWidth
         maxWidth="xs"
-        open={Boolean(acceptReqOpen)}
-        onClose={handleAcceptClose}
+        open={Boolean(studentAcceptOpen)}
+        onClose={handleStudentAcceptClose}
         className={styles.container}
       >
         <Box p={2} className={styles.acceptModal}>
           <Box mb={1}>
             <Typography variant="h5" align="center">
-              Add {reqData.name} to class
+              Add {studentReqData.name} to class
             </Typography>
           </Box>
           <Box mb={1}>
-            <Typography variant="caption" align="center">
+            <Typography variant="caption" align="center" color="textSecondary">
               Student will be notified and can use Zubstr features after you
               accept request
             </Typography>
           </Box>
           <Box className={styles.inputContainer}>
-            <SearchInput onChange={handleClassSelect} />
+            <SearchInput
+              searchType="class"
+              onChange={handleClassSelect}
+              label="Class"
+              error={!!studentReqData.classId.error}
+              helperText={studentReqData.classId.error}
+              placeholder="Type and press search..."
+              noOptionsText="No class found"
+            />
           </Box>
           <Box mt={2}>
             <Button
               color="primary"
               variant="contained"
               disableElevation
-              onClick={handleAddClick}
+              disabled={addLoading}
+              onClick={handleStudentAddClick}
               startIcon={
                 addLoading ? (
-                  <CircularProgress color="primary" size="small" />
+                  <CircularProgress
+                    color="primary"
+                    style={{ width: "20px", height: "20px" }}
+                  />
                 ) : null
               }
             >
               Add
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
+      <Dialog
+        fullWidth
+        maxWidth="xs"
+        open={Boolean(teachertAcceptOpen)}
+        onClose={handleTeacherAcceptClose}
+        className={styles.container}
+      >
+        <Box p={2} className={styles.acceptModal}>
+          <Box mb={1}>
+            <Typography variant="h5" align="center">
+              Assign classes to {teacherReqData.name}
+            </Typography>
+          </Box>
+          <Box mb={1}>
+            <Typography variant="caption" align="center">
+              Teacher will be notified and can use Zubstr features after you
+              accept request
+            </Typography>
+          </Box>
+          <Box className={styles.inputContainer}>
+            <SearchInput
+              searchType="class"
+              onChange={handleClassesSelect}
+              multiple
+            />
+          </Box>
+          <Box mt={2}>
+            <Button
+              color="primary"
+              variant="contained"
+              disableElevation
+              disabled={addLoading}
+              onClick={handleTeacherAddClick}
+              startIcon={
+                addLoading ? (
+                  <CircularProgress
+                    color="primary"
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                ) : null
+              }
+            >
+              Add
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
+      <Dialog
+        fullWidth
+        maxWidth="xs"
+        open={Boolean(rejectOpen)}
+        onClose={handleRejectClose}
+        className={styles.container}
+      >
+        <Box p={2} className={styles.acceptModal}>
+          <Box mb={1}>
+            <Typography variant="h5" align="center">
+              Confirm
+            </Typography>
+          </Box>
+          <Box mb={1}>
+            <Typography variant="caption" align="center" color="textSecondary">
+              Are you sure, you want to reject this request? this action is
+              irreversible.
+            </Typography>
+          </Box>
+          <Box mt={2}>
+            <Button
+              color="primary"
+              variant="contained"
+              disableElevation
+              disabled={addLoading}
+              onClick={handleRejectConfirm}
+              startIcon={
+                addLoading ? (
+                  <CircularProgress
+                    color="primary"
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                ) : null
+              }
+            >
+              Reject
             </Button>
           </Box>
         </Box>

@@ -49,7 +49,7 @@ const NewCustomer = (props) => {
               alignItems="center"
             >
               <Grid item>
-                <Typography variant="h2" align="center">
+                <Typography variant="h2" align="center" color="textPrimary">
                   Start your journey at Zubstr!
                 </Typography>
               </Grid>

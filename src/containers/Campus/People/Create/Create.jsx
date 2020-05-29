@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -20,15 +20,21 @@ import {
   Link,
 } from "react-router-dom";
 import { ArrowLeft, ChevronDown } from "react-feather";
+import { useDispatch, useSelector } from "react-redux";
 
 import Section from "./Section/Section";
 import ClassComp from "./Class/Class";
 import ClassGroup from "./ClassGroup/ClassGroup";
+import {
+  setBackBtnEnabled,
+  setPageTitle,
+} from "../../../../store/actions/global";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
+    color: theme.palette.text.primary,
   },
   sectionOne: {
     display: "flex",
@@ -39,14 +45,16 @@ const useStyles = makeStyles((theme) => ({
 const Create = (props) => {
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
   const currentPath = useRouteMatch().path;
   let currentCreate = useLocation().pathname;
   currentCreate = currentCreate.split("/").reverse()[0].replace("-", " ");
   console.log(currentCreate);
+  useEffect(() => {
+    dispatch(setPageTitle(`Create ${currentCreate}`));
+    dispatch(setBackBtnEnabled());
+  }, [currentCreate]);
 
-  const handleBack = () => {
-    history.goBack();
-  };
   const handleSelectClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -57,15 +65,16 @@ const Create = (props) => {
   const classes = useStyles();
   return (
     <Box>
-      <Paper>
-        <Box className={classes.container} p={3}>
+      <Box>
+        <Box className={classes.container}>
           <Box className={classes.sectionOne}>
-            <IconButton color="inherit" onClick={handleBack}>
-              <ArrowLeft />
-            </IconButton>
             <Box ml={3} style={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="h5" style={{ textTransform: "capitalize" }}>
-                Create {currentCreate}
+              <Typography
+                variant="h5"
+                style={{ textTransform: "capitalize" }}
+                color="textPrimary"
+              >
+                Change
               </Typography>
               <IconButton
                 color="inherit"
@@ -121,7 +130,7 @@ const Create = (props) => {
             </Switch>
           </Box>
         </Box>
-      </Paper>
+      </Box>
     </Box>
   );
 };

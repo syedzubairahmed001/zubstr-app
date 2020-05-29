@@ -10,7 +10,7 @@ const InstituteNav = props => {
       Icon: Home
     },
     {
-      link: "/i/institutes",
+      link: "/i/campuses",
       tooltip: "Institutes",
       Icon: Grid
     },

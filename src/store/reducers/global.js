@@ -7,7 +7,8 @@ const initailState = {
   isLoading: true,
   currentUrl: null,
   theme: currentTheme,
-  pageTitle: "Zubstr"
+  pageTitle: "Zubstr",
+  isBackBtnEnabled: false,
 };
 
 const reducer = (state = initailState, action) => {
@@ -16,28 +17,38 @@ const reducer = (state = initailState, action) => {
     case actionTypes.SET_GLOBAL_LOADING:
       return {
         ...state,
-        isLoading: true
+        isLoading: true,
       };
     case actionTypes.RESET_GLOBAL_LOADING:
       return {
         ...state,
-        isLoading: false
+        isLoading: false,
       };
     case actionTypes.RESET_GLOBAL_APP_URL:
       return {
         ...state,
-        currentUrl: null
+        currentUrl: null,
       };
     case actionTypes.SET_GLOBAL_APP_URL:
       return {
         ...state,
-        currentUrl: action.url
+        currentUrl: action.url,
+      };
+    case actionTypes.SET_BACK_BTN:
+      return {
+        ...state,
+        isBackBtnEnabled: true,
+      };
+    case actionTypes.RESET_BACK_BTN:
+      return {
+        ...state,
+        isBackBtnEnabled: false,
       };
     case actionTypes.SET_GLOBAL_PAGE_TITLE:
       document.title = action.pageTitle || "Zubstr";
       return {
         ...state,
-        pageTitle: action.pageTitle || "Zubstr"
+        pageTitle: action.pageTitle || "Zubstr",
       };
     case actionTypes.SET_GLOBAL_THEME:
       let theme = action.theme && action.theme.toLowerCase();
@@ -46,7 +57,7 @@ const reducer = (state = initailState, action) => {
       }
       return {
         ...state,
-        theme
+        theme,
       };
     default:
       return state;

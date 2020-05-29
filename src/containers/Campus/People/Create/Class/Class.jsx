@@ -11,20 +11,21 @@ import {
   Button,
   makeStyles,
   InputAdornment,
-  IconButton
+  IconButton,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { Info, ChevronRight, X } from "react-feather";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
+import SearchInput from "../../../../../components/SearchInput/SearchInput";
 
 import { createClass } from "../../../../../store/actions/campus";
 
 const useStyles = makeStyles((theme) => ({
   tipsContainer: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.background.default,
     borderRadius: "1rem",
-    color: "#fff",
+    color: theme.palette.type === "dark" ? "#ccc" : "#555",
   },
   tipsList: {
     display: "flex",
@@ -35,11 +36,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ClassComp = (props) => {
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
   const [noNextClassChecked, setNoNextClass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingNextClass, setLoadingNextClass] = useState(false);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -48,13 +46,29 @@ const ClassComp = (props) => {
     name: { value: "", error: null },
     description: { value: "", error: null },
     location: { value: "", error: null },
-    nexClassId: { value: "", error: null },
+    nextClassId: { value: "", error: null },
   });
+  const initialForm = {
+    name: { value: "", error: null },
+    description: { value: "", error: null },
+    location: { value: "", error: null },
+    nextClassId: { value: "", error: null },
+  };
+
+  const resetForm = () => {
+    setForm(initialForm);
+  };
 
   const { name, description, location, nextClassId } = form;
 
   const handleNoNextChange = (event) => {
     setNoNextClass(event.target.checked);
+  };
+  const handleNextClassChange = (e, newVal) => {
+    setForm((prev) => ({
+      ...prev,
+      nextClassId: { value: newVal.value, error: null },
+    }));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,21 +78,26 @@ const ClassComp = (props) => {
         name: name.value,
         description: description.value,
         location: location.value,
+        nextClassId: nextClassId.value,
       };
       dispatch(createClass(data))
         .then((res) => {
           setLoading(false);
           const { error, data } = res || {};
-
-          if (error) {
+          if (data) {
+            enqueueSnackbar("Class Create", {
+              variant: "success",
+            });
+            resetForm();
+          } else if (error) {
             if (error.msg) {
               enqueueSnackbar(error.msg, {
                 variant: "error",
               });
             } else if (error.type === "validationError") {
-              const { data } = error || {};
+              const { data: errData } = error || {};
 
-              if (data) {
+              if (errData) {
                 Array.isArray(data) &&
                   data.forEach((e) => {
                     setForm((prev) => ({
@@ -183,53 +202,13 @@ const ClassComp = (props) => {
               />
             </Box>
             <Box mb={1}>
-              <Autocomplete
-                id="asynchronous-demo"
+              <SearchInput
+                searchType="class"
+                onChange={handleNextClassChange}
                 disabled={noNextClassChecked}
-                fullWidth
-                open={open}
-                onOpen={() => {
-                  setOpen(true);
-                }}
-                onClose={() => {
-                  setOpen(false);
-                }}
-                getOptionSelected={(option, value) =>
-                  option.name === value.name
-                }
-                getOptionLabel={(option) => option.name}
-                options={options}
+                label="Next Class"
+                placeholder="Type and press search..."
                 noOptionsText="No class found"
-                loading={loadingNextClass}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Next Class"
-                    variant="outlined"
-                    fullWidth
-                    placeholder="Next Class (Required)"
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={() => {}}
-                              onMouseDown={() => {}}
-                            >
-                              <X />
-                            </IconButton>
-                          </InputAdornment>
-                        // <React.Fragment>
-                        //   {loadingNextClass ? (
-                        //     <CircularProgress color="inherit" size={20} />
-                        //   ) : null}
-                        //   {params.InputProps.endAdornment}
-                        // </React.Fragment>
-                      ),
-                    }}
-                  />
-                )}
               />
               <Box
                 mt={0.5}
@@ -244,6 +223,7 @@ const ClassComp = (props) => {
                   <Typography
                     variant="caption"
                     style={{ display: "flex", alignItems: "center" }}
+                    color="textSecondary"
                   >
                     What is Next Class?
                     <Info size={15} style={{ marginLeft: "5px" }} />

@@ -7,9 +7,11 @@ import {
   IconButton,
   makeStyles,
   Avatar,
+  Box,
 } from "@material-ui/core";
-import { Camera, Bell, Sun, Moon } from "react-feather";
+import { Camera, Bell, Sun, Moon, ArrowLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import * as actionTypes from "../../../store/actions/action-types";
 import CampusNav from "../../../components/Navigation/CampusNav/CampusNav";
@@ -19,11 +21,18 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: theme.palette.text.primary,
   },
+  backBtn: {
+    color: theme.palette.text.primary,
+    paddingRight: "1rem",
+    cursor: "pointer",
+  },
 }));
 
 const CampusLayout = (props) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const theme = useSelector((state) => state.global.theme);
+  const backBtnEnabled = useSelector((state) => state.global.isBackBtnEnabled);
   const pageTitle = useSelector((state) => state.global.pageTitle);
   const account = useSelector((state) => state.auth.account);
   const classes = useStyles();
@@ -44,7 +53,16 @@ const CampusLayout = (props) => {
           color="inherit"
           className="ZubstrAppBar"
         >
-          <Toolbar>
+          <Toolbar variant="dense">
+            {backBtnEnabled && (
+              <Box
+                className={classes.backBtn}
+                aria-label="Nell"
+                onClick={() => history.goBack()}
+              >
+                <ArrowLeft size={20} />
+              </Box>
+            )}
             <Typography
               variant="h6"
               style={{ flexGrow: 1, fontWeight: 400 }}

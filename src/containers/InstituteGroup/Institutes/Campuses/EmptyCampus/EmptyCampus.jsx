@@ -44,15 +44,13 @@ const EmptyCampus = (props) => {
         teachers. You can create as many campuses as you want (school, college
         or other)
       </Typography>
+      {/* TODO: add subscription check  */}
       <Box mt={2}>
         {/* TODO: add youtube tutorial */}
         {/* <Button variant="text" color="primary" disableElevation>
           Watch the tutorial
         </Button> */}
-        <Link
-          to="/i/institutes/create-campus"
-          style={{ textDecoration: "none" }}
-        >
+        <Link to="/i/campuses/campus" style={{ textDecoration: "none" }}>
           <Button variant="contained" color="primary" disableElevation>
             Create Campus
           </Button>

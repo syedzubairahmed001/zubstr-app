@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   IconButton,
+  Paper,
   Typography,
   Box,
   TextField,
@@ -14,14 +15,16 @@ import {
   FormHelperText,
   Slider,
   CircularProgress,
+  Avatar,
 } from "@material-ui/core";
 import { ArrowLeft, MapPin, Upload, AlignLeft } from "react-feather";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import ReactAvatarEditor from "react-avatar-editor";
 import Dropzone from "react-dropzone";
 import _ from "lodash";
 import { useSnackbar } from "notistack";
+import { scrollToRefTop } from "../../../../helpers/dom";
 
 import campusTypes from "../../../../constants/campusTypes.json";
 import countries from "../../../../constants/countries.json";
@@ -33,7 +36,10 @@ import {
   uploadCampusProfileImage,
   setCampusShouldLoad,
 } from "../../../../store/actions/instituteGroup";
-import { setPageTitle } from "../../../../store/actions/global";
+import {
+  setPageTitle,
+  setBackBtnEnabled,
+} from "../../../../store/actions/global";
 
 const useStyles = makeStyles((theme) => ({
   gridItem: {
@@ -85,19 +91,23 @@ const CreateCampus = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  let editorContainerRef = useRef(null);
   let reactAvatarRef;
   const setEditorRef = (editor) => {
     reactAvatarRef = editor;
   };
-  useEffect(() => {
-    dispatch(setPageTitle("Create Campus"));
-  }, []);
+  const { state: routeState } = useLocation();
+  const loc = useLocation();
+  const { editData } = routeState || {};
+  const [editCampusId, setEditCampusId] = useState(null);
   const [scale, setScale] = useState(1.4);
   const [upload, setUpload] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [uploadUrl, setUploadUrl] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
   const [rotate, setRotate] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-
   const [form, setForm] = useState({
     name: { value: "", error: null },
     type: { value: "", error: null },
@@ -111,9 +121,85 @@ const CreateCampus = (props) => {
     category: { value: "", error: null },
     landmark: { value: "", error: null },
   });
+
+  useEffect(() => {
+    console.log(loc);
+    dispatch(setBackBtnEnabled());
+    console.log(routeState);
+
+    if (editData) {
+      dispatch(setPageTitle("Edit Campus"));
+      const {
+        _id,
+        name,
+        campusType,
+        email,
+        phone,
+        description,
+        location,
+        category,
+        profileImageUrl,
+      } = editData || {};
+      const { country, state, city, zipCode, landmark } = location || {};
+      if (
+        _id &&
+        name &&
+        campusType &&
+        email &&
+        phone &&
+        description &&
+        country &&
+        state &&
+        city &&
+        zipCode &&
+        landmark
+      ) {
+        setEditCampusId(_id);
+        setIsEditMode(true);
+        if (profileImageUrl) {
+          setImageUrl(profileImageUrl);
+        }
+        setForm({
+          name: { value: name, error: null },
+          type: { value: campusType, error: null },
+          email: { value: email, error: null },
+          phone: { value: phone, error: null },
+          description: { value: description, error: null },
+          country: { value: country, error: null },
+          state: { value: state, error: null },
+          city: { value: city, error: null },
+          zipCode: { value: zipCode, error: null },
+          category: { value: category, error: null },
+          landmark: { value: landmark, error: null },
+        });
+      } else {
+        dispatch(setPageTitle("Create Campus"));
+      }
+    } else {
+      dispatch(setPageTitle("Create Campus"));
+    }
+  }, []);
+
+  const { enqueueSnackbar } = useSnackbar();
+  useEffect(() => {
+    if (upload && editorContainerRef) {
+      scrollToRefTop(editorContainerRef);
+    }
+  }, [upload, editorContainerRef, reactAvatarRef]);
+
   const inputLabel = React.useRef(null);
   const handleDrop = (acceptedFiles) => {
     setUpload(acceptedFiles[0]);
+    setEditorOpen(true);
+  };
+  const handleImageDone = () => {
+    let canvas =
+      reactAvatarRef && reactAvatarRef.getImageScaledToCanvas().toDataURL();
+    setUploadUrl(canvas);
+    fetch(canvas)
+      .then((res) => res.blob())
+      .then((blob) => setImageUrl(window.URL.createObjectURL(blob)));
+    setEditorOpen(false);
   };
   const handleScaleChange = (event, newValue) => {
     setScale(newValue);
@@ -184,8 +270,9 @@ const CreateCampus = (props) => {
       category: category.value,
       landmark: landmark.value,
     };
-    let canvas =
-      reactAvatarRef && reactAvatarRef.getImageScaledToCanvas().toDataURL();
+    if (editCampusId) {
+      body.campusId = editCampusId;
+    }
     if (validate()) {
       setLoading(true);
       dispatch(
@@ -194,11 +281,11 @@ const CreateCampus = (props) => {
         })
       )
         .then((res) => {
-          const { account, error } = res || {};
-          if (account) {
+          const { data, error, success } = res || {};
+          if (success) {
             dispatch(setCampusShouldLoad(true));
-            if (canvas) {
-              fetch(canvas)
+            if (uploadUrl) {
+              fetch(uploadUrl)
                 .then((res) => res.blob())
                 .then((blob) => {
                   const formdata = new FormData();
@@ -206,15 +293,19 @@ const CreateCampus = (props) => {
                   dispatch(
                     uploadCampusProfileImage({
                       body: formdata,
-                      campusId: account._id,
+                      campusId: isEditMode ? editCampusId : data && data._id,
                     })
                   )
                     .then((res) => {
                       setLoading(false);
-                      enqueueSnackbar("Campus created successfully!", {
+                      enqueueSnackbar("Success!", {
                         variant: "success",
                       });
-                      resetData();
+                      if (isEditMode) {
+                        history.goBack();
+                      } else {
+                        resetData();
+                      }
                     })
                     .catch((err) => {
                       setLoading(false);
@@ -228,10 +319,14 @@ const CreateCampus = (props) => {
                 });
             } else {
               setLoading(false);
-              enqueueSnackbar("Campus created successfully!", {
+              enqueueSnackbar("Success!", {
                 variant: "success",
               });
-              resetData();
+              if (isEditMode) {
+                history.goBack();
+              } else {
+                resetData();
+              }
             }
           } else if (error && error.type === "validationError") {
             setLoading(false);
@@ -250,15 +345,17 @@ const CreateCampus = (props) => {
                   },
                 }));
               });
-          } else if(error){
+          } else if (error) {
             setLoading(false);
             enqueueSnackbar(
-              "Opps something went wrong. Please wait for some time and try again",
+              error.msg ||
+                "Opps something went wrong. Please wait for some time and try again",
               { variant: "error" }
             );
           }
         })
         .catch((err) => {
+          setLoading(false);
           enqueueSnackbar(
             "Opps something went wrong. Please wait for some time and try again",
             { variant: "error" }
@@ -301,21 +398,20 @@ const CreateCampus = (props) => {
     return valid;
   };
   return (
-    <Box p={2}>
+    <Paper>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={4}>
           <Grid item container sm={12} md={4} xs={12} direction="column">
-            <Grid item>
-              <IconButton color="inherit" onClick={handleBack}>
-                <ArrowLeft />
-              </IconButton>
-              <Typography variant="h5" style={{ display: "inline-block" }}>
-                Create Campus
-              </Typography>
-            </Grid>
-            <Grid item style={{textAlign: "center"}}>
+            <Grid item style={{ textAlign: "center" }}>
               <Box className={classes.illustration} mb={2}>
-                <Illustration type="campus" withBg />
+                {imageUrl ? (
+                  <Avatar
+                    src={imageUrl}
+                    style={{ width: "150px", height: "150px" }}
+                  />
+                ) : (
+                  <Illustration type="campus" withBg />
+                )}
               </Box>
             </Grid>
             <Grid item>
@@ -324,7 +420,9 @@ const CreateCampus = (props) => {
                   <Box className={classes.subHeading}>
                     <Upload className={classes.icon} />
                     <div>
-                      <Typography variant="subtitle1">Upload Logo</Typography>
+                      <Typography variant="subtitle1" color="textPrimary">
+                        Upload Logo
+                      </Typography>
                       <Typography color="textSecondary" variant="caption">
                         Please upload a .jpeg or .png file
                       </Typography>
@@ -333,9 +431,9 @@ const CreateCampus = (props) => {
                 </Box>
                 <Dropzone
                   onDrop={handleDrop}
-                  disableClick
                   disable={loading}
                   accept={["image/png", "image/jpeg"]}
+                  className={classes.dropZone}
                 >
                   {({ getRootProps, getInputProps }) => (
                     <section>
@@ -348,42 +446,54 @@ const CreateCampus = (props) => {
                           Drag 'n' drop the logo here, or click to select
                         </Typography>
                       </div>
-                      {upload && (
-                        <Box mt={2} className={classes.uploadControls}>
-                          <Box>
-                            <ReactAvatarEditor
-                              width={200}
-                              height={200}
-                              ref={setEditorRef}
-                              borderRadius={100}
-                              style={{ borderRadius: "10px" }}
-                              scale={scale}
-                              image={upload}
-                              rotate={rotate}
-                            />
+                      <Box ref={editorContainerRef}>
+                        {upload && editorOpen && (
+                          <Box mt={2} className={classes.uploadControls}>
+                            <Box>
+                              <ReactAvatarEditor
+                                width={200}
+                                height={200}
+                                ref={setEditorRef}
+                                borderRadius={100}
+                                style={{ borderRadius: "10px" }}
+                                scale={scale}
+                                image={upload}
+                                rotate={rotate}
+                              />
+                            </Box>
+                            <Box ml={2} width={150}>
+                              <Typography>Zoom</Typography>
+                              <Slider
+                                value={scale}
+                                min={1}
+                                step={0.1}
+                                max={10}
+                                onChange={handleScaleChange}
+                                aria-labelledby="continuous-slider"
+                              />
+                              <Typography>Rotate</Typography>
+                              <Slider
+                                value={rotate}
+                                min={0}
+                                step={1}
+                                max={360}
+                                onChange={handleRotateChange}
+                                aria-labelledby="continuous-slider"
+                              />
+                            </Box>
+                            <Box>
+                              <Button
+                                color="primary"
+                                variant="contained"
+                                disableElevation
+                                onClick={handleImageDone}
+                              >
+                                Done
+                              </Button>
+                            </Box>
                           </Box>
-                          <Box ml={2} width={150}>
-                            <Typography>Zoom</Typography>
-                            <Slider
-                              value={scale}
-                              min={1}
-                              step={0.1}
-                              max={10}
-                              onChange={handleScaleChange}
-                              aria-labelledby="continuous-slider"
-                            />
-                            <Typography>Rotate</Typography>
-                            <Slider
-                              value={rotate}
-                              min={0}
-                              step={1}
-                              max={360}
-                              onChange={handleRotateChange}
-                              aria-labelledby="continuous-slider"
-                            />
-                          </Box>
-                        </Box>
-                      )}
+                        )}
+                      </Box>
                     </section>
                   )}
                 </Dropzone>
@@ -401,7 +511,11 @@ const CreateCampus = (props) => {
           >
             <Grid item container direction="column" spacing={2}>
               <Grid item container>
-                <Typography variant="subtitle1" className={classes.subHeading}>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.subHeading}
+                  color="textPrimary"
+                >
                   <AlignLeft className={classes.icon} /> General
                 </Typography>
               </Grid>
@@ -536,7 +650,11 @@ const CreateCampus = (props) => {
             </Grid>
             <Grid item container direction="column" spacing={2}>
               <Grid item>
-                <Typography variant="subtitle1" className={classes.subHeading}>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.subHeading}
+                  color="textPrimary"
+                >
                   <MapPin className={classes.icon} /> Location
                 </Typography>
               </Grid>
@@ -658,13 +776,13 @@ const CreateCampus = (props) => {
                   ) : null
                 }
               >
-                Create Campus
+                {isEditMode ? "Edit Campus" : "Create Campus"}
               </Button>
             </Grid>
           </Grid>
         </Grid>
       </form>
-    </Box>
+    </Paper>
   );
 };
 

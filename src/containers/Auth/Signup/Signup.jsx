@@ -11,7 +11,8 @@ import {
   FormControl,
   InputLabel,
   OutlinedInput,
-  FormHelperText
+  FormHelperText,
+  CircularProgress,
 } from "@material-ui/core";
 import { Eye, EyeOff } from "react-feather";
 import { Redirect, Link, __RouterContext } from "react-router-dom";
@@ -19,38 +20,37 @@ import { useTransition, animated } from "react-spring";
 import { isEmail } from "../../../helpers/validator";
 
 import Box from "@material-ui/core/Box";
-import { signup } from "../../../store/actions/auth"; 
+import { signup } from "../../../store/actions/auth";
 
-const Signup = props => {
+const Signup = (props) => {
   const [form, setForm] = useState({
     name: { value: "", error: false },
     email: { value: "", error: false },
-    phone: { value: "", error: false },
-    password: { value: "", error: false }
+    password: { value: "", error: false },
   });
   const [error, setError] = useState(false);
   const [isShowPassword, setShowPassword] = useState(false);
   const [redirect, setRedirect] = useState(null);
-  const toggleShowPassword = () => setShowPassword(prev => !prev);
+  const toggleShowPassword = () => setShowPassword((prev) => !prev);
   const [toggle, set] = useState(false);
   const dispatch = useDispatch();
-  const isLoading = useSelector(state => state.auth.isLoading);
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
   const formTransitions = useTransition(toggle, null, {
     from: {
       opacity: 0,
-      transform: "translate(-20%,0)"
+      transform: "translate(-20%,0)",
     },
     enter: { opacity: 1, transform: "translate(0%,0)" },
-    leave: { opacity: 0, transform: "translate(20%,0)" }
+    leave: { opacity: 0, transform: "translate(20%,0)" },
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const name = e.target.name,
       value = e.target.value;
-    setForm(prevValue => ({
+    setForm((prevValue) => ({
       ...prevValue,
-      [name]: { value, error: false }
+      [name]: { value, error: false },
     }));
   };
   const validate = () => {
@@ -58,55 +58,43 @@ const Signup = props => {
     let flag = true;
     if (!email.value || email.value === "" || !isEmail(email.value)) {
       flag = false;
-      setForm(prevForm => {
+      setForm((prevForm) => {
         return {
           ...prevForm,
           email: {
             ...prevForm.email,
-            error: "Please enter a valid email"
-          }
+            error: "Please enter a valid email",
+          },
         };
       });
     }
     if (!password.value || password.value === "") {
       flag = false;
-      setForm(prevForm => {
+      setForm((prevForm) => {
         return {
           ...prevForm,
           password: {
             ...prevForm.password,
-            error: "Please enter password"
-          }
+            error: "Please enter password",
+          },
         };
       });
     }
     if (!name.value || name.value === "") {
       flag = false;
-      setForm(prevForm => {
+      setForm((prevForm) => {
         return {
           ...prevForm,
           name: {
             ...prevForm.name,
-            error: "Please enter name"
-          }
-        };
-      });
-    }
-    if (!phone.value || phone.value === "") {
-      flag = false;
-      setForm(prevForm => {
-        return {
-          ...prevForm,
-          phone: {
-            ...prevForm.phone,
-            error: "Please enter phone number"
-          }
+            error: "Please enter name",
+          },
         };
       });
     }
     return flag;
   };
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const { email, password, name, phone } = form;
     if (validate()) {
@@ -114,31 +102,30 @@ const Signup = props => {
         email: email.value,
         password: password.value,
         name: name.value,
-        phone: phone.value
       };
       dispatch(signup(data))
-        .then(res => {
+        .then((res) => {
           if (res.account) {
             return setRedirect("/auth/login");
           } else if (res && res.error) {
             if (res.error.type === "validationError") {
               const data = res.error.data;
               Array.isArray(data) &&
-                data.forEach(e => {
-                  setForm(prevValue => {
+                data.forEach((e) => {
+                  setForm((prevValue) => {
                     return {
                       ...prevValue,
                       [e.param]: {
                         value: prevValue[e.param].value,
-                        error: e.msg
-                      }
+                        error: e.msg,
+                      },
                     };
                   });
                 });
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -163,13 +150,14 @@ const Signup = props => {
               alignItems="center"
               justify="space-around"
             >
-              <Box textAlign="center" m={1}>
+              {/* <Box textAlign="center" m={1}>
                 <Typography variant="h2" style={{ fontSize: "1rem" }}>
-                  Zubstr is an institute network application which lets you connect with students and staff together
+                  Zubstr is an institute network application which lets you
+                  connect with students and staff together
                 </Typography>
-              </Box>
+              </Box> */}
               <Grid item className="w-100">
-                <Box m={1}>
+                <Box m={1} mt={2}>
                   <TextField
                     fullWidth
                     variant="outlined"
@@ -201,7 +189,7 @@ const Signup = props => {
                   />
                 </Box>
               </Grid>
-              <Grid item className="w-100">
+              {/* <Grid item className="w-100">
                 <Box m={1}>
                   <TextField
                     fullWidth
@@ -216,7 +204,7 @@ const Signup = props => {
                     value={phone.value}
                   />
                 </Box>
-              </Grid>
+              </Grid> */}
               <Grid item className="w-100">
                 <Box m={1}>
                   <FormControl variant="outlined" fullWidth>
@@ -237,7 +225,7 @@ const Signup = props => {
                           <IconButton
                             aria-label="toggle password visibility"
                             onClick={toggleShowPassword}
-                            onMouseDown={e => e.preventDefault()}
+                            onMouseDown={(e) => e.preventDefault()}
                           >
                             {isShowPassword ? (
                               <Eye color="#aaa" />
@@ -257,11 +245,32 @@ const Signup = props => {
                       </FormHelperText>
                     )}
                   </FormControl>
-                  {/* TODO add privarcy policy and terms of services */}
                 </Box>
               </Grid>
               <Grid item className="w-100">
-                <Box m={1}>
+                <Box mb={1} style={{ textAlign: "center" }}>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    align="center"
+                  >
+                    By signing up you agree to Zubstr{" "}
+                    <Link style={{ textDecoration: "none" }}>
+                      <Typography color="primary" variant="caption">
+                        Terms of Service
+                      </Typography>
+                    </Link>{" "}
+                    and{" "}
+                    <Link style={{ textDecoration: "none" }}>
+                      <Typography color="primary" variant="caption">
+                        Privacy Policy
+                      </Typography>
+                    </Link>
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item className="w-100">
+                <Box mb={1} mx={1}>
                   <Button
                     type="submit"
                     size="large"
@@ -270,15 +279,23 @@ const Signup = props => {
                     fullWidth
                     color="primary"
                     disableElevation
+                    startIcon={
+                      isLoading ? (
+                        <CircularProgress
+                          color="primary"
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                      ) : null
+                    }
                   >
-                    Create account
+                    Signup
                   </Button>
                 </Box>
               </Grid>
               <Grid item>
                 <Box>
                   <Typography color="textSecondary">
-                    Already a member?{" "}
+                    Already have an account?{" "}
                     <Link to="/auth/login" className="text-decoration-none">
                       <Button
                         type="submit"
