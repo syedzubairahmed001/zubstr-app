@@ -67,7 +67,7 @@ const Create = (props) => {
     <Box>
       <Box>
         <Box className={classes.container}>
-          <Box className={classes.sectionOne}>
+          {/* <Box className={classes.sectionOne}>
             <Box ml={3} style={{ display: "flex", alignItems: "center" }}>
               <Typography
                 variant="h5"
@@ -117,7 +117,7 @@ const Create = (props) => {
                 </MenuItem>
               </Menu>
             </Box>
-          </Box>
+          </Box> */}
           <Box mt={2}>
             <Switch>
               <Route path={currentPath + "/class"} component={ClassComp} />

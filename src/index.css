@@ -16,9 +16,9 @@ html {
   transition: all 0.2s;
 }
 main {
-  margin: 24px;
+  margin: .5rem;
   margin-top: 4.5rem;
-  margin-left: calc(4rem + 24px);
+  margin-left: 4.5rem;
   border-radius: 2rem;
 }
 
@@ -41,7 +41,7 @@ main {
 }
 
 .AnimatedPage {
-  width: calc(100% - (4rem + 48px));
+  width: calc(100% - 5rem);
 }
 .ZubstrAppBar {
   left: 3rem;
@@ -62,13 +62,13 @@ main {
   main {
     margin: 0;
     margin-top: 4.5rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-left: .5rem;
+    margin-right: .5rem;
     border-radius: 2rem;
     background-color: #ccc;
   }
   .AnimatedPage {
-    width: calc(100% - 2rem);
+    width: calc(100% - 1rem);
     margin-bottom: 5rem;
     padding: 0;
   }

@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Card03 = (props) => {
   const styles = useStyles();
-  const { heading } = props || {};
+  const { heading, subHeading } = props || {};
   return (
     <Paper className={styles.container} variant="outlined">
       <Box>
@@ -24,9 +24,11 @@ const Card03 = (props) => {
             {heading}
           </Typography>
         )}
-        <Typography variant="caption" color="textSecondary">
-          Something
-        </Typography>
+        {subHeading && (
+          <Typography variant="caption" color="textSecondary">
+            {subHeading}
+          </Typography>
+        )}
       </Box>
       <Box>
         <Box>hello</Box>

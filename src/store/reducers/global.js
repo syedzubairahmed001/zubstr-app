@@ -9,6 +9,10 @@ const initailState = {
   theme: currentTheme,
   pageTitle: "Zubstr",
   isBackBtnEnabled: false,
+
+  postModal: {
+    open: false,
+  },
 };
 
 const reducer = (state = initailState, action) => {
@@ -58,6 +62,22 @@ const reducer = (state = initailState, action) => {
       return {
         ...state,
         theme,
+      };
+    case actionTypes.SET_POST_MODAL_OPEN:
+      return {
+        ...state,
+        postModal: {
+          ...state.postModal,
+          open: true,
+        },
+      };
+    case actionTypes.RESET_POST_MODAL_OPEN:
+      return {
+        ...state,
+        postModal: {
+          ...state.postModal,
+          open: false,
+        },
       };
     default:
       return state;

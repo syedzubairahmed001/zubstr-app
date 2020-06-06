@@ -27,7 +27,7 @@ const Students = (props) => {
 
   const classCards = data.map((e) => (
     <Grid item md={3} sm={6} xs={12} key={e._id}>
-      <Card03 heading={e.name} />
+      <Card03 heading={e.name} subHeading="class" />
     </Grid>
   ));
 

@@ -16,3 +16,9 @@ export const resetBackBtnEnabled = (data) => (dispatch) =>
   dispatch({
     type: actionTypes.RESET_BACK_BTN,
   });
+
+export const setPostModalOpen = (data) => (dispatch) =>
+  dispatch({ type: actionTypes.SET_POST_MODAL_OPEN });
+
+export const resetPostModalOpen = (data) => (dispatch) =>
+  dispatch({ type: actionTypes.RESET_POST_MODAL_OPEN });

@@ -22,6 +22,7 @@ import { setBackBtnEnabled } from "../../../../store/actions/global";
 const useStyles = makeStyles((theme) => ({
   topContainer: {
     display: "flex",
+    padding: "1rem",
   },
   postsContainer: {
     minHeight: "5rem",
@@ -117,14 +118,13 @@ const ViewCampus = (props) => {
       });
   }, [dispatch]);
   return (
-    <Box p={2} className={styles.width100}>
+    <Box className={styles.width100}>
       {data && (
-        <Box className={styles.topContainer}>
+        <Paper className={styles.topContainer}>
           <Box p={0} className={styles.width100}>
             <Grid container>
               <Grid item md={3} sm={4} xs={12} align="center">
                 <Box className={styles.headContainer}>
-                  s
                   <Box className={styles.avatarContainer}>
                     <Box className={styles.avatar}>
                       {data.profileImageUrl ? (
@@ -216,7 +216,7 @@ const ViewCampus = (props) => {
               </IconButton> */}
                 </Box>
               </Grid>
-              <Grid
+              {/* <Grid
                 item
                 md={3}
                 sm={12}
@@ -226,13 +226,13 @@ const ViewCampus = (props) => {
                 <Box mx={1}>
                   <Paper variant="outlined">hello</Paper>
                 </Box>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
-        </Box>
+        </Paper>
       )}
       {loading && !data && (
-        <Box className={styles.topContainer}>
+        <Paper className={styles.topContainer}>
           <Box p={0} className={styles.width100}>
             <Grid container>
               <Grid item md={3} sm={4} xs={12} align="center">
@@ -326,7 +326,7 @@ const ViewCampus = (props) => {
               </Grid>
             </Grid>
           </Box>
-        </Box>
+        </Paper>
       )}
     </Box>
   );

@@ -42,7 +42,7 @@ const DisplayRequests = ({ type, onAcceptClick, onRejectClick }) => {
     studentRequests.length > 0 &&
     studentRequests.forEach((e) =>
       requestsCards.push(
-        <Grid item md={4} key={e._id}>
+        <Grid item md={3} key={e._id} sm={6} xs={12}>
           <RequestCard
             msg={e.msg}
             requestId={e._id}
@@ -63,7 +63,7 @@ const DisplayRequests = ({ type, onAcceptClick, onRejectClick }) => {
     teacherRequests.length > 0 &&
     teacherRequests.forEach((e) =>
       requestsCards.push(
-        <Grid item md={4} key={e._id}>
+        <Grid item md={3} key={e._id} sm={6} xs={12}>
           <RequestCard
             msg={e.msg}
             requestId={e._id}
@@ -95,10 +95,10 @@ const DisplayRequests = ({ type, onAcceptClick, onRejectClick }) => {
 const LoadingRequests = (props) => {
   return (
     <Grid container spacing={2}>
-      <Grid item md={4}>
+      <Grid item md={3} sm={6} xs={12}>
         <RequestCard loading />
       </Grid>
-      <Grid item md={4}>
+      <Grid item md={3} sm={6} xs={12}>
         <RequestCard loading />
       </Grid>
     </Grid>

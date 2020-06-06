@@ -134,10 +134,16 @@ const Requests = (props) => {
       setAddLoading(true);
       const data = { requestId, classId: classId.value };
       dispatch(acceptStudentRequest(data))
-        .then(() => {
+        .then((res) => {
           setAddLoading(false);
           setStudentAcceptReqOpen(false);
-          enqueueSnackbar("Student added", { variant: "success" });
+          if (res.data) {
+            enqueueSnackbar("Student added", { variant: "success" });
+          } else {
+            enqueueSnackbar("Something went wrong, please try again", {
+              variant: "error",
+            });
+          }
         })
         .catch(() => setAddLoading(false));
     } else if (!classId || !classId.value) {
@@ -154,10 +160,10 @@ const Requests = (props) => {
       if (personType.value === "student") {
         setAddLoading(true);
         dispatch(rejectStudentRequest(data))
-        .then(() => {
-          setAddLoading(false);
-          setRejectOpen(false);
-        })
+          .then(() => {
+            setAddLoading(false);
+            setRejectOpen(false);
+          })
           .catch(() => setAddLoading(false));
       } else if (personType.value === "teacher") {
         setAddLoading(true);
@@ -397,12 +403,22 @@ const Requests = (props) => {
             </Typography>
           </Box>
           <Box mb={1}>
-            <Typography variant="caption" align="center" color="textSecondary">
+            <Typography variant="body1" align="center" color="textSecondary">
               Are you sure, you want to reject this request? this action is
               irreversible.
             </Typography>
           </Box>
           <Box mt={2}>
+            <Button
+              color="primary"
+              variant="text"
+              disableElevation
+              disabled={addLoading}
+              style={{ marginRight: "1rem" }}
+              onClick={() => setRejectOpen(false)}
+            >
+              Cancel
+            </Button>
             <Button
               color="primary"
               variant="contained"
