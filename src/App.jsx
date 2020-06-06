@@ -20,6 +20,7 @@ import { authCheckState, getAccount } from "./store/actions/auth";
 import Auth from "./containers/Auth/Auth";
 import Public from "./containers/Public/Public";
 import AppLoading from "./components/AppLoading/AppLoading";
+import PostModal from "./components/PostModal/PostModal";
 
 const Campus = lazy(() => import("./containers/Campus/Campus"));
 const InstituteGroup = lazy(() =>
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.success.main,
   },
   errorSnackbar: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: "blue",
   },
 }));
 const App = (props) => {
@@ -101,6 +102,7 @@ const App = (props) => {
                   <Redirect to="/i/dashboard" />
                 )}
               </Switch>
+              <PostModal />
             </>
           );
           break;
@@ -116,6 +118,7 @@ const App = (props) => {
                   <Redirect to="/c/dashboard" />
                 )}
               </Switch>
+              <PostModal />
             </>
           );
           break;
@@ -159,6 +162,7 @@ const App = (props) => {
       }
     }
   }
+
   const theme = currentTheme === "dark" ? darkTheme : lightTheme;
   const classes = useStyles();
   return (
@@ -190,6 +194,7 @@ const App = (props) => {
       >
         <div className={currentTheme === "dark" ? "dark-bg App" : "App"}>
           {routes}
+
           <InternetConnectionAlerter />
         </div>
       </SnackbarProvider>

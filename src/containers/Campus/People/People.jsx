@@ -5,6 +5,7 @@ import {
   Paper,
   Typography,
   Box,
+  Divider,
   Grid,
   Dialog,
   DialogContent,
@@ -20,7 +21,7 @@ import {
 
 import Requests from "./Requests/Requests";
 import ToolBar from "./ToolBar/Toolbar";
-import Students from "./Students/Students";
+import Classes from "./Classes/Classes";
 import Teachers from "./Teachers/Teachers";
 import Create from "./Create/Create";
 
@@ -59,22 +60,24 @@ const InstituteTabs = (props) => {
         onCloseBtnClick={handleRequestsClose}
       />
       <ToolBar onRequestsBtnClick={handleRequestsOpen} />
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        // centered
-      >
-        <Tab label="Students" />
-        <Tab label="Teachers" />
-      </Tabs>
-      <TabPanel value={value} index={0}>
-        <Students />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <Teachers />
-      </TabPanel>
+      <Paper>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          // centered
+        >
+          <Tab label="Classes" />
+          <Tab label="Teachers" />
+        </Tabs>
+        <TabPanel value={value} index={0}>
+          <Classes />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <Teachers />
+        </TabPanel>
+      </Paper>
     </>
   );
 };
@@ -83,13 +86,13 @@ const People = (props) => {
   const currentPath = useRouteMatch().path;
   return (
     <Box>
-      <Paper elevation={0}>
+      <Box>
         <Switch>
           <Route path={currentPath + "/create"} component={Create} />
           <Route path={currentPath} exact component={InstituteTabs} />
           <Redirect to={currentPath} />
         </Switch>
-      </Paper>
+      </Box>
     </Box>
   );
 };

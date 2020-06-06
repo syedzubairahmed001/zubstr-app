@@ -28,7 +28,7 @@ const Campuses = (props) => {
         })
         .catch((err) => console.log(err));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -39,21 +39,6 @@ const Campuses = (props) => {
       )}
     </>
   );
-  // return (
-  //   <Grid container spacing={2}>
-  //     <Grid item md={3} sm={12} xs={12}>
-  //       <CampusCard isAdd link="/i/institutes/create-campus" />
-  //     </Grid>
-  //     <Grid item md={3} sm={12} xs={12}>
-  //       <CampusCard link="/i/dashboard" />
-  //     </Grid>
-  //     <Grid item md={3} sm={12} xs={12}>
-  //       <CampusCard skeleton />
-  //     </Grid>
-  //   </Grid>
-  // );
-  // return <EmptyCampus />;
-  return <LoadingCampus />;
 };
 
 export default Campuses;

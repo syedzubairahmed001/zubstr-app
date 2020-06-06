@@ -5,13 +5,14 @@ import {
   Switch,
   useRouteMatch,
   useLocation,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 
 import Campuses from "./Campuses/Campuses";
 import CreateCampus from "./CreateCampus/CreateCampus";
+import ViewCampus from "./ViewCampus/ViewCampus";
 
-const TabPanel = props => {
+const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
   return (
     <Typography
@@ -21,18 +22,18 @@ const TabPanel = props => {
       id={index}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && <Box pt={3}>{children}</Box>}
     </Typography>
   );
 };
 
-const InstituteTabs = props => {
+const InstituteTabs = (props) => {
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   return (
-    <>
+    <Box>
       <Tabs
         value={value}
         onChange={handleChange}
@@ -49,25 +50,26 @@ const InstituteTabs = props => {
       <TabPanel value={value} index={1}>
         Principals
       </TabPanel>
-    </>
+    </Box>
   );
 };
 
-const Institutes = props => {
+const Institutes = (props) => {
   const currentPath = useRouteMatch().path;
-  
+
   return (
     <Box>
-      <Paper elevation={0}>
+      <Box>
         <Switch>
+          <Route path={currentPath + "/campus"} component={CreateCampus} />
           <Route
-            path={currentPath + "/create-campus"}
-            component={CreateCampus}
+            path={currentPath + "/view/:campusId"}
+            component={ViewCampus}
           />
           <Route path={currentPath} exact component={InstituteTabs} />
           <Redirect to={currentPath} />
         </Switch>
-      </Paper>
+      </Box>
     </Box>
   );
 };

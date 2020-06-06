@@ -46,20 +46,21 @@ const theme = createMuiTheme({
     tonalOffset: 0.2,
     background: {
       paper: "#fff",
+      default: "#f7f7f7",
     },
     common: {
-      black: "#333",
+      black: "#222",
       white: "#fff",
     },
     text: {
-      primary: "#333",
+      primary: "#222",
     },
   },
   overrides: {
     MuiAppBar: {
       positionFixed: {
         backdropFilter: "saturate(180%) blur(20px)",
-        backgroundColor: "rgba(255, 255, 255, 0)",
+        backgroundColor: "#fff",
       },
     },
     MuiTooltip: {
@@ -91,7 +92,7 @@ const theme = createMuiTheme({
     },
     MuiPaper: {
       elevation1: {
-        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+        boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
       },
     },
     MuiFormHelperText: {

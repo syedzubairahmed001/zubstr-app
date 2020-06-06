@@ -1,7 +1,14 @@
 import * as actionTypes from "../actions/action-types";
 
 const initailState = {
-  classes: {},
+  classes: {
+    data: [],
+    count: 0,
+    loadedOnce: false,
+    from: 0,
+    limit: 10,
+    loading: false,
+  },
   requests: {
     student: {
       isLoadedOnce: false,
@@ -68,6 +75,41 @@ const reducer = (state = initailState, action) => {
           },
         },
       };
+    case actionTypes.REQUEST__TEACHER_JOIN_REQUESTS:
+      return {
+        ...state,
+        requests: {
+          ...state.requests,
+          teacher: {
+            ...state.requests.teacher,
+            isLoading: true,
+          },
+        },
+      };
+    case actionTypes.ERROR__TEACHER_JOIN_REQUESTS:
+      return {
+        ...state,
+        requests: {
+          ...state.requests,
+          teacher: {
+            ...state.requests.teacher,
+            isLoading: false,
+          },
+        },
+      };
+    case actionTypes.SUCCESS__TEACHER_JOIN_REQUESTS:
+      return {
+        ...state,
+        requests: {
+          ...state.requests,
+          teacher: {
+            ...state.requests.teacher,
+            isLoadedOnce: true,
+            data: [...state.requests.teacher.data, ...data.data],
+            isLoading: false,
+          },
+        },
+      };
     case actionTypes.SUCCESS__ACCEPT_STUDENT_ADMISSION_REQUEST:
       if (data.data && data.data.requestId) {
         let newReqArr = state.requests.student.data.filter((e) => {
@@ -78,6 +120,43 @@ const reducer = (state = initailState, action) => {
           requests: {
             ...state.requests,
             student: { ...state.requests.student, data: newReqArr },
+          },
+        };
+      }
+      return { ...state };
+    case actionTypes.SUCCESS__REJECT_STUDENT_ADMISSION_REQUEST:
+      if (data.data && data.data._id) {
+        let newReqArr = state.requests.student.data.filter((e) => {
+          return e._id !== data.data._id;
+        });
+        return {
+          ...state,
+          requests: {
+            ...state.requests,
+            student: { ...state.requests.student, data: newReqArr },
+          },
+        };
+      }
+      return { ...state };
+    case actionTypes.SUCCESS__GET_CLASSES:
+      if (data.data) {
+        if (state.classes.loadedOnce) {
+          let newArr = [...state.classes.data, ...data.data];
+          return {
+            ...state,
+            classes: {
+              ...state.classes,
+              data: newArr,
+              loadedOnce: true,
+            },
+          };
+        }
+        return {
+          ...state,
+          classes: {
+            ...state.classes,
+            data: data.data,
+            loadedOnce: true,
           },
         };
       }

@@ -7,9 +7,11 @@ import {
   IconButton,
   makeStyles,
   Avatar,
+  Box,
 } from "@material-ui/core";
-import { Camera, Bell, Sun, Moon } from "react-feather";
+import { Camera, Bell, Sun, Moon, ArrowLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import * as actionTypes from "../../../store/actions/action-types";
 import InstituteGroupNav from "../../../components/Navigation/InstituteGroupNav/InstituteGroupNav";
@@ -19,10 +21,17 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: theme.palette.text.primary,
   },
+  backBtn: {
+    color: theme.palette.text.primary,
+    paddingRight: "1rem",
+    cursor: "pointer",
+  },
 }));
 
 const InstituteGroupLayout = (props) => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const backBtnEnabled = useSelector((state) => state.global.isBackBtnEnabled);
   const theme = useSelector((state) => state.global.theme);
   const pageTitle = useSelector((state) => state.global.pageTitle);
   const account = useSelector((state) => state.auth.account);
@@ -45,6 +54,15 @@ const InstituteGroupLayout = (props) => {
           className="ZubstrAppBar"
         >
           <Toolbar>
+            {backBtnEnabled && (
+              <Box
+                className={classes.backBtn}
+                aria-label="Nell"
+                onClick={() => history.goBack()}
+              >
+                <ArrowLeft size={20} />
+              </Box>
+            )}
             <Typography
               variant="h6"
               style={{ flexGrow: 1, fontWeight: 400 }}

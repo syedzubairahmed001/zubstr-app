@@ -15,14 +15,23 @@ const College = props => {
     from: {
       position: "absolute",
       opacity: 0,
-      transform: "translate(100%,0)",
-      padding: "1rem"
+      // transform: "translate(100%,0)",
+      transform: "scale(1.2)",
+      // padding: "1rem",
     },
-    enter: { opacity: 1, transform: "translate(0%,0)" },
-    leave: { opacity: 0, transform: "translate(-50%,0)" },
+    enter: {
+      opacity: 1,
+      // transform: "translate(0%,0)",
+      transform: "scale(1)",
+    },
+    leave: {
+      opacity: 0,
+      // transform: "translate(-50%,0)",
+      transform: "scale(1.2)",
+    },
     config: {
-      friction: 20
-    }
+      friction: 20,
+    },
   });
 
   return (
@@ -32,7 +41,7 @@ const College = props => {
           <animated.div key={key} style={props} className="AnimatedPage">
             <Switch location={item}>
               <Route path="/i/dashboard" component={Dashboard} />
-              <Route path="/i/institutes" component={Institutes} />
+              <Route path="/i/campuses" component={Institutes} />
               <Route path="/i/subscription" component={Subscription} />
               <Route path="/i/settings" component={Settings} />
               <Redirect to="/i/dashboard" />

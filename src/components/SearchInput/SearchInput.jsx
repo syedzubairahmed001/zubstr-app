@@ -8,7 +8,19 @@ import { searchClasses } from "../../store/actions/campus";
 
 const SearchInput = (props) => {
   const dispatch = useDispatch();
-  const { type, onChange } = props;
+  const {
+    searchType,
+    onChange,
+    multiple,
+    name,
+    disabled,
+    label,
+    noOptionsText,
+    placeholder,
+    error,
+    helperText,
+    ...remProps
+  } = props;
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = useState(false);
@@ -16,30 +28,33 @@ const SearchInput = (props) => {
 
   const handleSearch = () => {
     if (inputValue) {
-      setLoading(true);
-      dispatch(searchClasses({ query: inputValue }))
-        .then((res) => {
-          setLoading(false);
-          if (res.data) {
-            setOpen(true);
-            let dataOptions =
-              Array.isArray(res.data) &&
-              res.data.map((e) => ({ name: e.name, value: e._id }));
-            setOptions(dataOptions);
-          }
-        })
-        .catch((err) => {
-          setLoading(false);
-          console.error(err);
-        });
+      if (searchType === "class") {
+        setLoading(true);
+        dispatch(searchClasses({ query: inputValue }))
+          .then((res) => {
+            setLoading(false);
+            if (res.data) {
+              setOpen(true);
+              let dataOptions =
+                Array.isArray(res.data) &&
+                res.data.map((e) => ({ name: e.name, value: e._id }));
+              setOptions(dataOptions);
+            }
+          })
+          .catch((err) => {
+            setLoading(false);
+            console.error(err);
+          });
+      }
     }
   };
 
   return (
     <Autocomplete
       id="asynchronous-demo"
-      //   disabled={noNextClassChecked}
       fullWidth
+      {...remProps}
+      disabled={disabled}
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -51,28 +66,36 @@ const SearchInput = (props) => {
       onClose={() => {
         setOpen(false);
       }}
+      multiple={multiple}
       getOptionSelected={(option, value) => option.name === value.name}
       getOptionLabel={(option) => option.name}
       options={options}
       disableClearable
-      noOptionsText="No class found"
+      noOptionsText={noOptionsText || "No Options"}
       loading={loading}
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Next Class"
+          label={label}
+          name={name}
+          error={error}
+          helperText={helperText}
           variant="outlined"
           fullWidth
-          placeholder="Next Class (Required)"
+          placeholder={placeholder || "Type and press search..."}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
                 {loading ? (
-                  <CircularProgress color="inherit" size={20} />
+                  <CircularProgress color="inherit" size={25} />
                 ) : (
-                  <IconButton onClick={handleSearch}>
-                    <Search />
+                  <IconButton
+                    onClick={handleSearch}
+                    style={{ padding: "5px" }}
+                    disabled={disabled}
+                  >
+                    <Search size={25} />
                   </IconButton>
                 )}
                 {params.InputProps.endAdornment}

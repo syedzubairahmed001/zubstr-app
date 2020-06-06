@@ -10,7 +10,7 @@ import {
   Typography,
   LinearProgress,
   Snackbar,
-  Slide
+  Slide,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import {
@@ -19,34 +19,32 @@ import {
   Switch,
   useLocation,
   useRouteMatch,
-  __RouterContext
+  __RouterContext,
 } from "react-router-dom";
 import EmailVerification from "./EmailVerification/EmailVerification";
-const Auth = props => {
-  const isAuth = useSelector(state => state.auth.isAuth);
-  const isLoading = useSelector(state => state.auth.isLoading);
-  const error = useSelector(state => state.auth.error);
-  const success = useSelector(state => state.auth.success);
+import ResetPassword from "./ResetPassword/ResetPassword";
+const Auth = (props) => {
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const isLoading = useSelector((state) => state.auth.isLoading);
+  const error = useSelector((state) => state.auth.error);
+  const success = useSelector((state) => state.auth.success);
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const p = useLocation().pathname;
-  const redirect =
-    p.indexOf("login") > -1 ||
-    p.indexOf("signup") > -1 ||
-    p.indexOf("verify-email") > -1 ? null : (
-      <Redirect to="/auth/login" />
-    );
 
   const { location } = useContext(__RouterContext);
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      {redirect}
       <Switch>
         <Route
           path="/public/verify-email/:token"
           component={EmailVerification}
         />
+        <Route
+          path="/public/reset-password/:token"
+          component={ResetPassword}
+        />
+        <Redirect to="/auth/login" />
       </Switch>
     </div>
   );

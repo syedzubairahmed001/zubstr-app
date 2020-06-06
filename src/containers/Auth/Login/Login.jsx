@@ -1,5 +1,5 @@
 import React, { Component, Fragment, useContext, useState } from "react";
-import Helmet from 'react-helmet';
+import Helmet from "react-helmet";
 import { useSelector, useDispatch } from "react-redux";
 import {
   TextField,
@@ -14,6 +14,7 @@ import {
   InputLabel,
   OutlinedInput,
   FormHelperText,
+  CircularProgress,
 } from "@material-ui/core";
 import { Eye, EyeOff } from "react-feather";
 import { Redirect, Link, __RouterContext } from "react-router-dom";
@@ -22,35 +23,35 @@ import { isEmail } from "../../../helpers/validator";
 
 import Box from "@material-ui/core/Box";
 import classes from "../auth.module.scss";
-import { login, setAuthError} from "../../../store/actions/auth"; 
+import { login, setAuthError } from "../../../store/actions/auth";
 
-const Login = props => {
+const Login = (props) => {
   const [form, setForm] = useState({
     email: { value: "", error: false },
-    password: { value: "", error: false }
+    password: { value: "", error: false },
   });
   const [error, setError] = useState(false);
   const [isShowPassword, setShowPassword] = useState(false);
-  const toggleShowPassword = () => setShowPassword(prev => !prev);
+  const toggleShowPassword = () => setShowPassword((prev) => !prev);
   const [toggle, set] = useState(false);
   const dispatch = useDispatch();
-  const isLoading = useSelector(state => state.auth.isLoading);
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
   const formTransitions = useTransition(toggle, null, {
     from: {
       opacity: 0,
-      transform: "translate(20%,0)"
+      transform: "translate(20%,0)",
     },
     enter: { opacity: 1, transform: "translate(0%,0)" },
-    leave: { opacity: 0, transform: "translate(-20%,0)" }
+    leave: { opacity: 0, transform: "translate(-20%,0)" },
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const name = e.target.name,
       value = e.target.value;
-    setForm(prevValue => ({
+    setForm((prevValue) => ({
       ...prevValue,
-      [name]: { value, error: false }
+      [name]: { value, error: false },
     }));
   };
   const validate = () => {
@@ -58,57 +59,57 @@ const Login = props => {
     let flag = true;
     if (!email.value || email.value === "" || !isEmail(email.value)) {
       flag = false;
-      setForm(prevForm => {
+      setForm((prevForm) => {
         return {
           ...prevForm,
           email: {
             ...prevForm.email,
-            error: "Please enter a valid email"
-          }
+            error: "Please enter a valid email",
+          },
         };
       });
     }
     if (!password.value || password.value === "") {
       flag = false;
-      setForm(prevForm => {
+      setForm((prevForm) => {
         return {
           ...prevForm,
           password: {
             ...prevForm.password,
-            error: "Please enter password"
-          }
+            error: "Please enter password",
+          },
         };
       });
     }
 
     return flag;
   };
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const { email, password } = form;
     if (validate()) {
       const data = { email: email.value, password: password.value };
       dispatch(login(data))
-        .then(res => {
+        .then((res) => {
           if (res && res.error) {
             if (res.error.type === "validationError") {
               const data = res.error.data;
               Array.isArray(data) &&
-                data.forEach(e => {
-                  setForm(prevValue => {
+                data.forEach((e) => {
+                  setForm((prevValue) => {
                     return {
                       ...prevValue,
                       [e.param]: {
                         value: prevValue[e.param].value,
-                        error: e.msg
-                      }
+                        error: e.msg,
+                      },
                     };
                   });
                 });
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           setError("Something is wrong, please try again");
         });
     }
@@ -116,7 +117,7 @@ const Login = props => {
   const { email, password } = form;
   return (
     <>
-    <Helmet>
+      <Helmet>
         <title>Zubstr Login</title>
         <meta
           name="description"
@@ -133,7 +134,9 @@ const Login = props => {
               justify="space-around"
             >
               <Box textAlign="center" m={1}>
-              <Typography variant="h2" style={{fontSize: '1rem'}} >Welcome back! Login to your existing Zubstr account</Typography>
+                <Typography variant="h2" style={{ fontSize: "1rem" }}>
+                  Welcome back! Login to your existing Zubstr account
+                </Typography>
               </Box>
               <Grid item className="w-100">
                 <Box m={1}>
@@ -155,7 +158,11 @@ const Login = props => {
               <Grid item className="w-100">
                 <Box m={1}>
                   <FormControl variant="outlined" fullWidth>
-                    <InputLabel htmlFor="password" error={!!password.error} disabled={isLoading}>
+                    <InputLabel
+                      htmlFor="password"
+                      error={!!password.error}
+                      disabled={isLoading}
+                    >
                       Password
                     </InputLabel>
                     <OutlinedInput
@@ -172,7 +179,7 @@ const Login = props => {
                           <IconButton
                             aria-label="toggle password visibility"
                             onClick={toggleShowPassword}
-                            onMouseDown={e => e.preventDefault()}
+                            onMouseDown={(e) => e.preventDefault()}
                           >
                             {isShowPassword ? (
                               <Eye color="#aaa" />
@@ -192,10 +199,17 @@ const Login = props => {
                       </FormHelperText>
                     )}
                   </FormControl>
-                  <Typography style={{fontSize: '.7rem'}} >Forgot password?</Typography> {/* TODO: forget password api logic */}
+                  <Link to="/auth/reset-password">
+                    <Typography
+                      style={{ fontSize: ".7rem", display: "inline-block" }}
+                      color="textSecondary"
+                    >
+                      Forgot password?
+                    </Typography>{" "}
+                  </Link>
                 </Box>
               </Grid>
-              <Grid item className="w-100"> 
+              <Grid item className="w-100">
                 <Box m={1}>
                   <Button
                     type="submit"
@@ -205,6 +219,14 @@ const Login = props => {
                     fullWidth
                     color="primary"
                     disableElevation
+                    startIcon={
+                      isLoading ? (
+                        <CircularProgress
+                          color="primary"
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                      ) : null
+                    }
                   >
                     Login
                   </Button>
@@ -212,7 +234,7 @@ const Login = props => {
               </Grid>
               <Grid item>
                 <Box>
-                  <Typography color="textSecondary" >
+                  <Typography color="textSecondary">
                     Don't have an account?{" "}
                     <Link to="/auth/signup" className="text-decoration-none">
                       <Button

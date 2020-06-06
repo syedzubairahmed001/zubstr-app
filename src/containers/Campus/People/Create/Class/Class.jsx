@@ -11,20 +11,22 @@ import {
   Button,
   makeStyles,
   InputAdornment,
-  IconButton
+  IconButton,
+  Paper,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { Info, ChevronRight, X } from "react-feather";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
+import SearchInput from "../../../../../components/SearchInput/SearchInput";
 
 import { createClass } from "../../../../../store/actions/campus";
 
 const useStyles = makeStyles((theme) => ({
   tipsContainer: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.background.default,
     borderRadius: "1rem",
-    color: "#fff",
+    color: theme.palette.type === "dark" ? "#ccc" : "#555",
   },
   tipsList: {
     display: "flex",
@@ -35,11 +37,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ClassComp = (props) => {
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
   const [noNextClassChecked, setNoNextClass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingNextClass, setLoadingNextClass] = useState(false);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -48,13 +47,29 @@ const ClassComp = (props) => {
     name: { value: "", error: null },
     description: { value: "", error: null },
     location: { value: "", error: null },
-    nexClassId: { value: "", error: null },
+    nextClassId: { value: "", error: null },
   });
+  const initialForm = {
+    name: { value: "", error: null },
+    description: { value: "", error: null },
+    location: { value: "", error: null },
+    nextClassId: { value: "", error: null },
+  };
+
+  const resetForm = () => {
+    setForm(initialForm);
+  };
 
   const { name, description, location, nextClassId } = form;
 
   const handleNoNextChange = (event) => {
     setNoNextClass(event.target.checked);
+  };
+  const handleNextClassChange = (e, newVal) => {
+    setForm((prev) => ({
+      ...prev,
+      nextClassId: { value: newVal.value, error: null },
+    }));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,21 +79,26 @@ const ClassComp = (props) => {
         name: name.value,
         description: description.value,
         location: location.value,
+        nextClassId: nextClassId.value,
       };
       dispatch(createClass(data))
         .then((res) => {
           setLoading(false);
           const { error, data } = res || {};
-
-          if (error) {
+          if (data) {
+            enqueueSnackbar("Class Create", {
+              variant: "success",
+            });
+            resetForm();
+          } else if (error) {
             if (error.msg) {
               enqueueSnackbar(error.msg, {
                 variant: "error",
               });
             } else if (error.type === "validationError") {
-              const { data } = error || {};
+              const { data: errData } = error || {};
 
-              if (data) {
+              if (errData) {
                 Array.isArray(data) &&
                   data.forEach((e) => {
                     setForm((prev) => ({
@@ -133,150 +153,115 @@ const ClassComp = (props) => {
   return (
     <Grid container justify="center" spacing={2}>
       <Grid item md={6} sm={12}>
-        <form onSubmit={handleSubmit}>
-          <Box>
-            <Box mb={1}>
-              <TextField
-                label="Name"
-                error={!!name.error}
-                helperText={name.error}
-                value={name.value}
-                onChange={handleInputChange}
-                disabled={loading}
-                variant="outlined"
-                placeholder="Class Name (Required)"
-                color="primary"
-                name="name"
-                fullWidth
-              />
-            </Box>
-            <Box mb={1}>
-              <TextField
-                error={!!description.error}
-                helperText={description.error}
-                value={description.value}
-                onChange={handleInputChange}
-                disabled={loading}
-                label="Description"
-                variant="outlined"
-                placeholder="Some description about the class  (Optional)"
-                color="primary"
-                fullWidth
-                multiline
-                rows={4}
-                name="description"
-              />
-            </Box>
-            <Box mb={1}>
-              <TextField
-                error={!!location.error}
-                helperText={location.error}
-                value={location.value}
-                onChange={handleInputChange}
-                disabled={loading}
-                label="Location"
-                variant="outlined"
-                placeholder="eg: First floor, Room no 2 (Optional)"
-                color="primary"
-                fullWidth
-                name="location"
-              />
-            </Box>
-            <Box mb={1}>
-              <Autocomplete
-                id="asynchronous-demo"
-                disabled={noNextClassChecked}
-                fullWidth
-                open={open}
-                onOpen={() => {
-                  setOpen(true);
-                }}
-                onClose={() => {
-                  setOpen(false);
-                }}
-                getOptionSelected={(option, value) =>
-                  option.name === value.name
-                }
-                getOptionLabel={(option) => option.name}
-                options={options}
-                noOptionsText="No class found"
-                loading={loadingNextClass}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Next Class"
-                    variant="outlined"
-                    fullWidth
-                    placeholder="Next Class (Required)"
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={() => {}}
-                              onMouseDown={() => {}}
-                            >
-                              <X />
-                            </IconButton>
-                          </InputAdornment>
-                        // <React.Fragment>
-                        //   {loadingNextClass ? (
-                        //     <CircularProgress color="inherit" size={20} />
-                        //   ) : null}
-                        //   {params.InputProps.endAdornment}
-                        // </React.Fragment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-              <Box
-                mt={0.5}
-                mb={0}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <Tooltip
-                  title="After passing final exams, students of this class will be promoted to specified next class"
-                  aria-label="add"
-                  arrow
-                >
-                  <Typography
-                    variant="caption"
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    What is Next Class?
-                    <Info size={15} style={{ marginLeft: "5px" }} />
-                  </Typography>
-                </Tooltip>
+        <Paper>
+          <form onSubmit={handleSubmit}>
+            <Box p={2}>
+              <Box mb={1}>
+                <TextField
+                  label="Name"
+                  error={!!name.error}
+                  helperText={name.error}
+                  value={name.value}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  variant="outlined"
+                  placeholder="Class Name (Required)"
+                  color="primary"
+                  name="name"
+                  fullWidth
+                />
               </Box>
+              <Box mb={1}>
+                <TextField
+                  error={!!description.error}
+                  helperText={description.error}
+                  value={description.value}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  label="Description"
+                  variant="outlined"
+                  placeholder="Some description about the class  (Optional)"
+                  color="primary"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  name="description"
+                />
+              </Box>
+              <Box mb={1}>
+                <TextField
+                  error={!!location.error}
+                  helperText={location.error}
+                  value={location.value}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  label="Location"
+                  variant="outlined"
+                  placeholder="eg: First floor, Room no 2 (Optional)"
+                  color="primary"
+                  fullWidth
+                  name="location"
+                />
+              </Box>
+              <Box mb={1}>
+                <SearchInput
+                  searchType="class"
+                  onChange={handleNextClassChange}
+                  disabled={noNextClassChecked}
+                  label="Next Class"
+                  placeholder="Type and press search..."
+                  noOptionsText="No class found"
+                />
+                <Box
+                  mt={0.5}
+                  mb={0}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Tooltip
+                    title="After passing final exams, students of this class will be promoted to specified next class"
+                    aria-label="add"
+                    arrow
+                  >
+                    <Typography
+                      variant="caption"
+                      style={{ display: "flex", alignItems: "center" }}
+                      color="textSecondary"
+                    >
+                      What is Next Class?
+                      <Info size={15} style={{ marginLeft: "5px" }} />
+                    </Typography>
+                  </Tooltip>
+                </Box>
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={noNextClassChecked}
-                    onChange={handleNoNextChange}
-                    name="noNextClassCheck"
-                    color="primary"
-                  />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={noNextClassChecked}
+                      onChange={handleNoNextChange}
+                      name="noNextClassCheck"
+                      color="primary"
+                    />
+                  }
+                  label="There is no next class for this class"
+                />
+              </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                disableElevation
+                type="submit"
+                disabled={loading}
+                startIcon={
+                  loading ? (
+                    <CircularProgress color="primary" size={20} />
+                  ) : null
                 }
-                label="There is no next class for this class"
-              />
+              >
+                Create Class
+              </Button>
             </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              disableElevation
-              type="submit"
-              disabled={loading}
-              startIcon={
-                loading ? <CircularProgress color="primary" size={20} /> : null
-              }
-            >
-              Create Class
-            </Button>
-          </Box>
-        </form>
+          </form>
+        </Paper>
       </Grid>
       <Grid item md={6} sm={12}>
         <Box className={classes.tipsContainer} mx={2} p={2}>

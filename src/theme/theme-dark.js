@@ -45,22 +45,23 @@ const theme = createMuiTheme({
     contrastThreshold: 3,
     tonalOffset: 0.2,
     background: {
-      paper: "#333",
+      paper: "#242526",
+      default: "#2f2f2f",
     },
     common: {
-      black: "#333",
+      black: "#222",
       white: "#fff",
     },
     text: {
       primary: "#ddd",
-      secondary: "#ccc",
+      secondary: "#bbb",
     },
   },
   overrides: {
     MuiAppBar: {
       positionFixed: {
-        backdropFilter: "saturate(180%) blur(20px)",
-        backgroundColor: "rgba(255, 255, 255, 0)",
+        // backdropFilter: "saturate(180%) blur(20px)",
+        backgroundColor: "#242526",
       },
     },
     MuiTooltip: {
@@ -93,7 +94,7 @@ const theme = createMuiTheme({
     },
     MuiPaper: {
       elevation1: {
-        boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+        boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
       },
     },
     MuiFormHelperText: {

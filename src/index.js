@@ -15,6 +15,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import * as actionTypes from "./store/actions/action-types";
 import "./index.css";
 import App from "./App";
+import BackBtnReset from "./components/BackBtnReset/BackBtnReset";
 import authReducer from "./store/reducers/auth";
 import globalReducer from "./store/reducers/global";
 import instituteGroupReducer from "./store/reducers/instituteGroup";
@@ -67,6 +68,7 @@ const app = (
     <Elements stripe={stripePromise}>
       <Router history={history}>
         <App />
+        <BackBtnReset />
       </Router>
     </Elements>
   </Provider>

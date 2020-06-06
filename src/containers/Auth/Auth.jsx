@@ -10,7 +10,7 @@ import {
   Typography,
   LinearProgress,
   Snackbar,
-  Slide
+  Slide,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import {
@@ -19,62 +19,59 @@ import {
   Switch,
   useLocation,
   useRouteMatch,
-  __RouterContext
+  __RouterContext,
 } from "react-router-dom";
 import { useTransition, animated } from "react-spring";
 
 import Login from "./Login/Login";
 import SignUp from "./Signup/Signup";
 import VerifyEmail from "./VerifyEmail/VerifyEmail";
+import PasswordReset from "./PasswordReset/PasswordReset";
 import classes from "./auth.module.scss";
-import { setAuthError, setAuthSuccess } from "../../store/actions/auth"; 
+import { setAuthError, setAuthSuccess } from "../../store/actions/auth";
 import Logo from "../../components/Logo/Logo";
 
-const SlideTransition = props => {
+const SlideTransition = (props) => {
   return <Slide {...props} direction="down" />;
 };
-const Auth = props => {
-  const isAuth = useSelector(state => state.auth.isAuth);
-  const isLoading = useSelector(state => state.auth.isLoading);
-  const error = useSelector(state => state.auth.error);
-  const success = useSelector(state => state.auth.success);
+const Auth = (props) => {
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const isLoading = useSelector((state) => state.auth.isLoading);
+  const error = useSelector((state) => state.auth.error);
+  const success = useSelector((state) => state.auth.success);
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const p = useLocation().pathname;
-  const redirect =
-    p.indexOf("login") > -1 ||
-    p.indexOf("signup") > -1 ||
-    p.indexOf("verify-email") > -1 ? null : (
-      <Redirect to="/auth/login" />
-    );
 
   let title;
   switch (p && p.split("/").reverse()[0]) {
     case "login":
-      title = "Zubstr Login";
+      title = "Zubstr - Login";
       break;
     case "signup":
-      title = "Zubstr Signup";
+      title = "Zubstr - Signup";
       break;
     case "verify-email":
       title = "Verify Email";
+      break;
+    case "reset-password":
+      title = "Reset Password";
       break;
     default:
       title = "Zubstr";
   }
   const { location } = useContext(__RouterContext);
-  const transitions = useTransition(location, location => location.pathname, {
+  const transitions = useTransition(location, (location) => location.pathname, {
     from: {
       opacity: 0,
-      transform: "translate(100%,0)"
+      transform: "translate(100%,0)",
     },
     enter: { opacity: 1, transform: "translate(0%,0)" },
-    leave: { opacity: 0, transform: "translate(-50%,0)" }
+    leave: { opacity: 0, transform: "translate(-50%,0)" },
   });
 
   return (
     <div className={classes.authContainer}>
-      {redirect}
       {error && !success && (
         <Snackbar
           open={!!error}
@@ -100,8 +97,7 @@ const Auth = props => {
       <Grid container alignItems="center" justify="center">
         <Grid item container md={6} sm={8} lg={4}>
           <Box px={2} className="w-100">
-            <Paper elevation={1} >
-              {isLoading && <LinearProgress color="primary" />}
+            <Paper elevation={1}>
               <Paper elevation={0} style={{ padding: "30px" }}>
                 <Box>
                   <Grid
@@ -114,11 +110,15 @@ const Auth = props => {
                       <Logo width="3rem" />
                     </Grid>
                     <Grid item>
-                      <Box px={2} >
+                      <Box px={2}>
                         <Typography
                           variant="h1"
                           color="textSecondary"
-                          style={{ textTransform: "capitalize", fontSize: '2rem', fontWeight: 400 }}
+                          style={{
+                            textTransform: "capitalize",
+                            fontSize: "2rem",
+                            fontWeight: 400,
+                          }}
                         >
                           {title}
                         </Typography>
@@ -134,6 +134,11 @@ const Auth = props => {
                       path={`/auth/verify-email`}
                       component={VerifyEmail}
                     />
+                    <Route
+                      path={`/auth/reset-password`}
+                      component={PasswordReset}
+                    />
+                    <Redirect to="/auth/login" />
                   </Switch>
                 </Box>
               </Paper>
