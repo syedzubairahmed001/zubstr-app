@@ -6,6 +6,7 @@ import {
   Button,
   FormControlLabel,
   Checkbox,
+  CircularProgress,
 } from "@material-ui/core";
 import { FilePlus } from "react-feather";
 
@@ -34,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
 
 const PostFooter = (props) => {
   const styles = useStyles();
-  const { onFilesChange } = props || {};
+  const { onFilesChange, onSubmit, postBtnDisabled, postBtnLoading } =
+    props || {};
   return (
     <Box className={styles.container}>
       <Box className={styles.sec1}>
@@ -58,7 +60,21 @@ const PostFooter = (props) => {
         </label>
       </Box>
       <Box className={styles.sec2}>
-        <Button color="primary" disableElevation variant="contained">
+        <Button
+          color="primary"
+          disableElevation
+          variant="contained"
+          onClick={onSubmit}
+          disabled={postBtnDisabled || postBtnLoading}
+          startIcon={
+            postBtnLoading ? (
+              <CircularProgress
+                color="primary"
+                style={{ width: "20px", height: "20px" }}
+              />
+            ) : null
+          }
+        >
           Post
         </Button>
       </Box>

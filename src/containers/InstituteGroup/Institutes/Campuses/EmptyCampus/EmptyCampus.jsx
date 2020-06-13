@@ -34,7 +34,9 @@ const EmptyCampus = (props) => {
       <Box className={classes.illustration} mb={2}>
         <Illustration type="campus" withBg />
       </Box>
-      <Typography variant="h5">Create Campus</Typography>
+      <Typography variant="h5" color="textPrimary">
+        Create Campus
+      </Typography>
       <Typography
         variant="body1"
         color="textSecondary"

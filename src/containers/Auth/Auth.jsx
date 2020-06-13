@@ -20,6 +20,7 @@ import {
   useLocation,
   useRouteMatch,
   __RouterContext,
+  Link,
 } from "react-router-dom";
 import { useTransition, animated } from "react-spring";
 
@@ -94,6 +95,7 @@ const Auth = (props) => {
           <Alert severity="success">{success}</Alert>
         </Snackbar>
       )}
+
       <Grid container alignItems="center" justify="center">
         <Grid item container md={6} sm={8} lg={4}>
           <Box px={2} className="w-100">
@@ -141,6 +143,19 @@ const Auth = (props) => {
                     <Redirect to="/auth/login" />
                   </Switch>
                 </Box>
+                <Typography
+                  color="textPrimary"
+                  align="center"
+                  style={{ padding: "10px" }}
+                >
+                  We are currently under development, please visit{" "}
+                  <a
+                    href="https://www.zubstr.com"
+                    style={{ textDecoration: "none", color: "#0083FF" }}
+                  >
+                    this page
+                  </a>
+                </Typography>
               </Paper>
             </Paper>
           </Box>

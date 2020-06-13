@@ -234,18 +234,20 @@ const Login = (props) => {
               </Grid>
               <Grid item>
                 <Box>
-                  <Typography color="textSecondary">
+                  <Typography color="textSecondary" variant="caption">
                     Don't have an account?{" "}
                     <Link to="/auth/signup" className="text-decoration-none">
-                      <Button
+                      {/* <Button
                         type="submit"
                         variant="text"
                         color="primary"
                         disableElevation
                         size="small"
-                      >
+                      > */}
+                      <Typography color="primary" variant="caption">
                         Signup
-                      </Button>
+                      </Typography>
+                      {/* </Button> */}
                     </Link>
                   </Typography>
                 </Box>

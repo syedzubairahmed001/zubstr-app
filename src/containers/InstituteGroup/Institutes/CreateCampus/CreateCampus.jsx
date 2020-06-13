@@ -250,9 +250,15 @@ const CreateCampus = (props) => {
       category: { value: "", error: null },
       landmark: { value: "", error: null },
     });
+    setEditCampusId(null);
     setScale(1.4);
-    setRotate(0);
     setUpload(null);
+    setImageUrl(null);
+    setUploadUrl(null);
+    setIsEditMode(false);
+    setEditorOpen(false);
+    setRotate(0);
+    setLoading(false);
   };
   const handleSubmit = (e) => {
     e.preventDefault();
