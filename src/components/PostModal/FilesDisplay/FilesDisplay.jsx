@@ -73,7 +73,7 @@ const FilesDisplay = (props) => {
     <Box className={styles.container}>
       {files.map((e) => {
         return (
-          <Box className={styles.imageContainer}>
+          <Box className={styles.imageContainer} key={e.name}>
             <Box
               className={styles.deleteBtn}
               onClick={() => onDeleteFile(e.name)}
@@ -88,7 +88,7 @@ const FilesDisplay = (props) => {
                 key={e.name}
               />
             ) : (
-              <Box className={styles.filePlaceholder}>
+              <Box className={styles.filePlaceholder} key={e.name}>
                 <Box>
                   <File />
                 </Box>

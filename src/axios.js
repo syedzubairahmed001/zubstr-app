@@ -18,6 +18,8 @@ const instance = axios.create({
   },
   adapter: cache.adapter,
 });
+instance.defaults.withCredentials = true;
+
 console.log("api-url", process.env.REACT_APP_API_URL);
 
 export default instance;

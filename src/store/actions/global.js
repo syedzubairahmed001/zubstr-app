@@ -22,3 +22,13 @@ export const setPostModalOpen = (data) => (dispatch) =>
 
 export const resetPostModalOpen = (data) => (dispatch) =>
   dispatch({ type: actionTypes.RESET_POST_MODAL_OPEN });
+
+export const sendPost = (data) => {
+  return (dispatch) => {
+    return Api(`/v1/post`, data, {
+      method: "post",
+      dispatch,
+      actionType: actionTypes.REQUEST__SEND_POST,
+    });
+  };
+};

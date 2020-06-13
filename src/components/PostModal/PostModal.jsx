@@ -27,7 +27,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { X, List, File, Image, MessageCircle } from "react-feather";
 
 import SearchInput from "../../components/SearchInput/SearchInput";
-import { resetPostModalOpen } from "../../store/actions/global";
+import { resetPostModalOpen, sendPost } from "../../store/actions/global";
 import PostInput from "./PostInput/PostInput";
 import FilesDisplay from "./FilesDisplay/FilesDisplay";
 import PostFooter from "./PostFooter/PostFooter";
@@ -108,9 +108,10 @@ const Post = (props) => {
   const styles = useStyles();
   const modalOpen = useSelector((state) => state.global.postModal.open);
   const user = useSelector((state) => state.auth.user);
+  const [loading, setLoading] = useState(false);
   const account = useSelector((state) => state.auth.account);
   const [form, setForm] = useState({
-    postDescription: {
+    postText: {
       value: "",
       error: null,
       count: 0,
@@ -131,7 +132,7 @@ const Post = (props) => {
   });
   const [disableComments, setDisableComments] = useState(false);
   const [files, setFiles] = useState([]);
-  const { postDescription, visibleTo, classesTo, classes } = form;
+  const { postText, visibleTo, classesTo, classes } = form;
   const onModalClose = () => {
     dispatch(resetPostModalOpen());
   };
@@ -180,14 +181,14 @@ const Post = (props) => {
       value: "all_teachers",
     },
   ];
-  const payload = {
-    classes: [],
-    visibleTo: "",
-    postType: "",
-    postText: "",
-    files: [],
-    disableComments: true,
-  };
+  // const payload = {
+  //   classes: [],
+  //   visibleTo: "",
+  //   postType: "",
+  //   postText: "",
+  //   files: [],
+  //   disableComments: true,
+  // };
   const handleInputChange = (e) => {
     const newVal = e.target.value;
     const name = e.target.name;
@@ -211,6 +212,47 @@ const Post = (props) => {
   };
   const handleCommentsDisableToggle = (e) => {
     setDisableComments(e.target.checked);
+  };
+  const handleClassesChange = (event, newVal) => {
+    const newArr = newVal.map((e) => e.value);
+    setForm((prev) => ({
+      ...prev,
+      classes: {
+        value: newArr,
+        error: null,
+      },
+    }));
+  };
+  const handleSubmit = () => {
+    setLoading(true);
+    // const payloadd = {
+    //   classes: classes.value,
+    //   visibleTo: visibleTo.value,
+    //   classesTo: classesTo.value,
+    //   disableComments: disableComments || false,
+    //   files: files,
+    //   postText: postText.value,
+    // };
+
+    let payload = new FormData();
+    payload.append("classes", JSON.stringify(classes.value));
+    if (visibleTo.value === "selected_classes") {
+      payload.append("visibleTo", classesTo.value);
+    } else {
+      payload.append("visibleTo", visibleTo.value);
+    }
+    payload.append("disableComments", disableComments);
+    payload.append("postText", postText.value);
+    files.forEach((e) => {
+      payload.append("files", e);
+    });
+
+    dispatch(sendPost(payload))
+      .then((res) => {
+        setLoading(false);
+      })
+      .catch((err) => setLoading(false));
+    console.log(payload);
   };
 
   return (
@@ -238,13 +280,10 @@ const Post = (props) => {
               <PostInput
                 open={Boolean(modalOpen)}
                 onChange={handleInputChange}
-                name="postDescription"
-                value={postDescription.value}
+                name="postText"
+                value={postText.value}
               />
-              <CharCounter
-                count={postDescription.count}
-                maxCount={postDescription.max}
-              />
+              <CharCounter count={postText.count} maxCount={postText.max} />
             </Box>
 
             <Box className={styles.input2Container} mt={2}>
@@ -254,7 +293,7 @@ const Post = (props) => {
                     <Box className={styles.input2sec1}>
                       <SearchInput
                         searchType="class"
-                        onChange={() => {}}
+                        onChange={handleClassesChange}
                         label="Visible to Classes"
                         // error={!!studentReqData.classId.error}
                         // helperText={studentReqData.classId.error}
@@ -272,7 +311,7 @@ const Post = (props) => {
                       <RadioGroup
                         row
                         aria-label="position"
-                        name="to"
+                        name="classesTo"
                         defaultValue={classesTo.value}
                       >
                         {classesToOptions.map((c) => (
@@ -370,7 +409,17 @@ const Post = (props) => {
             </Box>
             {/* <Box mt={2}></Box> */}
             <Box className={styles.footer} mt={1}>
-              <PostFooter onFilesChange={handleFilesChange} />
+              <PostFooter
+                onFilesChange={handleFilesChange}
+                onSubmit={handleSubmit}
+                postBtnLoading={loading}
+                postBtnDisabled={Boolean(
+                  !postText.value ||
+                    postText.value === "" ||
+                    (visibleTo.value === "selected_classes" &&
+                      classes.value.length === 0)
+                )}
+              />
             </Box>
           </Box>
         </Box>

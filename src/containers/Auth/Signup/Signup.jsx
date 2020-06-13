@@ -294,18 +294,12 @@ const Signup = (props) => {
               </Grid>
               <Grid item>
                 <Box>
-                  <Typography color="textSecondary">
+                  <Typography color="textSecondary" variant="caption">
                     Already have an account?{" "}
                     <Link to="/auth/login" className="text-decoration-none">
-                      <Button
-                        type="submit"
-                        variant="text"
-                        color="primary"
-                        disableElevation
-                        size="small"
-                      >
+                      <Typography color="primary" variant="caption">
                         Login
-                      </Button>
+                      </Typography>
                     </Link>
                   </Typography>
                 </Box>
